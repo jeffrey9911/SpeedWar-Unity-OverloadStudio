@@ -4,5 +4,17 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/_Scenes/PhotonTestScenes/Multiplayer-Test-Login.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/_Scenes/PhotonTestScenes/Multiplayer-Test-Lobby.unity
+    guid: 1442da624dee8a9459b2ca2b2b21da64
+  - enabled: 1
+    path: Assets/_Scenes/TestMaps/PrototypeMap.unity
+    guid: 8574b73f9bef0994a931ec3f7de4e7b2
+  - enabled: 1
+    path: Assets/_Scenes/PhotonTestScenes/SandboxMap.unity
+    guid: fa52237de73ef88428c953eabb1920e5
   m_configObjects: {}

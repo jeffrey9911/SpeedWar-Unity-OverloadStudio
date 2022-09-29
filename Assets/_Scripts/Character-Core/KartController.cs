@@ -2,12 +2,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditorInternal;
+//using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UI;
 
+using Photon.Pun;
+
 public class KartController : MonoBehaviour
 {
+    PhotonView _punView;
+
     public static int numOfWheels = 4;
     public enum Wheel_Location
     {
@@ -207,6 +211,11 @@ public class KartController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _punView = this.transform.GetParentComponent<PhotonView>();
+        if(_punView.IsMine)
+        {
+            GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraController = this.transform.Find("cameraController").transform;
+        }
         _rigidbody = GetComponent<Rigidbody>();
         if (vehicle_centre != null && _rigidbody != null)
             _rigidbody.centerOfMass = vehicle_centre.localPosition;
@@ -226,18 +235,21 @@ public class KartController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        float motorInput, steerInput;
-        bool handBrakeInput;
+        if(_punView.IsMine)
+        {
+            float motorInput, steerInput;
+            bool handBrakeInput;
 
-        bool boostInput;
+            bool boostInput;
 
-        motorInput = Input.GetAxis("Vertical");
-        steerInput = Input.GetAxis("Horizontal");
-        handBrakeInput = Input.GetButton("Jump");
+            motorInput = Input.GetAxis("Vertical");
+            steerInput = Input.GetAxis("Horizontal");
+            handBrakeInput = Input.GetButton("Jump");
 
-        boostInput = Input.GetKey(KeyCode.LeftShift);
+            boostInput = Input.GetKey(KeyCode.LeftShift);
 
-        vehicleMove(motorInput, steerInput, handBrakeInput, boostInput);
-        updateMovingDirection();
+            vehicleMove(motorInput, steerInput, handBrakeInput, boostInput);
+            updateMovingDirection();
+        }
     }
 }
