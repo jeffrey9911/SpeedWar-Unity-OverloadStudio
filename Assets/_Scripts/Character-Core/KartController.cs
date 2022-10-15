@@ -10,8 +10,30 @@ using Photon.Pun;
 
 public class KartController : MonoBehaviour
 {
+    //public static KartController instance;
+   
+    public GameObject _gameManager;
+
+    public KartAction inputActions;
+
+    [Header("Photon Network")]
+    private bool isOnNetwork = false;
+
+    
     PhotonView _punView;
 
+    
+
+    [Header("Vehicle Setup")]
+    [SerializeField] private Transform vehicle_centre;
+
+    private Rigidbody _rigidbody;
+
+    private float kartSpeed = 0.0f;
+
+    [SerializeField] private Text _sText; // later link to UI
+
+    #region wheels variables
     public static int numOfWheels = 4;
     public enum Wheel_Location
     {
@@ -21,7 +43,6 @@ public class KartController : MonoBehaviour
         Rear_Right
     }
 
-
     [Serializable]
     class Wheel
     {
@@ -29,28 +50,34 @@ public class KartController : MonoBehaviour
         public GameObject _gameObject;
         public Wheel_Location _wLocation;
     }
+    
 
-    [SerializeField] private Transform vehicle_centre;
-
-    private Rigidbody _rigidbody;
-
-    [SerializeField] private Text _sText; // later link to UI
-
+    [Header("Wheels Setup")]
     [SerializeField] private Wheel[] wheels = new Wheel[numOfWheels];
-    [SerializeField]
-    private float torque_max = 1000.0f,
-                  brakeTorque_max = 10000.0f,
-                  steerAngle_max = 30.0f;
-    [SerializeField] private static int NumOfGears = 5;
+    #endregion
+
+    [Header("Vehicle Parameters")]
+    [SerializeField] private float torque_max = 1000.0f;
+    [SerializeField] private float brakeTorque_max = 10000.0f;
+    [SerializeField] private float steerAngle_max = 30.0f;
+    [SerializeField] private float steerSensitivity = 1.0f;
+    [SerializeField] private float torqueSensitivity = 1.0f;
+    [SerializeField] private float kineticRecycleForce = 1.0f;
+    [SerializeField] private float wheelStiffness = 3.0f;
+    //[SerializeField] private static int NumOfGears = 5;
 
     [SerializeField] private float gravMult = 100.0f;
     [SerializeField] private float speed_max = 200, speed_min = -10;
 
-    private bool isSpeedingUp = false, isSlowingDown = false, isHandbrake = false;
+    private bool isHandbrake = false;
 
-    public bool isBoost = false;
+    private Vector2 kartMoveVector = new Vector2(0.0f, 0.0f);
 
-    private bool isMoveingForward = true;
+    //private bool isMoveingForward = true;
+
+    public bool speedEffected = false;
+
+    private List<Items> _itemsPack;
    
     public float calc_speed
     {
@@ -73,7 +100,8 @@ public class KartController : MonoBehaviour
         wheel._gameObject.transform.position = wPos;
         wheel._gameObject.transform.rotation = wRot;
     }
-    
+
+    /*
     private void vehicleMove(float torqueForce, float steerInput, bool handBrake, bool boost)
     {
         isHandbrake = handBrake;
@@ -105,42 +133,48 @@ public class KartController : MonoBehaviour
             if (wheels[i]._wCollider == null)
                 break;
 
-            if (wheels[i]._wLocation == Wheel_Location.Front_Left
-                || wheels[i]._wLocation == Wheel_Location.Front_Right)
-            {
-                wheels[i]._wCollider.steerAngle = steerAng;
-            }
+            
 
-            if(!isHandbrake) // not handbraking
+            /// Not Handbraking - WS calculation
+            if(!isHandbrake)
             {
                 wheels[i]._wCollider.brakeTorque = 0.0f;
+
+                /// Speeding Up by W
                 if (isSpeedingUp)
                 {
-                    wheels[i]._wCollider.motorTorque = torqueForce * torque_max / 4.0f;
+                    
                     if (isBoost)
                     {
                         //wheels[i]._wCollider.motorTorque = torqueForce * torque_max * 4.0f;
                         _rigidbody.velocity = (speed_max / 1.0f) * _rigidbody.velocity.normalized;
                     }
                 }
+                /// Slowing Down by S
                 else if (isSlowingDown)
                 {
                     if(isMoveingForward)
                     {
-                        if (wheels[i]._wLocation == Wheel_Location.Front_Left || wheels[i]._wLocation == Wheel_Location.Front_Right)
+
+                        if(!Mathf.Approximately(kartSpeed, 0.0f))
                         {
-                            wheels[i]._wCollider.motorTorque = torqueForce * brakeTorque_max;
-                            //wheels[i]._wCollider.brakeTorque = brakeTorque_max * 40.0f;
+                            wheels[i]._wCollider.motorTorque = torqueForce * torque_max;
                         }
                         else
                         {
+                            if (wheels[i]._wLocation == Wheel_Location.Front_Left || wheels[i]._wLocation == Wheel_Location.Front_Right)
+                            {
+                                wheels[i]._wCollider.brakeTorque = torqueForce * brakeTorque_max;
+                                //wheels[i]._wCollider.brakeTorque = brakeTorque_max * 40.0f;
+                                
+                            }
                             wheels[i]._wCollider.motorTorque = 0.0f;
                         }
-                        
+
                     }
                     else
                     {
-                        wheels[i]._wCollider.motorTorque = torqueForce * brakeTorque_max / 10.0f;
+                        
                     }
                 }
                 else
@@ -154,7 +188,7 @@ public class KartController : MonoBehaviour
                     
             }
             else //is handbraking
-            {
+            { 
                 if (wheels[i]._wLocation == Wheel_Location.Rear_Left
                        || wheels[i]._wLocation == Wheel_Location.Rear_Right)
                 {
@@ -163,65 +197,207 @@ public class KartController : MonoBehaviour
                 wheels[i]._wCollider.motorTorque = 0.0f;
             }
 
-            if (wheels[i]._gameObject != null)
-                syncWheel(wheels[i]);
+            
 
            
         }
 
-        applyDownForce();
-        ApplySpeed();
+        
     }
-
+*/
+    /// <summary>
+    /// Apply aerodynamics force onto the wheels
+    /// </summary>
     private void applyDownForce()
     {
         if (wheels[0]._wCollider == null)
             return;
-        wheels[0]._wCollider.attachedRigidbody.AddForce(-transform.up * gravMult
-                                                            * wheels[0]._wCollider.attachedRigidbody.velocity.magnitude);
+
+        for(int i = 0; i < wheels.Length; i++)
+        {
+            wheels[i]._wCollider.attachedRigidbody.AddForce(-transform.up * gravMult * wheels[i]._wCollider.attachedRigidbody.velocity.magnitude);
+        }
+        
     }
 
-    private void ApplySpeed()
+    private void UpdateVelocithy()
     {
-        float speed = _rigidbody.velocity.magnitude;
-        speed *= 3.6f;
+        kartSpeed = _rigidbody.velocity.magnitude * 3.6f;
 
+        kartSpeed *= Vector3.Dot(_rigidbody.velocity, this.transform.forward) > 0 ? 1.0f : -1.0f;
 
-
-        float direcIdentifier = Vector3.Dot(_rigidbody.velocity, this.transform.forward);
-
-        if (isMoveingForward && speed > speed_max && !isBoost)
+        if (kartSpeed > speed_max && !speedEffected)
         {
             _rigidbody.velocity = (speed_max / 3.6f) * _rigidbody.velocity.normalized;
             
         }
-        else if(!isMoveingForward && -speed < speed_min)
+        else if(kartSpeed < speed_min)
         {
             _rigidbody.velocity = -(speed_min / 3.6f) * _rigidbody.velocity.normalized;
         }
-
-        Debug.Log(isMoveingForward ? speed : -speed + "KM/H");
     }
 
-    private void updateMovingDirection()
-    {
-        isMoveingForward = Vector3.Dot(_rigidbody.velocity, this.transform.forward) > 0 ? true : false;
-    }
 
     // Start is called before the first frame update
     void Start()
     {
-        _punView = this.transform.GetParentComponent<PhotonView>();
-        if(_punView.IsMine)
-        {
-            GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraController = this.transform.Find("cameraController").transform;
-        }
+        isOnNetwork = PunManager.instance.isOnNetWork;
+        if(isOnNetwork)
+            _punView = this.transform.GetParentComponent<PhotonView>();
+
+        _itemsPack = new List<Items>();
+
+        inputActions = KartInputController.inst_controller.inputActions;
+
+        //inputActions.Player.Move.performed += context => KartMove(context.ReadValue<Vector2>());
+
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraController = this.transform.Find("cameraController").transform;
+        
         _rigidbody = GetComponent<Rigidbody>();
         if (vehicle_centre != null && _rigidbody != null)
             _rigidbody.centerOfMass = vehicle_centre.localPosition;
+        /*
         for(int i = 0; i < wheels.Length; ++i)
         {
             syncWheel(wheels[i]);
+        }*/
+        
+    }
+
+    private void KartMove(Vector2 moveVec)
+    {
+        //Debug.Log(kartMoveVector);
+
+        float steerAng = kartMoveVector.x = Mathf.Lerp(kartMoveVector.x, moveVec.x * steerAngle_max, Time.deltaTime * steerSensitivity);
+
+        float torqueForce = kartMoveVector.y = Mathf.Lerp(kartMoveVector.y, moveVec.y * torque_max, Time.deltaTime * torqueSensitivity);
+
+
+        for(int i = 0; i < wheels.Length; i++)
+        {
+            if (wheels[i]._wCollider == null)
+                break;
+
+            /// Not Handbraking
+            if(!isHandbrake)
+            {
+                /// Wheels tunring
+                if (wheels[i]._wLocation == Wheel_Location.Front_Left
+                    || wheels[i]._wLocation == Wheel_Location.Front_Right)
+                {
+                    wheels[i]._wCollider.steerAngle = steerAng;
+                }
+
+                /// Speeding Up by W
+                if (moveVec.y > 0)
+                {
+                    //Debug.Log("SPEEDING!!!" + torqueForce);
+                    wheels[i]._wCollider.motorTorque = torqueForce;
+                    wheels[i]._wCollider.brakeTorque = 0.0f;
+                }
+                /// Slowing Down by S
+                else if (moveVec.y < 0)
+                {
+                    
+                    if (kartSpeed > 0)
+                    {
+                        //Debug.Log("BRAKING!!!" + torqueForce);
+                        if (wheels[i]._wLocation == Wheel_Location.Front_Left || wheels[i]._wLocation == Wheel_Location.Front_Right)
+                            wheels[i]._wCollider.brakeTorque = -moveVec.y * brakeTorque_max;
+                        else
+                            wheels[i]._wCollider.brakeTorque = kineticRecycleForce;
+
+                        wheels[i]._wCollider.motorTorque = 0.0f;
+                    }
+                    else if(kartSpeed < 0 || Mathf.Approximately(kartSpeed, 0.0f))
+                    {
+                        //Debug.Log("BACKING!!!" + torqueForce);
+                        wheels[i]._wCollider.motorTorque = torqueForce * 0.1f;
+                        wheels[i]._wCollider.brakeTorque = 0.0f;
+                    }
+                }
+                else
+                {
+                    //Debug.Log("STILL!!!" + torqueForce);
+                    wheels[i]._wCollider.motorTorque = 0.0f;
+                    wheels[i]._wCollider.brakeTorque = kineticRecycleForce;
+                }
+            }
+            /// IS Handbraking
+            else
+            {
+                if (wheels[i]._wLocation == Wheel_Location.Rear_Left || wheels[i]._wLocation == Wheel_Location.Rear_Right)
+                    wheels[i]._wCollider.brakeTorque = brakeTorque_max;
+                else
+                    wheels[i]._wCollider.brakeTorque = kineticRecycleForce;
+
+                wheels[i]._wCollider.motorTorque = 0.0f;
+            }
+
+
+            
+
+            if (wheels[i]._gameObject != null)
+                syncWheel(wheels[i]);
+        }
+    }
+
+    private void KartDrive()
+    {
+       
+       
+
+        
+
+        isHandbrake = Input.GetKey(KeyCode.Space);
+
+        Vector2 moveVector = new Vector2();
+
+        if (Input.GetKey(KeyCode.W))
+        {
+            if (Input.GetKey(KeyCode.S))
+                moveVector.y = 0.0f;
+            else
+                moveVector.y = 1.0f;
+        }
+        else if (Input.GetKey(KeyCode.S))
+            moveVector.y = -1.0f;
+        else
+            moveVector.y = 0.0f;
+
+
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            if (Input.GetKey(KeyCode.A))
+                moveVector.x = 0.0f;
+            else
+                moveVector.x = 1.0f;
+        }
+        else if (Input.GetKey(KeyCode.A))
+            moveVector.x = -1.0f;
+        else
+            moveVector.x = 0.0f;
+        
+
+
+        KartMove(moveVector);
+        
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        //Debug.Log(collision.gameObject.name);
+        switch(collision.gameObject.tag)
+        {
+            case "Booster":
+                Debug.Log(_itemsPack.Count);
+                _itemsPack.Add(_gameManager.GetComponent<ItemsFactory>().GetItems("Booster"));
+                Debug.Log(_itemsPack.Count);
+                Destroy(collision.gameObject);
+                break;
+
+                
         }
         
     }
@@ -235,21 +411,19 @@ public class KartController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(_punView.IsMine)
+        if(isOnNetwork)
         {
-            float motorInput, steerInput;
-            bool handBrakeInput;
-
-            bool boostInput;
-
-            motorInput = Input.GetAxis("Vertical");
-            steerInput = Input.GetAxis("Horizontal");
-            handBrakeInput = Input.GetButton("Jump");
-
-            boostInput = Input.GetKey(KeyCode.LeftShift);
-
-            vehicleMove(motorInput, steerInput, handBrakeInput, boostInput);
-            updateMovingDirection();
+            if (_punView.IsMine)
+            {
+                //KartDrive();
+            }
         }
+        else
+        {
+            KartDrive();
+            UpdateVelocithy();
+            //applyDownForce();
+        }
+        
     }
 }
