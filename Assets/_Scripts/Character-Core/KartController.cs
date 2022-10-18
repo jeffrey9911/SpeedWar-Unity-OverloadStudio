@@ -78,6 +78,8 @@ public class KartController : MonoBehaviour
     public bool speedEffected = false;
 
     private List<Items> _itemsPack;
+
+    private Items itemInUse;
    
     public float calc_speed
     {
@@ -344,10 +346,14 @@ public class KartController : MonoBehaviour
 
     private void KartDrive()
     {
-       
-       
-
-        
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            Debug.Log("LShift Detected");
+            itemInUse = _itemsPack[0];
+            itemInUse.effectTime(3.0f);
+            _itemsPack.RemoveAt(0);
+        }
+            
 
         isHandbrake = Input.GetKey(KeyCode.Space);
 
@@ -382,7 +388,6 @@ public class KartController : MonoBehaviour
 
 
         KartMove(moveVector);
-        
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -391,31 +396,24 @@ public class KartController : MonoBehaviour
         switch(collision.gameObject.tag)
         {
             case "Booster":
-                Debug.Log(_itemsPack.Count);
-                _itemsPack.Add(_gameManager.GetComponent<ItemsFactory>().GetItems("Booster"));
-                Debug.Log(_itemsPack.Count);
+                if (_itemsPack.Count <= 2)
+                    _itemsPack.Add(_gameManager.GetComponent<ItemsFactory>().GetItems("Booster"));
+                else
+                    Debug.Log("Item Pack Full");
+                
                 Destroy(collision.gameObject);
                 break;
-
-                
         }
-        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(_sText != null)
-            _sText.text = ((int)calc_speed).ToString() + " KPH";
-    }
-
-    private void FixedUpdate()
-    {
-        if(isOnNetwork)
+        if (isOnNetwork)
         {
             if (_punView.IsMine)
             {
-                //KartDrive();
+                KartDrive();
             }
         }
         else
@@ -423,6 +421,29 @@ public class KartController : MonoBehaviour
             KartDrive();
             UpdateVelocithy();
             //applyDownForce();
+        }
+
+        if(Input.GetKeyDown(KeyCode.Tab))
+        {
+            for(int i = 0; i < _itemsPack.Count; i++)
+            {
+                Debug.Log(i + ". " + _itemsPack[i].Name);
+            }
+        }
+
+        if (_sText != null)
+            _sText.text = ((int)calc_speed).ToString() + " KPH";
+    }
+
+    private void FixedUpdate()
+    {
+        if(itemInUse != null)
+        {
+            if(itemInUse.isEffecting)
+            {
+                itemInUse.itemEffect();
+                Debug.Log("EFFECTING!!!");
+            }
         }
         
     }

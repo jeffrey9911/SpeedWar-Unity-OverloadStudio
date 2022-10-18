@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class Items : MonoBehaviour
 {
+    public bool isEffecting = false;
+
     public float _tCounter;
 
     public abstract string Name { get; }
@@ -12,20 +14,10 @@ public abstract class Items : MonoBehaviour
 
     public abstract void itemEffect();
 
-    private void effectTime(float effectTime)
+    public void effectTime(float effectTime)
     {
         _tCounter = effectTime;
     }
-
-    private void FixedUpdate()
-    {
-        if (_tCounter > 0)
-        {
-            itemEffect();
-            _tCounter -= Time.deltaTime;
-        }   
-    }
-
 }
 
 public class Booster : Items
@@ -41,6 +33,15 @@ public class Booster : Items
 
     public override void itemEffect()
     {
-        PunManager.instance._spawnedPlayer.GetComponent<Rigidbody>().AddRelativeForce(Vector3.forward * 100f);
+        if(_tCounter >= 0)
+        {
+            isEffecting = true;
+            PunManager.instance._spawnedPlayer.GetComponent<Rigidbody>().AddRelativeForce(Vector3.forward * 100f);
+            _tCounter -= Time.deltaTime;
+        }
+        else
+        {
+            isEffecting = false;
+        }
     }
 }
