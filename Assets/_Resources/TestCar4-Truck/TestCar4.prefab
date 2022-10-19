@@ -700,7 +700,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bba319cc1cea656418c8606c4da7b85e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isOnNetwork: 0
+  _gameManager: {fileID: 0}
   vehicle_centre: {fileID: 7188418520245000433}
   _sText: {fileID: 0}
   wheels:
@@ -724,9 +724,9 @@ MonoBehaviour:
   kineticRecycleForce: 2
   wheelStiffness: 3
   gravMult: 100
-  speed_max: 200
-  speed_min: -10
-  isBoost: 0
+  speed_max: 100
+  speed_min: -20
+  speedEffected: 0
 --- !u!1 &7188418520245000438
 GameObject:
   m_ObjectHideFlags: 0
