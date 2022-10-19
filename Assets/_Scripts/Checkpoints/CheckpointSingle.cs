@@ -8,7 +8,7 @@ public class CheckpointSingle : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-       if (other.gameObject.tag == "Player")
+       if (other.transform.parent.parent.tag == "Player")
         {
             trackCheckpoints.PlayerThroughCheckpoint(this);
             Debug.Log("Player detected");
