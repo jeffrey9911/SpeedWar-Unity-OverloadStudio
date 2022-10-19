@@ -11,6 +11,8 @@ public class ItemsFactory : MonoBehaviour
 {
     public GameObject booster;
 
+    public GameObject instantEffectItem;
+
     List<Items> _items;
 
     private void Start()
@@ -24,7 +26,6 @@ public class ItemsFactory : MonoBehaviour
             var tempType = Activator.CreateInstance(type) as Items;
 
             _items.Add(tempType);
-            Debug.Log(tempType);
         }
     }
 

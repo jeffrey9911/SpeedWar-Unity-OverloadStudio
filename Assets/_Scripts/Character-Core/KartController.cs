@@ -77,7 +77,7 @@ public class KartController : MonoBehaviour
 
     public bool speedEffected = false;
 
-    private List<Items> _itemsPack;
+    itemCommand _itemCommand;
    
     public float calc_speed
     {
@@ -245,8 +245,6 @@ public class KartController : MonoBehaviour
         if(isOnNetwork)
             _punView = this.transform.GetParentComponent<PhotonView>();
 
-        _itemsPack = new List<Items>();
-
         inputActions = KartInputController.inst_controller.inputActions;
 
         //inputActions.Player.Move.performed += context => KartMove(context.ReadValue<Vector2>());
@@ -344,11 +342,6 @@ public class KartController : MonoBehaviour
 
     private void KartDrive()
     {
-       
-       
-
-        
-
         isHandbrake = Input.GetKey(KeyCode.Space);
 
         Vector2 moveVector = new Vector2();
@@ -382,40 +375,33 @@ public class KartController : MonoBehaviour
 
 
         KartMove(moveVector);
-        
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         //Debug.Log(collision.gameObject.name);
-        switch(collision.gameObject.tag)
-        {
-            case "Booster":
-                Debug.Log(_itemsPack.Count);
-                _itemsPack.Add(_gameManager.GetComponent<ItemsFactory>().GetItems("Booster"));
-                Debug.Log(_itemsPack.Count);
-                Destroy(collision.gameObject);
-                break;
-
-                
-        }
         
+        
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (LayerMask.LayerToName(other.gameObject.layer) == "Item")
+        {
+            _itemCommand = new itemUseCommand(other.gameObject.tag);
+            itemEffectInvoker.AddItem(_itemCommand);
+            Destroy(other.gameObject);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(_sText != null)
-            _sText.text = ((int)calc_speed).ToString() + " KPH";
-    }
-
-    private void FixedUpdate()
-    {
-        if(isOnNetwork)
+        if (isOnNetwork)
         {
             if (_punView.IsMine)
             {
-                //KartDrive();
+                KartDrive();
             }
         }
         else
@@ -424,6 +410,23 @@ public class KartController : MonoBehaviour
             UpdateVelocithy();
             //applyDownForce();
         }
+
+        if(Input.GetKeyDown(KeyCode.Tab))
+        {
+            Debug.Log("==== SHOW ITEMS IN THE PACK ====");
+            for(int i = 0; i < itemEffectInvoker._itemCommands.Count; i++)
+            {
+                Debug.Log(itemEffectInvoker._itemCommands[i].getItemName());
+            }
+            Debug.Log("================================");
+        }
+
+        if (_sText != null)
+            _sText.text = ((int)calc_speed).ToString() + " KPH";
+    }
+
+    private void FixedUpdate()
+    {
         
     }
 }

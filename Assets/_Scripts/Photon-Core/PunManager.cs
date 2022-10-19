@@ -25,7 +25,8 @@ public class PunManager : MonoBehaviour
         {
             instance = this;
         }
-        _gameManager = GameObject.Find("GAMEMANAGER");
+
+        _gameManager = this.gameObject;
 
         kartSpawn();
     }
