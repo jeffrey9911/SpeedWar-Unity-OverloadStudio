@@ -4,20 +4,9 @@ using UnityEngine;
 
 public abstract class Items : MonoBehaviour
 {
-    public bool isEffecting = false;
-
-    public float _tCounter;
-
     public abstract string Name { get; }
 
     public abstract GameObject createItem(GameObject _itemPrefab, Vector3 instPos, Quaternion instQuat);
-
-    public abstract void itemEffect();
-
-    public void effectTime(float effectTime)
-    {
-        _tCounter = effectTime;
-    }
 }
 
 public class Booster : Items
@@ -30,18 +19,16 @@ public class Booster : Items
 
         return item;
     }
+}
 
-    public override void itemEffect()
+public class InstItem : Items
+{
+    public override string Name => "InstItem";
+
+    public override GameObject createItem(GameObject _itemPrefab, Vector3 instPos, Quaternion instQuat)
     {
-        if(_tCounter >= 0)
-        {
-            isEffecting = true;
-            PunManager.instance._spawnedPlayer.GetComponent<Rigidbody>().AddRelativeForce(Vector3.forward * 100f);
-            _tCounter -= Time.deltaTime;
-        }
-        else
-        {
-            isEffecting = false;
-        }
+        GameObject item = Instantiate(_itemPrefab, instPos, instQuat);
+
+        return item;
     }
 }

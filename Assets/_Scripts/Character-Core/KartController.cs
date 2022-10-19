@@ -77,9 +77,7 @@ public class KartController : MonoBehaviour
 
     public bool speedEffected = false;
 
-    private List<Items> _itemsPack;
-
-    private Items itemInUse;
+    itemCommand _itemCommand;
    
     public float calc_speed
     {
@@ -247,8 +245,6 @@ public class KartController : MonoBehaviour
         if(isOnNetwork)
             _punView = this.transform.GetParentComponent<PhotonView>();
 
-        _itemsPack = new List<Items>();
-
         inputActions = KartInputController.inst_controller.inputActions;
 
         //inputActions.Player.Move.performed += context => KartMove(context.ReadValue<Vector2>());
@@ -346,15 +342,6 @@ public class KartController : MonoBehaviour
 
     private void KartDrive()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            Debug.Log("LShift Detected");
-            itemInUse = _itemsPack[0];
-            itemInUse.effectTime(3.0f);
-            _itemsPack.RemoveAt(0);
-        }
-            
-
         isHandbrake = Input.GetKey(KeyCode.Space);
 
         Vector2 moveVector = new Vector2();
@@ -393,16 +380,17 @@ public class KartController : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         //Debug.Log(collision.gameObject.name);
-        switch(collision.gameObject.tag)
+        
+        
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (LayerMask.LayerToName(other.gameObject.layer) == "Item")
         {
-            case "Booster":
-                if (_itemsPack.Count <= 2)
-                    _itemsPack.Add(_gameManager.GetComponent<ItemsFactory>().GetItems("Booster"));
-                else
-                    Debug.Log("Item Pack Full");
-                
-                Destroy(collision.gameObject);
-                break;
+            _itemCommand = new itemUseCommand(other.gameObject.tag);
+            itemEffectInvoker.AddItem(_itemCommand);
+            Destroy(other.gameObject);
         }
     }
 
@@ -425,10 +413,12 @@ public class KartController : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Tab))
         {
-            for(int i = 0; i < _itemsPack.Count; i++)
+            Debug.Log("==== SHOW ITEMS IN THE PACK ====");
+            for(int i = 0; i < itemEffectInvoker._itemCommands.Count; i++)
             {
-                Debug.Log(i + ". " + _itemsPack[i].Name);
+                Debug.Log(itemEffectInvoker._itemCommands[i].getItemName());
             }
+            Debug.Log("================================");
         }
 
         if (_sText != null)
@@ -437,14 +427,6 @@ public class KartController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(itemInUse != null)
-        {
-            if(itemInUse.isEffecting)
-            {
-                itemInUse.itemEffect();
-                Debug.Log("EFFECTING!!!");
-            }
-        }
         
     }
 }
