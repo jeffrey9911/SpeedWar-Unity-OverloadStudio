@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class TrackCheckpoints : MonoBehaviour
 {
-    private List<CheckpointSingle> checkpointSingleList;
+    private List<CheckpointSingle> checkpointSingleList = new List<CheckpointSingle>();
     private int nextCheckpointSingleIndex;
 
     private void Awake()
     {
-        Transform checkpointsTransform = transform.Find("Checkpoints");
+        //Finds the parent object
+        Transform checkpointsTransform = GameObject.Find("Checkpoints").transform;
         Debug.Log(checkpointsTransform);
+
         foreach (Transform checkpointSingleTransform in checkpointsTransform)
         {
             Debug.Log(checkpointSingleTransform);

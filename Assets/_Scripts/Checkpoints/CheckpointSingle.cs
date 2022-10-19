@@ -8,10 +8,11 @@ public class CheckpointSingle : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-       //if (other.TryGetComponent<Player>(out Player player))
-       // {
-       //     trackCheckpoints.PlayerThroughCheckpoint(this);
-       // }
+       if (other.gameObject.tag == "Player")
+        {
+            trackCheckpoints.PlayerThroughCheckpoint(this);
+            Debug.Log("Player detected");
+        }
     }
 
     public void SetTrackCheckpoints(TrackCheckpoints trackCheckpoints)
