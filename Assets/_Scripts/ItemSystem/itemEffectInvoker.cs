@@ -21,6 +21,8 @@ public class itemEffectInvoker : MonoBehaviour
         inputActions = KartInputController.inst_controller.inputActions;
 
         inputActions.Player.UseItem.performed += context => UseItem();
+        
+        
 
         effectCD = -1.0f;
 

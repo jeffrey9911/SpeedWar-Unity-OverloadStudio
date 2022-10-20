@@ -26,9 +26,13 @@ public class TrackCheckpoints : MonoBehaviour
             //checkpointSingle.SetTrackCheckpoints(this);
 
             checkpointSingleList.Add(checkpointSingle);
+
+            checkpointSingleTransform.GetComponent<MeshRenderer>().enabled = false;
         }
 
         nextCheckpointSingleIndex = 0;
+
+        checkpointSingleList[0].GetComponent<MeshRenderer>().enabled = true;
     }
 
     public void PlayerThroughCheckpoint(CheckpointSingle checkpointSingle)
@@ -37,12 +41,14 @@ public class TrackCheckpoints : MonoBehaviour
         {
             //Correct checkpoint
             Debug.Log("Correct");
+            checkpointSingleList[nextCheckpointSingleIndex].GetComponent<MeshRenderer>().enabled = false;
             nextCheckpointSingleIndex = (nextCheckpointSingleIndex + 1) % checkpointSingleList.Count;
+            checkpointSingleList[nextCheckpointSingleIndex].GetComponent<MeshRenderer>().enabled = true;
         }
         else
         {
             //Wrong checkpoint
-            Debug.Log("Wrong");
+            Debug.Log("WRONG WAY!");
         }
     }
 
