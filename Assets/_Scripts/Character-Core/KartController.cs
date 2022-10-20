@@ -392,6 +392,12 @@ public class KartController : MonoBehaviour
             itemEffectInvoker.AddItem(_itemCommand);
             Destroy(other.gameObject);
         }
+
+        if(LayerMask.LayerToName(other.gameObject.layer) == "Point")
+        {
+            scoreManager.instance.addScore(100);
+            Destroy(other.gameObject);
+        }
     }
 
     // Update is called once per frame
@@ -418,6 +424,8 @@ public class KartController : MonoBehaviour
             {
                 Debug.Log(itemEffectInvoker._itemCommands[i].getItemName());
             }
+            Debug.Log("==== POINTS THE PLAYER HAS ====");
+            Debug.Log(scoreManager.instance.getScore());
             Debug.Log("================================");
         }
 
