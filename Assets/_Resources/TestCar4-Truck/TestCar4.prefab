@@ -724,8 +724,8 @@ MonoBehaviour:
   kineticRecycleForce: 2
   wheelStiffness: 3
   gravMult: 100
-  speed_max: 200
-  speed_min: -10
+  speed_max: 100
+  speed_min: -20
   speedEffected: 0
 --- !u!1 &7188418520245000438
 GameObject:

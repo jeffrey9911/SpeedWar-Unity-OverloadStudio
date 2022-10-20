@@ -1160,7 +1160,6 @@ MonoBehaviour:
   targetMaterial: {fileID: 0}
   sourceTerrain: {fileID: 0}
   roadMaterials:
-  - dirt material
   - road material
   connectionMaterials:
   - crossing material
@@ -1187,7 +1186,7 @@ MonoBehaviour:
   selectedRoadRightInnerOffset: 0
   selectedCrossingMaterial: 0
   crossingTextureInfoIndex: 0
-  handleSelection: 1
+  handleSelection: 0
   positionHandleSelection: 1
   markerDirXZ: 0
   defaultCrossing: {fileID: 0}
@@ -1242,12 +1241,14 @@ MonoBehaviour:
   terrainNames:
   - All Terrains
   - Terrain
+  - Terrain
   terrainObjects:
   - {fileID: 0}
+  - {fileID: 1143663836}
   - {fileID: 1371878427}
   terrainSplatTextures:
-  - Splat 1 - layer_Grass ER
-  activeTerrain: {fileID: 1371878427}
+  - Splat 1 - Empty
+  activeTerrain: {fileID: 0}
   activeTerrainY: 0
   selectedTerrain: 0
   selectedRoadsOnly: 0
@@ -1427,17 +1428,16 @@ MonoBehaviour:
   OQCCQQOODCScript: {fileID: 0}
   OQDQOCOCCOElement: -1
   OQQDDCOCCC: -1
-  OQOOOQOQQC: {fileID: 1986434452}
-  OQQQDQODDO: {fileID: 1986434452}
+  OQOOOQOQQC: {fileID: 0}
+  OQQQDQODDO: {fileID: 0}
   OQDCCCCOQC: {fileID: 0}
-  OODQOQCDCC: 11
+  OODQOQCDCC: -1
   selectedRoadSOMarker: -1
   selectedMarkerNode: -1
   selectedMarkerNodes: 
   selectedMarkerSONode: -1
   selectedMarkerSONodes: 
-  selectedObjects:
-  - {fileID: 1172951821}
+  selectedObjects: []
   selectedExitRoad: -1
   newRoadFlag: 0
   roadTypeUpdateFlag: 1
@@ -1548,7 +1548,7 @@ MonoBehaviour:
   SoTestObject: {fileID: 0}
   lockRoadNetwork: 0
   showNotifications: 1
-  multipleTerrainsWarning: 0
+  multipleTerrainsWarning: 1
   OQODQOOOQQ: []
   OCDODOQCCQ: []
   textureCounter: 0
@@ -1713,6 +1713,53 @@ MonoBehaviour:
   perpDirRotated: {x: -0.8491815, y: 0, z: -0.52810115}
   markerStartUVY: 0.37045288
   customPoints: []
+--- !u!1 &731224749
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 731224750}
+  - component: {fileID: 731224751}
+  m_Layer: 0
+  m_Name: Checkpoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &731224750
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731224749}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 31.927256, y: -5.732258, z: 82.66883}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 990720398}
+  - {fileID: 2045578914}
+  - {fileID: 1197934807}
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &731224751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731224749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de203f69139d2dd43aa557e65b9b4f03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &732773199
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2200,6 +2247,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: ad8bd240e68daf54793f202db58f665e, type: 3}
+--- !u!4 &990720398 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+  m_PrefabInstance: {fileID: 6371128675782289767}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1020724894
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2501,6 +2553,7 @@ GameObject:
   - component: {fileID: 1143663837}
   - component: {fileID: 1143663836}
   - component: {fileID: 1143663835}
+  - component: {fileID: 1143663838}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -2568,23 +2621,115 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1172951821
+--- !u!114 &1143663838
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1143663834}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 561528938, guid: f56d46228aee4734f9114056c53bb57e, type: 3}
+  m_Script: {fileID: 910771039, guid: f56d46228aee4734f9114056c53bb57e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roadScr: {fileID: 1986434452}
-  prefabScr: {fileID: 0}
-  markers: 0b000000
-  startEnd: 0
-  prefab: {fileID: 0}
+  surfacevecs: []
+  tdataFloat: []
+  terrainData: {fileID: 15600000, guid: 9693a7f408a95724082ec646aa2f9d73, type: 2}
+  xStart: 0
+  zStart: 0
+  roadSurface: {fileID: 0}
+  surfaceMesh: {fileID: 0}
+  surfaceCollider: {fileID: 0}
+  terrainDataStored: []
+  terrainChanges: []
+  terrainTrees: []
+  detailInstances: []
+  detailInstanceStarts: 
+  surfaceObjects: []
+  terrainTestPoints: []
+  splatData: []
+  addedTrees: []
+  holes: []
+  terrainHeightsBackup: []
+  terrainTreesBackup: []
+  terrainDetailBackup: []
+  terrainSplatBackup: []
+  detailInstanceStartsBackUp: 
+  heightmapFlag: 0
+  splatmapFlag: 0
+  treeFlag: 0
+  detailFlag: 0
+  holesFlag: 0
+  terrainDone: 0
+  backupFlagNotification: 0
+  ignore: 0
+  backupObject: {fileID: 0}
+  terrain: {fileID: 0}
+--- !u!4 &1197934807 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+  m_PrefabInstance: {fileID: 1458739731}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1223363685
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 731224750}
+    m_Modifications:
+    - target: {fileID: 1356393088204180771, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_Name
+      value: CheckpointSingle (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_RootOrder
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 6.69
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 9.262258
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -38.94
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.96548563
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.26045635
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -30.194
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
 --- !u!43 &1280127527
 Mesh:
   m_ObjectHideFlags: 0
@@ -3086,6 +3231,65 @@ PrefabInstance:
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 9309ca576e25fd040903008810f101dd, type: 3}
+--- !u!1001 &1458739731
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 731224750}
+    m_Modifications:
+    - target: {fileID: 1356393088204180771, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_Name
+      value: CheckpointSingle (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_RootOrder
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 48.84
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 9.262258
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -64.22
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7769364
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.62957907
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -78.038
+      objectReference: {fileID: 0}
+    - target: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
 --- !u!114 &1646783445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11954,6 +12158,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1986434451}
   m_Mesh: {fileID: 1280127527}
+--- !u!4 &2045578914 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1388151306192217878, guid: a1aae3266b7a8184c9027b47775a2065, type: 3}
+  m_PrefabInstance: {fileID: 1223363685}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2137166164
 MonoBehaviour:
   m_ObjectHideFlags: 0
