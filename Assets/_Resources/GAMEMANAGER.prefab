@@ -82,9 +82,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79e55d841444b44e08377f2711429e86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSpawnPlayer: 0
   isOnNetWork: 0
   _gameManager: {fileID: 5993293559155044767}
-  _spawnPrefab: {fileID: 7188418520043412075, guid: 89efc45a41d1948a987d95e72631e3c3, type: 3}
+  _kart1: {fileID: 2133964237668934765, guid: d56fd008aaa964345b15c1199245ea14, type: 3}
+  _kart2: {fileID: 7188418520043412075, guid: 89efc45a41d1948a987d95e72631e3c3, type: 3}
   _spawnPos: {fileID: 5993293557715632026}
   _spawnedPlayer: {fileID: 0}
 --- !u!114 &5993293559155044754
