@@ -3,7 +3,8 @@
 ## ***INFR 3110U Group Assignment 1 Part 2 - Command Design Pattern UML***
 ![Command Design Pattern UML](https://user-images.githubusercontent.com/71342545/197076219-3cf8abcc-60a1-4ba1-bdfa-badaa04b3d68.png)
 
-
+## ***The use of Trello as project management tool***
+![Trello](https://user-images.githubusercontent.com/71342545/197095531-a690b69b-c4a6-470b-8e91-f6378dd8fe73.png)
 
 ## ***Group Information***
 ### **Group Name**
