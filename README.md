@@ -6,6 +6,10 @@
 ## ***The use of Trello as project management tool***
 ![Trello](https://user-images.githubusercontent.com/71342545/197095531-a690b69b-c4a6-470b-8e91-f6378dd8fe73.png)
 
+## ***The Statement of Contribution***
+[Contribution Statement.pdf](https://github.com/jeffrey9911/GDW22_23-Project-Overload-Studio/files/9835152/Contribution.Statement.pdf)
+
+
 ## ***Group Information***
 ### **Group Name**
 - Overload Studio
