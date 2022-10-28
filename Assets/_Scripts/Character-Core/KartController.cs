@@ -92,10 +92,8 @@ public class KartController : MonoBehaviour
 
     private void syncWheel(Wheel wheel)
     {
-        Debug.Log("Wheel Sync start");
         if (wheel._wObject == null || wheel._wCollider == null)
         {
-            Debug.Log("something is null");
             return;
         }
             
@@ -107,8 +105,6 @@ public class KartController : MonoBehaviour
 
         wheel._wObject.transform.position = wPos;
         wheel._wObject.transform.rotation = wRot;
-
-        Debug.Log("Wheel Sync end");
     }
 
     
@@ -125,6 +121,11 @@ public class KartController : MonoBehaviour
             wheels[i]._wCollider.attachedRigidbody.AddForce(-transform.up * gravMult * wheels[i]._wCollider.attachedRigidbody.velocity.magnitude);
         }
         
+    }
+
+    public float getSpeed()
+    {
+        return kartSpeed;
     }
 
     private void UpdateVelocity()
@@ -156,8 +157,9 @@ public class KartController : MonoBehaviour
 
         //inputActions.Player.Move.performed += context => KartMove(context.ReadValue<Vector2>());
 
-        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraController = this.transform.Find("camController").Find("camTrans").transform;
-        
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraTrans = this.transform.Find("camController").Find("camTrans").transform;
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraRotator = this.transform.Find("camController").transform;
+
         _rigidbody = GetComponent<Rigidbody>();
         if (vehicle_centre != null && _rigidbody != null)
             _rigidbody.centerOfMass = vehicle_centre.localPosition;
