@@ -83,6 +83,38 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &1872961905069696693
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3277483648382251899}
+  m_Layer: 0
+  m_Name: camController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3277483648382251899
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1872961905069696693}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2133964235646583880}
+  m_Father: {fileID: 2133964237668934764}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2133964235646583881
 GameObject:
   m_ObjectHideFlags: 0
@@ -93,7 +125,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2133964235646583880}
   m_Layer: 0
-  m_Name: cameraController
+  m_Name: camTrans
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -106,12 +138,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2133964235646583881}
-  m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
+  m_LocalRotation: {x: 0.17364816, y: -0, z: -0, w: 0.9848078}
   m_LocalPosition: {x: 0, y: 0.9090004, z: -2.824997}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2133964237668934764}
+  m_Father: {fileID: 3277483648382251899}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
 --- !u!1 &2133964236272320086
@@ -461,7 +493,7 @@ Transform:
   - {fileID: 4063919692564592570}
   - {fileID: 2133964236638319441}
   - {fileID: 2133964237467870967}
-  - {fileID: 2133964235646583880}
+  - {fileID: 3277483648382251899}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -498,24 +530,24 @@ MonoBehaviour:
   _sText: {fileID: 0}
   wheels:
   - _wCollider: {fileID: 2133964236490133513}
-    _gameObject: {fileID: 6365273816088147026}
+    _wObject: {fileID: 6365273816088147026}
     _wLocation: 0
   - _wCollider: {fileID: 2133964237399132992}
-    _gameObject: {fileID: 810171782598198151}
+    _wObject: {fileID: 810171782598198151}
     _wLocation: 1
   - _wCollider: {fileID: 2133964237014764220}
-    _gameObject: {fileID: 6034565763416265932}
+    _wObject: {fileID: 6034565763416265932}
     _wLocation: 2
   - _wCollider: {fileID: 2133964236272320084}
-    _gameObject: {fileID: 3298594839418195655}
+    _wObject: {fileID: 3298594839418195655}
     _wLocation: 3
+  hbWheelStiffness: 0.5
   torque_max: 1000
   brakeTorque_max: 10000
   steerAngle_max: 30
   steerSensitivity: 1
   torqueSensitivity: 1
   kineticRecycleForce: 1
-  wheelStiffness: 3
   gravMult: 100
   speed_max: 200
   speed_min: -10

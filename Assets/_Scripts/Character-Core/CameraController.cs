@@ -13,11 +13,29 @@ public class CameraController : MonoBehaviour
     public float cameraFollowSpeedModifier = 3.0f;
     public float cameraRotateSpeedModifier = 3.0f;
 
+    Transform _cameraRotator;
+
+    private void cameraRot()
+    {
+        Quaternion cameraMoveRot;
+        if(Input.GetKey(KeyCode.LeftArrow))
+        {
+            if (!Input.GetKey(KeyCode.RightArrow))
+            {
+
+            }
+        }
+    }
+
     private void Awake()
     {
         if(_cameraController == null)
         {
             _cameraController = this.transform.Find("");
+        }
+        else
+        {
+            _cameraRotator = _cameraController.parent.transform;
         }
         
         if(this == Camera.main)
