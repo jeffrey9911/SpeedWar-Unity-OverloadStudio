@@ -33,6 +33,9 @@ public class KartController : MonoBehaviour
 
     [SerializeField] private Text _sText; // later link to UI
 
+    /// <summary>
+    /// Setup for wheels. class of variables of wheels
+    /// </summary>
     #region wheels variables
     public static int numOfWheels = 4;
     public enum Wheel_Location
@@ -47,15 +50,17 @@ public class KartController : MonoBehaviour
     class Wheel
     {
         public WheelCollider _wCollider;
-        public GameObject _gameObject;
+        public GameObject _wObject;
         public Wheel_Location _wLocation;
     }
     
 
     [Header("Wheels Setup")]
     [SerializeField] private Wheel[] wheels = new Wheel[numOfWheels];
+    [SerializeField] private float hbWheelStiffness = 0.5f;
     #endregion
 
+    #region vehicle variables
     [Header("Vehicle Parameters")]
     [SerializeField] private float torque_max = 1000.0f;
     [SerializeField] private float brakeTorque_max = 10000.0f;
@@ -63,21 +68,19 @@ public class KartController : MonoBehaviour
     [SerializeField] private float steerSensitivity = 1.0f;
     [SerializeField] private float torqueSensitivity = 1.0f;
     [SerializeField] private float kineticRecycleForce = 1.0f;
-    [SerializeField] private float wheelStiffness = 3.0f;
-    //[SerializeField] private static int NumOfGears = 5;
-
     [SerializeField] private float gravMult = 100.0f;
     [SerializeField] private float speed_max = 200, speed_min = -10;
+    #endregion
+
 
     private bool isHandbrake = false;
 
     private Vector2 kartMoveVector = new Vector2(0.0f, 0.0f);
 
-    //private bool isMoveingForward = true;
 
     public bool speedEffected = false;
 
-    itemCommand _itemCommand;
+    itemCommand _itemCommandPack;
    
     public float calc_speed
     {
@@ -89,122 +92,22 @@ public class KartController : MonoBehaviour
 
     private void syncWheel(Wheel wheel)
     {
-        if(wheel._gameObject == null || wheel._wCollider == null)
+        if (wheel._wObject == null || wheel._wCollider == null)
+        {
             return;
+        }
+            
 
         Vector3 wPos;
         Quaternion wRot;
         
         wheel._wCollider.GetWorldPose(out wPos, out wRot);
 
-        wheel._gameObject.transform.position = wPos;
-        wheel._gameObject.transform.rotation = wRot;
+        wheel._wObject.transform.position = wPos;
+        wheel._wObject.transform.rotation = wRot;
     }
 
-    /*
-    private void vehicleMove(float torqueForce, float steerInput, bool handBrake, bool boost)
-    {
-        isHandbrake = handBrake;
-
-        torqueForce = Mathf.Clamp(torqueForce, -1.0f, 1.0f);
-
-        steerInput = Mathf.Clamp(steerInput, -1.0f, 1.0f);
-        float steerAng = steerInput * steerAngle_max;
-
-        if(torqueForce > 0.0f)
-        {
-            isSpeedingUp = true;
-            isSlowingDown = false;
-        }
-        else if(torqueForce < 0.0f)
-        {
-            isSpeedingUp = false;
-            isSlowingDown = true;
-        }
-        else
-        {
-            isSpeedingUp = isSlowingDown = false;
-        }
-
-        isBoost = boost;
-
-        for(int i = 0; i < wheels.Length; ++i)
-        {
-            if (wheels[i]._wCollider == null)
-                break;
-
-            
-
-            /// Not Handbraking - WS calculation
-            if(!isHandbrake)
-            {
-                wheels[i]._wCollider.brakeTorque = 0.0f;
-
-                /// Speeding Up by W
-                if (isSpeedingUp)
-                {
-                    
-                    if (isBoost)
-                    {
-                        //wheels[i]._wCollider.motorTorque = torqueForce * torque_max * 4.0f;
-                        _rigidbody.velocity = (speed_max / 1.0f) * _rigidbody.velocity.normalized;
-                    }
-                }
-                /// Slowing Down by S
-                else if (isSlowingDown)
-                {
-                    if(isMoveingForward)
-                    {
-
-                        if(!Mathf.Approximately(kartSpeed, 0.0f))
-                        {
-                            wheels[i]._wCollider.motorTorque = torqueForce * torque_max;
-                        }
-                        else
-                        {
-                            if (wheels[i]._wLocation == Wheel_Location.Front_Left || wheels[i]._wLocation == Wheel_Location.Front_Right)
-                            {
-                                wheels[i]._wCollider.brakeTorque = torqueForce * brakeTorque_max;
-                                //wheels[i]._wCollider.brakeTorque = brakeTorque_max * 40.0f;
-                                
-                            }
-                            wheels[i]._wCollider.motorTorque = 0.0f;
-                        }
-
-                    }
-                    else
-                    {
-                        
-                    }
-                }
-                else
-                {
-                    if(Mathf.Approximately(_rigidbody.velocity.magnitude, 0.0f))
-                    {
-
-                    }
-                    wheels[i]._wCollider.motorTorque = 0.0f;
-                }
-                    
-            }
-            else //is handbraking
-            { 
-                if (wheels[i]._wLocation == Wheel_Location.Rear_Left
-                       || wheels[i]._wLocation == Wheel_Location.Rear_Right)
-                {
-                    wheels[i]._wCollider.brakeTorque = brakeTorque_max * 50.0f;
-                }
-                wheels[i]._wCollider.motorTorque = 0.0f;
-            }
-
-            
-
-           
-        }
-
-        
-    }
-*/
+    
     /// <summary>
     /// Apply aerodynamics force onto the wheels
     /// </summary>
@@ -220,7 +123,12 @@ public class KartController : MonoBehaviour
         
     }
 
-    private void UpdateVelocithy()
+    public float getSpeed()
+    {
+        return kartSpeed;
+    }
+
+    private void UpdateVelocity()
     {
         kartSpeed = _rigidbody.velocity.magnitude * 3.6f;
 
@@ -249,8 +157,9 @@ public class KartController : MonoBehaviour
 
         //inputActions.Player.Move.performed += context => KartMove(context.ReadValue<Vector2>());
 
-        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraController = this.transform.Find("cameraController").transform;
-        
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraTrans = this.transform.Find("camController").Find("camTrans").transform;
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraRotator = this.transform.Find("camController").transform;
+
         _rigidbody = GetComponent<Rigidbody>();
         if (vehicle_centre != null && _rigidbody != null)
             _rigidbody.centerOfMass = vehicle_centre.localPosition;
@@ -276,16 +185,16 @@ public class KartController : MonoBehaviour
             if (wheels[i]._wCollider == null)
                 break;
 
-            /// Not Handbraking
-            if(!isHandbrake)
+            /// Wheels tunring
+            if (wheels[i]._wLocation == Wheel_Location.Front_Left
+                || wheels[i]._wLocation == Wheel_Location.Front_Right)
             {
-                /// Wheels tunring
-                if (wheels[i]._wLocation == Wheel_Location.Front_Left
-                    || wheels[i]._wLocation == Wheel_Location.Front_Right)
-                {
-                    wheels[i]._wCollider.steerAngle = steerAng;
-                }
+                wheels[i]._wCollider.steerAngle = steerAng;
+            }
 
+            /// Not Handbraking
+            if (!isHandbrake)
+            {
                 /// Speeding Up by W
                 if (moveVec.y > 0)
                 {
@@ -325,18 +234,19 @@ public class KartController : MonoBehaviour
             else
             {
                 if (wheels[i]._wLocation == Wheel_Location.Rear_Left || wheels[i]._wLocation == Wheel_Location.Rear_Right)
+                {
                     wheels[i]._wCollider.brakeTorque = brakeTorque_max;
+                    WheelFrictionCurve sFriction = wheels[i]._wCollider.sidewaysFriction;
+                    sFriction.stiffness = hbWheelStiffness;
+                    wheels[i]._wCollider.sidewaysFriction = sFriction;
+                }
                 else
                     wheels[i]._wCollider.brakeTorque = kineticRecycleForce;
 
                 wheels[i]._wCollider.motorTorque = 0.0f;
             }
 
-
-            
-
-            if (wheels[i]._gameObject != null)
-                syncWheel(wheels[i]);
+            syncWheel(wheels[i]);
         }
     }
 
@@ -344,7 +254,7 @@ public class KartController : MonoBehaviour
     {
         isHandbrake = Input.GetKey(KeyCode.Space);
 
-        Vector2 moveVector = new Vector2();
+        Vector2 moveVector = new();
 
         if (Input.GetKey(KeyCode.W))
         {
@@ -372,24 +282,17 @@ public class KartController : MonoBehaviour
         else
             moveVector.x = 0.0f;
         
-
-
         KartMove(moveVector);
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        //Debug.Log(collision.gameObject.name);
-        
-        
-    }
+
 
     private void OnTriggerEnter(Collider other)
     {
         if (LayerMask.LayerToName(other.gameObject.layer) == "Item")
         {
-            _itemCommand = new itemUseCommand(other.gameObject.tag);
-            itemEffectInvoker.AddItem(_itemCommand);
+            _itemCommandPack = new itemUseCommand(other.gameObject.tag);
+            itemEffectInvoker.AddItem(_itemCommandPack);
             Destroy(other.gameObject);
         }
 
@@ -413,14 +316,14 @@ public class KartController : MonoBehaviour
         else
         {
             KartDrive();
-            UpdateVelocithy();
+            UpdateVelocity();
             //applyDownForce();
         }
 
-        if(Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             Debug.Log("==== SHOW ITEMS IN THE PACK ====");
-            for(int i = 0; i < itemEffectInvoker._itemCommands.Count; i++)
+            for (int i = 0; i < itemEffectInvoker._itemCommands.Count; i++)
             {
                 Debug.Log(itemEffectInvoker._itemCommands[i].getItemName());
             }
