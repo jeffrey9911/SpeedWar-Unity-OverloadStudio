@@ -10,7 +10,7 @@ using Photon.Pun;
 
 public class KartController : MonoBehaviour
 {
-    //public static KartController instance;
+    public static KartController instance;
    
     public GameObject _gameManager;
 
@@ -70,6 +70,9 @@ public class KartController : MonoBehaviour
     [SerializeField] private float kineticRecycleForce = 1.0f;
     [SerializeField] private float gravMult = 100.0f;
     [SerializeField] private float speed_max = 200, speed_min = -10;
+    //[SerializeField] private static int numberOfExhaust;
+    //[SerializeField] private Transform[] exhaustTrans = new Transform[numberOfExhaust];
+    [SerializeField] private List<Transform> exhaustTransList = new List<Transform>(); 
     #endregion
 
 
@@ -77,11 +80,123 @@ public class KartController : MonoBehaviour
 
     private Vector2 kartMoveVector = new Vector2(0.0f, 0.0f);
 
+    private itemCommand _itemCommandPack;
 
-    public bool speedEffected = false;
 
-    itemCommand _itemCommandPack;
-   
+    public bool isBoosted = false;
+
+    private float timeCounter = 0;
+    [SerializeField] private float fireTimeInterval;
+
+
+    private void Awake()
+    {
+        if (!instance)
+            instance = this;
+    }
+
+    void Start()
+    {
+        isOnNetwork = PunManager.instance.isOnNetWork;
+        if (isOnNetwork)
+            _punView = this.transform.GetParentComponent<PhotonView>();
+
+        inputActions = KartInputController.inst_controller.inputActions;
+
+        //inputActions.Player.Move.performed += context => KartMove(context.ReadValue<Vector2>());
+
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraTrans = this.transform.Find("camController").Find("camTrans").transform;
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraRotator = this.transform.Find("camController").transform;
+
+        _rigidbody = GetComponent<Rigidbody>();
+        if (vehicle_centre != null && _rigidbody != null)
+            _rigidbody.centerOfMass = vehicle_centre.localPosition;
+        /*
+        for(int i = 0; i < wheels.Length; ++i)
+        {
+            syncWheel(wheels[i]);
+        }*/
+
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (LayerMask.LayerToName(other.gameObject.layer) == "Item")
+        {
+            _itemCommandPack = new itemUseCommand(other.gameObject.tag);
+            itemEffectInvoker.AddItem(_itemCommandPack);
+            Destroy(other.gameObject);
+        }
+
+        if (LayerMask.LayerToName(other.gameObject.layer) == "Point")
+        {
+            scoreManager.instance.addScore(100);
+            Destroy(other.gameObject);
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    private void FixedUpdate()
+    {
+        if (isOnNetwork)
+        {
+            if (_punView.IsMine)
+            {
+                KartDrive();
+            }
+        }
+        else
+        {
+            KartDrive();
+            UpdateVelocity();
+            //applyDownForce();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            Debug.Log("==== SHOW ITEMS IN THE PACK ====");
+            for (int i = 0; i < itemEffectInvoker._itemCommands.Count; i++)
+            {
+                Debug.Log(itemEffectInvoker._itemCommands[i].getItemName());
+            }
+            Debug.Log("==== POINTS THE PLAYER HAS ====");
+            Debug.Log(scoreManager.instance.getScore());
+            Debug.Log("================================");
+        }
+
+        if (_sText != null)
+            _sText.text = ((int)calc_speed).ToString() + " KPH";
+
+        if(isBoosted)
+        {
+            if(timeCounter <= 0)
+            {
+                for (int i = 0; i < exhaustTransList.Count; i++)
+                {
+                    GameObject exFire = ObjectPool.instance.SpawnFromPool("BoostFire", exhaustTransList[i].position, Quaternion.identity);
+                    exFire.GetComponent<ExhaustFire>().SetTimedActive();
+                    Rigidbody exFireRb =exFire.GetComponent<Rigidbody>();
+
+                    exFireRb.velocity = Vector3.zero;
+
+                    exFireRb.AddForce(exhaustTransList[i].forward.normalized, ForceMode.Impulse);
+                }
+                timeCounter += fireTimeInterval;
+
+            }
+            else
+            {
+                timeCounter -= Time.deltaTime;
+            }
+            
+        }
+    }
+
     public float calc_speed
     {
         get
@@ -134,7 +249,7 @@ public class KartController : MonoBehaviour
 
         kartSpeed *= Vector3.Dot(_rigidbody.velocity, this.transform.forward) > 0 ? 1.0f : -1.0f;
 
-        if (kartSpeed > speed_max && !speedEffected)
+        if (kartSpeed > speed_max && !isBoosted)
         {
             _rigidbody.velocity = (speed_max / 3.6f) * _rigidbody.velocity.normalized;
             
@@ -147,29 +262,7 @@ public class KartController : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
-    {
-        isOnNetwork = PunManager.instance.isOnNetWork;
-        if(isOnNetwork)
-            _punView = this.transform.GetParentComponent<PhotonView>();
-
-        inputActions = KartInputController.inst_controller.inputActions;
-
-        //inputActions.Player.Move.performed += context => KartMove(context.ReadValue<Vector2>());
-
-        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraTrans = this.transform.Find("camController").Find("camTrans").transform;
-        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraRotator = this.transform.Find("camController").transform;
-
-        _rigidbody = GetComponent<Rigidbody>();
-        if (vehicle_centre != null && _rigidbody != null)
-            _rigidbody.centerOfMass = vehicle_centre.localPosition;
-        /*
-        for(int i = 0; i < wheels.Length; ++i)
-        {
-            syncWheel(wheels[i]);
-        }*/
-        
-    }
+    
 
     private void KartMove(Vector2 moveVec)
     {
@@ -285,59 +378,5 @@ public class KartController : MonoBehaviour
         KartMove(moveVector);
     }
 
-
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (LayerMask.LayerToName(other.gameObject.layer) == "Item")
-        {
-            _itemCommandPack = new itemUseCommand(other.gameObject.tag);
-            itemEffectInvoker.AddItem(_itemCommandPack);
-            Destroy(other.gameObject);
-        }
-
-        if(LayerMask.LayerToName(other.gameObject.layer) == "Point")
-        {
-            scoreManager.instance.addScore(100);
-            Destroy(other.gameObject);
-        }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (isOnNetwork)
-        {
-            if (_punView.IsMine)
-            {
-                KartDrive();
-            }
-        }
-        else
-        {
-            KartDrive();
-            UpdateVelocity();
-            //applyDownForce();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            Debug.Log("==== SHOW ITEMS IN THE PACK ====");
-            for (int i = 0; i < itemEffectInvoker._itemCommands.Count; i++)
-            {
-                Debug.Log(itemEffectInvoker._itemCommands[i].getItemName());
-            }
-            Debug.Log("==== POINTS THE PLAYER HAS ====");
-            Debug.Log(scoreManager.instance.getScore());
-            Debug.Log("================================");
-        }
-
-        if (_sText != null)
-            _sText.text = ((int)calc_speed).ToString() + " KPH";
-    }
-
-    private void FixedUpdate()
-    {
-        
-    }
+    
 }

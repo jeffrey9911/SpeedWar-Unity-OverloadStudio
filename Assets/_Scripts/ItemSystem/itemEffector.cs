@@ -19,5 +19,6 @@ public class itemEffector : MonoBehaviour
     {
         Rigidbody playerRB = PunManager.instance._spawnedPlayer.GetComponent<Rigidbody>();
         playerRB.velocity += playerRB.velocity.normalized * 30.0f * Time.deltaTime;
+
     }
 }
