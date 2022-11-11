@@ -2574,7 +2574,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pools:
   - _objTag: BoostFire
-    _prefab: {fileID: 4647288811893475416, guid: 3f1441d0b469ca242bc70266b7ff1e81, type: 3}
+    _prefab: {fileID: 790779222608884345, guid: 07eff44a18883e647817a1a046ca15f1, type: 3}
     _objMaxSize: 100
 --- !u!1001 &925865588
 PrefabInstance:
