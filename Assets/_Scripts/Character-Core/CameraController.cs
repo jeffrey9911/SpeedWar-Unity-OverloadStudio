@@ -15,7 +15,7 @@ public class CameraController : MonoBehaviour
     public float cameraFollowSensitivity = 3.0f;
     public float cameraRotateSensitivity = 3.0f;
 
-    
+    public float adaptiveCameraModifier = 100.0f;
 
     private bool cameraRot()
     {
@@ -47,7 +47,7 @@ public class CameraController : MonoBehaviour
     private void speedCam()
     {
         float kartSpeed = PunManager.instance._spawnedPlayer.GetComponent<KartController>().getSpeed();
-        _cameraTrans.localEulerAngles = new Vector3(20.0f - (kartSpeed * 25.0f / 100.0f), 0.0f, 0.0f);
+        _cameraTrans.localEulerAngles = new Vector3(20.0f - (kartSpeed * 20.0f / adaptiveCameraModifier), 0.0f, 0.0f);
     }
 
     private void Awake()
