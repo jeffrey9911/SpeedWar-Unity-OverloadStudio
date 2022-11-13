@@ -283,28 +283,30 @@ MonoBehaviour:
   _sText: {fileID: 0}
   wheels:
   - _wCollider: {fileID: 3156947267965176215}
-    _gameObject: {fileID: 7928333386392989132}
+    _wObject: {fileID: 0}
     _wLocation: 0
   - _wCollider: {fileID: 3156947267320386270}
-    _gameObject: {fileID: 4426098399751313945}
+    _wObject: {fileID: 0}
     _wLocation: 1
   - _wCollider: {fileID: 3156947266333479714}
-    _gameObject: {fileID: 7344793113132305746}
+    _wObject: {fileID: 0}
     _wLocation: 2
   - _wCollider: {fileID: 3156947268418119626}
-    _gameObject: {fileID: 1987232565414647641}
+    _wObject: {fileID: 0}
     _wLocation: 3
+  hbWheelStiffness: 0.5
   torque_max: 1000
   brakeTorque_max: 1000
   steerAngle_max: 30
   steerSensitivity: 1
   torqueSensitivity: 1
   kineticRecycleForce: 1
-  wheelStiffness: 3
   gravMult: 100
   speed_max: 200
   speed_min: -10
-  speedEffected: 0
+  exhaustTransList: []
+  isBoosted: 0
+  fireTimeInterval: 0
 --- !u!114 &7781916408908667976
 MonoBehaviour:
   m_ObjectHideFlags: 0
