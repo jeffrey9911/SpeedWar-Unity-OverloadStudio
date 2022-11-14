@@ -10,6 +10,7 @@
 ## ***INFR 3110U Group Assignment 2 - The Statement of Contribution***
 [Contribution Statement 2.pdf](https://github.com/jeffrey9911/GDW22_23-Project-Overload-Studio/files/9999215/Contribution.Statement.2.pdf)
 -------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
 ## ***INFR 3110U Group Assignment 1 Part 2 - Command Design Pattern UML***
 ![Command Design Pattern UML](https://user-images.githubusercontent.com/71342545/197076219-3cf8abcc-60a1-4ba1-bdfa-badaa04b3d68.png)
 
