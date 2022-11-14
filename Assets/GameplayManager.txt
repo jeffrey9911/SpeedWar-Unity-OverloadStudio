@@ -1,2 +1,3 @@
-TEST10=TTEESSTT
-TEST20=HAHAHA
+audioVolume=
+selectedMode=
+selectedCar=

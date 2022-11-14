@@ -9,8 +9,23 @@ public class GameplayManager : MonoBehaviour
 {
     public static GameplayManager instance;
 
+    private class dataTag
+    {
+        public List<string> dataTags = new List<string>();
+        public dataTag()
+        {
+            dataTags.Clear();
+            dataTags.Add(audioVolume);
+            dataTags.Add(selectedMode);
+            dataTags.Add(selectedCar);
+        }
+        public string audioVolume { get { return "audioVolume"; } }
+        public string selectedMode { get { return "selectedMode"; } }
+        public string selectedCar { get { return "selectedCar"; } }
+    }
+
     [DllImport("GameSetter")]
-    private static extern void readDataSet(string filePathName);
+    private static extern bool readDataSet(string filePathName);
 
     [DllImport("GameSetter")]
     private static extern void writeDataSet(string filePathName);
@@ -31,7 +46,11 @@ public class GameplayManager : MonoBehaviour
     [DllImport("GameSetter")]
     private static extern bool removeDataPiece(string filePathName, string tagToDelete);
 
-    string fn;
+    private string fn;
+
+    dataTag _dataTag = new dataTag();
+
+    private Dictionary<string, string> gameplaySetupDict = new();
 
     private void Awake()
     {
@@ -42,8 +61,8 @@ public class GameplayManager : MonoBehaviour
     private void Start()
     {
         fn = Application.dataPath + "/GameplayManager.txt";
-        writeDataSet(fn);
-        endRWDataSet();
+
+        initialRW();
     }
 
     private void Update()
@@ -59,6 +78,30 @@ public class GameplayManager : MonoBehaviour
             
             Debug.Log(Marshal.PtrToStringUTF8(_intptr));
         }
-        
+    }
+
+    private void initialRW()
+    {
+        if(!readDataSet(fn))
+        {
+            writeDataSet(fn);
+            endRWDataSet();
+        }
+            
+        foreach (string dTag in _dataTag.dataTags)
+        {
+            if (searchDataByTag(fn, dTag) < 0)
+            {
+                setDataByTag(fn, dTag, "");
+            }
+
+            gameplaySetupDict.Add(dTag, getStringData(dTag));
+        }
+    }
+
+    private string getStringData(string tagToSearch)
+    {
+        IntPtr _intptr = getDataByTag(fn, tagToSearch);
+        return Marshal.PtrToStringUTF8(_intptr);
     }
 }
