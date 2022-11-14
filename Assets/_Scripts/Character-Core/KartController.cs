@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using Photon.Pun;
+using TMPro;
 
 public class KartController : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class KartController : MonoBehaviour
     
     PhotonView _punView;
 
-    
+    Publisher _publisher = new Publisher();
 
     [Header("Vehicle Setup")]
     [SerializeField] private Transform vehicle_centre;
@@ -31,7 +32,7 @@ public class KartController : MonoBehaviour
 
     private float kartSpeed = 0.0f;
 
-    [SerializeField] private Text _sText; // later link to UI
+    [SerializeField] private TMP_Text _sText; // later link to UI
 
     /// <summary>
     /// Setup for wheels. class of variables of wheels
@@ -111,6 +112,15 @@ public class KartController : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
         if (vehicle_centre != null && _rigidbody != null)
             _rigidbody.centerOfMass = vehicle_centre.localPosition;
+
+        _sText = GameObject.FindGameObjectWithTag("GUI").transform.Find("PNL_UI").Find("TXT_SpeedMeter").GetComponent<TMP_Text>();
+
+        AchievementObserver fastObserver = new AchievementObserver(this.gameObject, new fastPoints());
+        _publisher.AddObserver(fastObserver);
+
+        AchievementObserver driftObserver = new AchievementObserver(this.gameObject, new driftPoints());
+        _publisher.AddObserver(driftObserver);
+
         /*
         for(int i = 0; i < wheels.Length; ++i)
         {
@@ -194,6 +204,11 @@ public class KartController : MonoBehaviour
                 timeCounter -= Time.deltaTime;
             }
             
+        }
+
+        if(calc_speed > 100.0f || isHandbrake)
+        {
+            _publisher.Notify();
         }
     }
 
