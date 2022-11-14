@@ -1,5 +1,10 @@
 # **Ontario Tech University Game Dev GDW 2022-23 Group Project**
 
+
+## ***INFR 3110U Group Assignment 2 Bonus Part - Flyweight Design Pattern UML***
+![Flyweight UML](https://user-images.githubusercontent.com/71342545/201565287-724621b8-3844-4e70-8071-0484b5491df0.png)
+
+
 ## ***INFR 3110U Group Assignment 1 Part 2 - Command Design Pattern UML***
 ![Command Design Pattern UML](https://user-images.githubusercontent.com/71342545/197076219-3cf8abcc-60a1-4ba1-bdfa-badaa04b3d68.png)
 
