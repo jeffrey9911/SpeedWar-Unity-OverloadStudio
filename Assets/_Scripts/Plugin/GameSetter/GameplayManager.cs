@@ -9,20 +9,9 @@ public class GameplayManager : MonoBehaviour
 {
     public static GameplayManager instance;
 
-    private class dataTag
-    {
-        public List<string> dataTags = new List<string>();
-        public dataTag()
-        {
-            dataTags.Clear();
-            dataTags.Add(audioVolume);
-            dataTags.Add(selectedMode);
-            dataTags.Add(selectedCar);
-        }
-        public string audioVolume { get { return "audioVolume"; } }
-        public string selectedMode { get { return "selectedMode"; } }
-        public string selectedCar { get { return "selectedCar"; } }
-    }
+    public string audioVolume { get { return "audioVolume"; } }
+    public string selectedMode { get { return "selectedMode"; } }
+    public string selectedCar { get { return "selectedCar"; } }
 
     [DllImport("GameSetter")]
     private static extern bool readDataSet(string filePathName);
@@ -37,10 +26,10 @@ public class GameplayManager : MonoBehaviour
     private static extern int searchDataByTag(string filePathName, string tagToSearch);
 
     [DllImport("GameSetter")]
-    private static extern IntPtr getDataByTag(string filePathName, string tagToSearch);
+    private static extern float getDataByTag(string filePathName, string tagToSearch);
 
     [DllImport("GameSetter")]
-    private static extern bool setDataByTag(string filePathName, string tagToSearch, string contxtToSet);
+    private static extern bool setDataByTag(string filePathName, string tagToSearch, float contxtToSet);
 
 
     [DllImport("GameSetter")]
@@ -48,9 +37,7 @@ public class GameplayManager : MonoBehaviour
 
     private string fn;
 
-    dataTag _dataTag = new dataTag();
-
-    private Dictionary<string, string> gameplaySetupDict = new();
+ 
 
     private void Awake()
     {
@@ -69,14 +56,15 @@ public class GameplayManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.M))
         {
-            setDataByTag(fn, "TEST10", "TTEESSTT");
-            setDataByTag(fn, "TEST20", "HAHAHA");
+            setDataByTag(fn, "TEST10", 1.111f);
+            setDataByTag(fn, "TEST20", 20.222f);
             Debug.Log("SETTED");
 
-            IntPtr _intptr = getDataByTag(fn, "TEST20"); ;
+            float got = getDataByTag(fn, "TEST20"); ;
             
             
-            Debug.Log(Marshal.PtrToStringUTF8(_intptr));
+            Debug.Log(got);
+
         }
     }
 
@@ -87,21 +75,15 @@ public class GameplayManager : MonoBehaviour
             writeDataSet(fn);
             endRWDataSet();
         }
-            
-        foreach (string dTag in _dataTag.dataTags)
-        {
-            if (searchDataByTag(fn, dTag) < 0)
-            {
-                setDataByTag(fn, dTag, "");
-            }
-
-            gameplaySetupDict.Add(dTag, getStringData(dTag));
-        }
     }
 
-    private string getStringData(string tagToSearch)
+    public void setData(string _tag, float _value)
     {
-        IntPtr _intptr = getDataByTag(fn, tagToSearch);
-        return Marshal.PtrToStringUTF8(_intptr);
+        setDataByTag(fn, _tag, _value);
+    }
+
+    public float getData(string _tag)
+    {
+        return getDataByTag(fn, _tag);
     }
 }

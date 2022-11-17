@@ -2859,7 +2859,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cfcd7cf1070f0d4b93a696564fb8f16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &858696533
+--- !u!114 &858696542
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2868,9 +2868,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 858696508}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb203b59185607049a10c47c9cff372c, type: 3}
+  m_Script: {fileID: 11500000, guid: 8b124e7f95e2a2d40b300f1c4a975a3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  kartList:
+  - {fileID: 11400000, guid: 634885a870eb4f149af1bbddc2808d09, type: 2}
+  - {fileID: 11400000, guid: 905f97e4d356bf343b58c9a6ee80ae47, type: 2}
 --- !u!1001 &925865588
 PrefabInstance:
   m_ObjectHideFlags: 0
