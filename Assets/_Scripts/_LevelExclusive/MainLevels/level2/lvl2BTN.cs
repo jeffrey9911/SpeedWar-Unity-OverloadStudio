@@ -9,38 +9,24 @@ public class lvl2BTN : MonoBehaviour
 {
     public void car1OnClick()
     {
-        if(SceneConnect.instance.findCntxt("kartID") != null)
-        {
-            SceneConnect.instance.changeCntxt("kartID", "0");
-        }
-        else
-        {
-            SceneConnect.instance.addCntxt("kartID", "0");
-        }
+        GameplayManager.instance.setData(GameplayManager.instance.selectedCar, 1.01f);
         
         Debug.Log("KART 1 SELECTED!");
     }
 
     public void car2OnClick()
     {
-        if (SceneConnect.instance.findCntxt("kartID") != null)
-        {
-            SceneConnect.instance.changeCntxt("kartID", "1");
-        }
-        else
-        {
-            SceneConnect.instance.addCntxt("kartID", "1");
-        }
+        GameplayManager.instance.setData(GameplayManager.instance.selectedCar, 1.01f);
         Debug.Log("KART 2 SELECTED!");
     }
 
     public void startOnClick()
     {
-        if(SceneConnect.instance.findCntxt("isOnNetwork") == "false")
+        if(GameplayManager.instance.getData(GameplayManager.instance.selectedMode) == 1f)
         {
             SceneManager.LoadScene("Level1");
         }
-        else if(SceneConnect.instance.findCntxt("isOnNetwork") == "true")
+        else if(GameplayManager.instance.getData(GameplayManager.instance.selectedMode) == 2f)
         {
             PhotonNetwork.LoadLevel("Level1");
         }

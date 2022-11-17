@@ -35,24 +35,11 @@ public class PunManager : MonoBehaviour
         _gameManager = this.gameObject;
 
         
-        if(SceneConnect.instance)
+        if(GameplayManager.instance)
         {
-            isOnNetWork = SceneConnect.instance.findCntxt("isOnNetwork") == "true";
+            isOnNetWork = GameplayManager.instance.getData(GameplayManager.instance.selectedMode) == 2f;
 
-            switch (SceneConnect.instance.findCntxt("kartID"))
-            {
-                case "0":
-                    _spawnPrefab = _kart1;
-                    break;
-
-                case "1":
-                    _spawnPrefab = _kart2;
-                    break;
-
-                default:
-                    
-                    break;
-            }
+            _spawnPrefab = KartAssetManager.instance.getKart(GameplayManager.instance.getData(GameplayManager.instance.selectedCar)).AssetPrefab;
         }
         
         if(_spawnPrefab == null)

@@ -1,3 +1,2 @@
-audioVolume=
-selectedMode=
-selectedCar=
+selectedMode=1.000000
+selectedCar=1.010000

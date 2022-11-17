@@ -1,3 +1,4 @@
+using Photon.Pun.Demo.PunBasics;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -17,13 +18,13 @@ public class lvl1BTN : MonoBehaviour
     }
     public void SinglePlayOnClick()
     {
-        SceneConnect.instance.addCntxt("isOnNetwork", "false");
+        GameplayManager.instance.setData(GameplayManager.instance.selectedMode, 1f);
         SceneManager.LoadScene("MainSelect");
     }
 
     public void MultPlayOnClick()
     {
-        SceneConnect.instance.addCntxt("isOnNetwork", "true");
+        GameplayManager.instance.setData(GameplayManager.instance.selectedMode, 2f);
         SceneManager.LoadScene("Multiplayer-Test-Login");
     }
 
