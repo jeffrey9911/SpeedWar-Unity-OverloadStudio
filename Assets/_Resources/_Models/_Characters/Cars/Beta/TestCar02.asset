@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 50ebbe3ed0bf8ec43a997e40af0bed4e, type: 3}
-  m_Name: SportCar
+  m_Name: TestCar02
   m_EditorClassIdentifier: 
-  KartName: SportCar
-  KartID: 1.01
-  AssetPrefab: {fileID: 1797814507197140498, guid: 4b0a67c664a402640a4e570604cf788b, type: 3}
+  KartName: TestCar02
+  KartID: 1.002
+  AssetPrefab: {fileID: 7188418520043412075, guid: 89efc45a41d1948a987d95e72631e3c3, type: 3}

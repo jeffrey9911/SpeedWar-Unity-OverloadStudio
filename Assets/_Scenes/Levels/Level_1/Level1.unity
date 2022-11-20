@@ -2874,6 +2874,7 @@ MonoBehaviour:
   kartList:
   - {fileID: 11400000, guid: 634885a870eb4f149af1bbddc2808d09, type: 2}
   - {fileID: 11400000, guid: 905f97e4d356bf343b58c9a6ee80ae47, type: 2}
+  - {fileID: 11400000, guid: 0e25b2034d837df45b94a12ccb01b875, type: 2}
 --- !u!1001 &925865588
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2969,7 +2970,7 @@ PrefabInstance:
     - target: {fileID: 5993293559155044765, guid: ad8bd240e68daf54793f202db58f665e, type: 3}
       propertyPath: _kart2
       value: 
-      objectReference: {fileID: 4060200376852992553, guid: dc54026a9c8f79140bec1d4b176063f4, type: 3}
+      objectReference: {fileID: 1797814507197140498, guid: 4b0a67c664a402640a4e570604cf788b, type: 3}
     - target: {fileID: 5993293559155044765, guid: ad8bd240e68daf54793f202db58f665e, type: 3}
       propertyPath: isSpawnPlayer
       value: 1
