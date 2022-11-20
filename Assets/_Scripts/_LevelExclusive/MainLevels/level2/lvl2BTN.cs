@@ -17,6 +17,7 @@ public class lvl2BTN : MonoBehaviour
     public void car2OnClick()
     {
         GameplayManager.instance.setData(GameplayManager.instance.selectedCar, 1.002f);
+
         Debug.Log("KART 2 SELECTED!");
     }
 

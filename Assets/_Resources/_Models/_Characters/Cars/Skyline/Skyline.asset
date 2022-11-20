@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 50ebbe3ed0bf8ec43a997e40af0bed4e, type: 3}
-  m_Name: TestCar01
+  m_Name: Skyline
   m_EditorClassIdentifier: 
-  KartName: Alpha
-  KartID: 1.001
-  AssetPrefab: {fileID: 2133964237668934765, guid: d56fd008aaa964345b15c1199245ea14, type: 3}
-  KartImage: {fileID: 21300000, guid: f4dc8c6ba60cbab49a5e9814b3be6d17, type: 3}
+  KartName: Skyline
+  KartID: 1.02
+  AssetPrefab: {fileID: 6637920488402930908, guid: ca3cc91776ae1ec48a2f2d3f9d7060ea, type: 3}
+  KartImage: {fileID: 21300000, guid: 061ebed21ced9634b97cb39d1a1ebca9, type: 3}
