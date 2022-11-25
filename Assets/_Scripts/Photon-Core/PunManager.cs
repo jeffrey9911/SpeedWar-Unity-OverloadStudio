@@ -40,7 +40,7 @@ public class PunManager : MonoBehaviour
         }
 
         if (_spawnPrefab == null)
-            _spawnPrefab = KartAssetManager.instance.getKart(1.01f).AssetPrefab;
+            _spawnPrefab = KartAssetManager.instance.getKart(1.02f).AssetPrefab;
 
 
         if (isSpawnPlayer)

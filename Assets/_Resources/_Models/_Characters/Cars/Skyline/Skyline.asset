@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   KartName: Skyline
   KartID: 1.02
-  AssetPrefab: {fileID: 6637920488402930908, guid: ca3cc91776ae1ec48a2f2d3f9d7060ea, type: 3}
-  KartImage: {fileID: 21300000, guid: 061ebed21ced9634b97cb39d1a1ebca9, type: 3}
+  AssetPrefab: {fileID: 7107370674672592234, guid: 6e9f628b37378f54182f2ac851534f27, type: 3}
+  KartImage: {fileID: 21300000, guid: ae3c321552d6e824195de4a4e5391f11, type: 3}
