@@ -26,8 +26,9 @@ public class Event_Select : MonoBehaviour
                     GameObject BTN = Instantiate(_kartBtn);
                     BTN.transform.SetParent(PNL.transform);
                     KartButton KBTN = BTN.GetComponent<KartButton>();
-                    KBTN.SetKartName(KAM.kartList[i].KartName);
-                    KBTN.SetKartImage(KAM.kartList[i].KartImage);
+                    KBTN.KartButtonSetup(KAM.kartList[i]);
+                    //KBTN.SetKartName(KAM.kartList[i].KartName);
+                    //KBTN.SetKartImage(KAM.kartList[i].KartImage);
                     if(i < KAM.kartList.Count - 1)
                     {
                         i++;
@@ -77,4 +78,6 @@ public class Event_Select : MonoBehaviour
     {
         SceneManager.LoadScene("MainMenu");
     }
+
+    
 }

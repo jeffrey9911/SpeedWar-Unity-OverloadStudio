@@ -11,6 +11,18 @@ public class KartButton : MonoBehaviour
     [SerializeField] private TMP_Text kartText;
     [SerializeField] private Image kartImage;
 
+    private KartAsset _kart;
+
+
+
+    public void KartButtonSetup(KartAsset KA)
+    {
+        _kart = KA;
+        kartText.text = KA.KartName;
+        kartImage.sprite = KA.KartImage;
+    }
+
+    /*
     public void SetKartName(string kartName)
     {
         kartText.text = kartName;
@@ -19,10 +31,12 @@ public class KartButton : MonoBehaviour
     public void SetKartImage(Sprite kartPic)
     {
         kartImage.sprite = kartPic;
-    }
+    }*/
 
     public void kbtnOnClick()
     {
-
+        GameplayManager.instance.setData(GameplayManager.instance.selectedCar, _kart.KartID);
+        KartStat _ks = GameObject.Find("SpawnPos").GetComponent<KartStat>();
+        _ks.setupKart(_kart);
     }
 }

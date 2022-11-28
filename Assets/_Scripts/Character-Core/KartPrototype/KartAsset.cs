@@ -13,4 +13,10 @@ public class KartAsset : ScriptableObject
     public GameObject AssetPrefab;
 
     public Sprite KartImage;
+
+    public float _acceleration;
+    public float _maxSpeed;
+    public float _drift;
+    public float _control;
+    public float _weight;
 }
