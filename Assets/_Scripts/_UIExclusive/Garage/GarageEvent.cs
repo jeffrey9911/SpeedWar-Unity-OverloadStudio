@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,5 +9,17 @@ public class GarageEvent : MonoBehaviour
     public void reloadScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void startOnClick()
+    {
+        if (GameplayManager.instance.getData(GameplayManager.instance.selectedMode) == 1f)
+        {
+            SceneManager.LoadScene("Level1");
+        }
+        else if (GameplayManager.instance.getData(GameplayManager.instance.selectedMode) == 2f)
+        {
+            PhotonNetwork.LoadLevel("Level1");
+        }
     }
 }
