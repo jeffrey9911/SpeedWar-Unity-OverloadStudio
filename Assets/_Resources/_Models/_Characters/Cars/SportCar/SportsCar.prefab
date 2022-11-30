@@ -700,8 +700,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5143428384124434292}
-  m_LocalRotation: {x: 0.18008995, y: 0, z: 0, w: 0.98365015}
-  m_LocalPosition: {x: 0, y: 2.14, z: -3.26}
+  m_LocalRotation: {x: 0.1736482, y: 0, z: 0, w: 0.9848078}
+  m_LocalPosition: {x: 0, y: 4.44, z: -6.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -722,7 +722,7 @@ GameObject:
   - component: {fileID: 8616899531451606627}
   m_Layer: 0
   m_Name: SportsCar2
-  m_TagString: Untagged
+  m_TagString: KartCollider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

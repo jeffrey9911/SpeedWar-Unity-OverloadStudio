@@ -15,11 +15,11 @@ public class GarageEvent : MonoBehaviour
     {
         if (GameplayManager.instance.getData(GameplayManager.instance.selectedMode) == 1f)
         {
-            SceneManager.LoadScene("Level1");
+            SceneManager.LoadScene("Level2");
         }
         else if (GameplayManager.instance.getData(GameplayManager.instance.selectedMode) == 2f)
         {
-            PhotonNetwork.LoadLevel("Level1");
+            PhotonNetwork.LoadLevel("Level2");
         }
     }
 }

@@ -8,13 +8,14 @@ public class CheckpointSingle : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.transform.parent.parent.tag);
-       if (other.transform.parent.parent.tag == "Player")
+        Debug.Log(other.transform.tag);
+        if (other.transform.tag == "KartCollider")
         {
             TrackCheckpoints.instance.PlayerThroughCheckpoint(this);
             //trackCheckpoints.PlayerThroughCheckpoint(this);
             Debug.Log("Player detected");
         }
+
     }
 
     /*
