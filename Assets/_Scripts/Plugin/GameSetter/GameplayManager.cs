@@ -41,15 +41,18 @@ public class GameplayManager : MonoBehaviour
 
     private void Awake()
     {
-        if(!instance)
+        if (!instance)
             instance = this;
+
+        fn = Application.dataPath + "/GameplayManager.txt";
+
+
+        //initialRW();
     }
 
     private void Start()
     {
-        fn = Application.dataPath + "/GameplayManager.txt";
-
-        initialRW();
+        
     }
 
     private void Update()
@@ -57,7 +60,9 @@ public class GameplayManager : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.M))
         {
             setDataByTag(fn, "TEST10", 1.111f);
-            setDataByTag(fn, "TEST20", 20.222f);
+            setData("TEST20", 20.222f);
+            setData("TEST20", 20.333f);
+            setData("TEST30", 20.333f);
             Debug.Log("SETTED");
 
             float got = getDataByTag(fn, "TEST20"); ;
@@ -72,6 +77,7 @@ public class GameplayManager : MonoBehaviour
     {
         if(!readDataSet(fn))
         {
+            Debug.Log("CAN'T READ - Rewrite");
             writeDataSet(fn);
             endRWDataSet();
         }
