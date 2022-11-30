@@ -67,14 +67,18 @@ public class KartController : MonoBehaviour
     [SerializeField] private float brakeTorque_max = 10000.0f;
     [SerializeField] private float steerAngle_max = 30.0f;
     [SerializeField] private float steerSensitivity = 1.0f;
+    public float getControl { get { return steerSensitivity; } }
     [SerializeField] private float torqueSensitivity = 1.0f;
+    public float getAcceleration { get { return torqueSensitivity; } }
     [SerializeField] private float kineticRecycleForce = 1.0f;
     [SerializeField] private float gravMult = 100.0f;
     [SerializeField] private float speed_max = 200, speed_min = -10;
+    public float getMaxSpeed { get { return speed_max; } }
     //[SerializeField] private static int numberOfExhaust;
     //[SerializeField] private Transform[] exhaustTrans = new Transform[numberOfExhaust];
     [SerializeField] private List<Transform> exhaustTransList = new List<Transform>(); 
     #endregion
+
 
 
     private bool isHandbrake = false;

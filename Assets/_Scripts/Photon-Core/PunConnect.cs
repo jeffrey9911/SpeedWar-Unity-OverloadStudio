@@ -9,17 +9,9 @@ public class PunConnect : MonoBehaviourPunCallbacks
 {
     private void Start()
     {
-        PhotonNetwork.ConnectUsingSettings();
+        
     }
 
-    public override void OnConnectedToMaster()
-    {
-        PhotonNetwork.JoinLobby();
-    }
-
-    public override void OnJoinedLobby()
-    {
-        SceneManager.LoadScene("Multiplayer-Test-Lobby");
-    }
+    
 
 }

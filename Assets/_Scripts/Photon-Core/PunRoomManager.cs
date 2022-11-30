@@ -25,8 +25,5 @@ public class PunRoomManager : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinRoom(_roomName.text);
     }
 
-    public override void OnJoinedRoom()
-    {
-        SceneManager.LoadScene("MainSelect");
-    }
+    
 }

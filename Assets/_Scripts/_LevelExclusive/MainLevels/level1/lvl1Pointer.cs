@@ -11,8 +11,9 @@ public class lvl1Pointer : MonoBehaviour
     {
         RectTransform _thisRect = this.GetComponent<RectTransform>();
         Vector2 _pointerController = this.GetComponent<RectTransform>().anchoredPosition;
-        
-        
+
+        _pointerController.y -= 540.0f;
+
         Vector2 ptDirection = getMousePosition() - _pointerController;
 
         ptDirection = ptDirection.normalized;

@@ -14,9 +14,6 @@ public class PunManager : MonoBehaviour
 
     public GameObject _gameManager;
 
-    public GameObject _kart1;
-    public GameObject _kart2;
-
     public Transform _spawnPos;
 
     [SerializeField]
@@ -41,9 +38,9 @@ public class PunManager : MonoBehaviour
 
             _spawnPrefab = KartAssetManager.instance.getKart(GameplayManager.instance.getData(GameplayManager.instance.selectedCar)).AssetPrefab;
         }
-        
-        if(_spawnPrefab == null)
-            _spawnPrefab = _kart2;
+
+        if (_spawnPrefab == null)
+            _spawnPrefab = KartAssetManager.instance.getKart(1.01f).AssetPrefab;
 
 
         if (isSpawnPlayer)
