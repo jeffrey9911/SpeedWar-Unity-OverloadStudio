@@ -12,7 +12,9 @@ using TMPro;
 public class KartController : MonoBehaviour
 {
     public static KartController instance;
-   
+
+    public bool isUsingOBJPOOL = true;
+
     public GameObject _gameManager;
 
     public KartAction inputActions;
@@ -192,9 +194,18 @@ public class KartController : MonoBehaviour
             {
                 for (int i = 0; i < exhaustTransList.Count; i++)
                 {
-                    GameObject exFire = ObjectPool.instance.SpawnFromPool("BoostFire", exhaustTransList[i].position, Quaternion.identity);
+                    GameObject exFire;
+                    if (isUsingOBJPOOL)
+                    {
+                        exFire = ObjectPool.instance.SpawnFromPool("BoostFire", exhaustTransList[i].position, Quaternion.identity);
+                    }
+                    else
+                    {
+                        exFire = Instantiate(ObjectPool.instance.pools[0]._prefab, exhaustTransList[i].position, Quaternion.identity);
+                    }
+                    
                     exFire.GetComponent<ExhaustFire>().SetTimedActive();
-                    Rigidbody exFireRb =exFire.GetComponent<Rigidbody>();
+                    Rigidbody exFireRb = exFire.GetComponent<Rigidbody>();
 
                     exFireRb.velocity = Vector3.zero;
 
