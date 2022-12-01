@@ -4,7 +4,7 @@
 ![Trello](https://user-images.githubusercontent.com/71342545/205152262-72e93897-caae-4982-8b0b-23a2f8b87626.png)
 
 ## ***INFR 3110U GDW Project - The Statement of Contribution***
-
+[GDW Project Contribution.pdf](https://github.com/jeffrey9911/GDW22_23-Project-Overload-Studio/files/10136313/GDW.Project.Contribution.pdf)
 
 ----------------------------------------------------------------------------------------------------------
 
