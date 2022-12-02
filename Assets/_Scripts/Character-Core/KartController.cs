@@ -60,7 +60,8 @@ public class KartController : MonoBehaviour
 
     [Header("Wheels Setup")]
     [SerializeField] private Wheel[] wheels = new Wheel[numOfWheels];
-    [SerializeField] private float hbWheelStiffness = 0.5f;
+    [SerializeField] private float hbWheelSideFric = 0.5f;
+    [SerializeField] private float nmWheelSideFric = 1.0f;
     #endregion
 
     #region vehicle variables
@@ -86,6 +87,7 @@ public class KartController : MonoBehaviour
     private bool isHandbrake = false;
 
     private Vector2 kartMoveVector = new Vector2(0.0f, 0.0f);
+    private Vector2 moveActionVector;
 
     private itemCommand _itemCommandPack;
 
@@ -110,7 +112,14 @@ public class KartController : MonoBehaviour
 
         inputActions = KartInputController.inst_controller.inputActions;
 
-        //inputActions.Player.Move.performed += context => KartMove(context.ReadValue<Vector2>());
+        //inputActions
+        inputActions.Player.Move.performed += context => moveActionVector = context.ReadValue<Vector2>();
+        inputActions.Player.Move.canceled += context => moveActionVector = Vector2.zero;
+
+        inputActions.Player.Handbrake.performed += context => isHandbrake = true;
+        inputActions.Player.Handbrake.canceled += context => isHandbrake = false;
+
+
 
         GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraTrans = this.transform.Find("camController").Find("camTrans").transform;
         GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraRotator = this.transform.Find("camController").transform;
@@ -126,27 +135,19 @@ public class KartController : MonoBehaviour
 
         AchievementObserver driftObserver = new AchievementObserver(this.gameObject, new driftPoints());
         _publisher.AddObserver(driftObserver);
-
-        /*
-        for(int i = 0; i < wheels.Length; ++i)
-        {
-            syncWheel(wheels[i]);
-        }*/
-
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (LayerMask.LayerToName(other.gameObject.layer) == "Item")
+        if(other.tag == "Item")
         {
-            _itemCommandPack = new itemUseCommand(other.gameObject.tag);
-            itemEffectInvoker.AddItem(_itemCommandPack);
+            itemEffectInvoker.AddItem(new itemUseCommand(other.GetComponent<Item>().ItemName));
             Destroy(other.gameObject);
         }
 
-        if (LayerMask.LayerToName(other.gameObject.layer) == "Point")
+        if (LayerMask.LayerToName(other.gameObject.layer) == "Item")
         {
-            scoreManager.instance.addScore(100);
+            scoreManager.instance.addScore(1000);
             Destroy(other.gameObject);
         }
     }
@@ -154,25 +155,6 @@ public class KartController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-    }
-
-    private void FixedUpdate()
-    {
-        if (isOnNetwork)
-        {
-            if (_punView.IsMine)
-            {
-                KartDrive();
-            }
-        }
-        else
-        {
-            KartDrive();
-            UpdateVelocity();
-            //applyDownForce();
-        }
-
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             Debug.Log("==== SHOW ITEMS IN THE PACK ====");
@@ -184,6 +166,27 @@ public class KartController : MonoBehaviour
             Debug.Log(scoreManager.instance.getScore());
             Debug.Log("================================");
         }
+    }
+
+    private void FixedUpdate()
+    {
+        if (isOnNetwork)
+        {
+            if (_punView.IsMine)
+            {
+                KartMove(moveActionVector);
+            }
+        }
+        else
+        {
+            KartMove(moveActionVector);
+            //KartDrive();
+            UpdateVelocity();
+            UpdateGameplayUI();
+            //applyDownForce();
+        }
+
+        
 
         if (_sText != null)
             _sText.text = ((int)calc_speed).ToString() + " KPH";
@@ -195,7 +198,8 @@ public class KartController : MonoBehaviour
                 for (int i = 0; i < exhaustTransList.Count; i++)
                 {
                     GameObject exFire;
-                    if (isUsingOBJPOOL)
+
+                    if(isUsingOBJPOOL)
                     {
                         exFire = ObjectPool.instance.SpawnFromPool("BoostFire", exhaustTransList[i].position, Quaternion.identity);
                     }
@@ -291,12 +295,9 @@ public class KartController : MonoBehaviour
     }
 
 
-    // Start is called before the first frame update
-    
-
     private void KartMove(Vector2 moveVec)
     {
-        //Debug.Log(kartMoveVector);
+        //Debug.Log(moveVec);
 
         float steerAng = kartMoveVector.x = Mathf.Lerp(kartMoveVector.x, moveVec.x * steerAngle_max, Time.deltaTime * steerSensitivity);
 
@@ -318,6 +319,7 @@ public class KartController : MonoBehaviour
             /// Not Handbraking
             if (!isHandbrake)
             {
+                SetSideFriction(wheels[i], nmWheelSideFric);
                 /// Speeding Up by W
                 if (moveVec.y > 0)
                 {
@@ -359,9 +361,7 @@ public class KartController : MonoBehaviour
                 if (wheels[i]._wLocation == Wheel_Location.Rear_Left || wheels[i]._wLocation == Wheel_Location.Rear_Right)
                 {
                     wheels[i]._wCollider.brakeTorque = brakeTorque_max;
-                    WheelFrictionCurve sFriction = wheels[i]._wCollider.sidewaysFriction;
-                    sFriction.stiffness = hbWheelStiffness;
-                    wheels[i]._wCollider.sidewaysFriction = sFriction;
+                    SetSideFriction(wheels[i], hbWheelSideFric);
                 }
                 else
                     wheels[i]._wCollider.brakeTorque = kineticRecycleForce;
@@ -373,40 +373,16 @@ public class KartController : MonoBehaviour
         }
     }
 
-    private void KartDrive()
+    private void SetSideFriction(Wheel wheel, float frictionValue)
     {
-        isHandbrake = Input.GetKey(KeyCode.Space);
-
-        Vector2 moveVector = new();
-
-        if (Input.GetKey(KeyCode.W))
-        {
-            if (Input.GetKey(KeyCode.S))
-                moveVector.y = 0.0f;
-            else
-                moveVector.y = 1.0f;
-        }
-        else if (Input.GetKey(KeyCode.S))
-            moveVector.y = -1.0f;
-        else
-            moveVector.y = 0.0f;
-
-
-
-        if (Input.GetKey(KeyCode.D))
-        {
-            if (Input.GetKey(KeyCode.A))
-                moveVector.x = 0.0f;
-            else
-                moveVector.x = 1.0f;
-        }
-        else if (Input.GetKey(KeyCode.A))
-            moveVector.x = -1.0f;
-        else
-            moveVector.x = 0.0f;
-        
-        KartMove(moveVector);
+        WheelFrictionCurve sFriction = wheel._wCollider.sidewaysFriction;
+        sFriction.stiffness = frictionValue;
+        wheel._wCollider.sidewaysFriction = sFriction;
     }
 
-    
+    private void UpdateGameplayUI()
+    {
+        GameplayUIManager.instance.UpdateSpeedometer(getSpeed() / getMaxSpeed);
+        GameplayUIManager.instance.UpdateTorqueBar(moveActionVector.y > 0 ? moveActionVector.y : 0);
+    }
 }
