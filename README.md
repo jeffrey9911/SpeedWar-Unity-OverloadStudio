@@ -1,5 +1,12 @@
 # **Ontario Tech University Game Dev GDW 2022-23 Group Project**
 
+## ***INFR 3110U GDW Project - The use of Trello as project management tool and updates***
+![Trello](https://user-images.githubusercontent.com/71342545/205152262-72e93897-caae-4982-8b0b-23a2f8b87626.png)
+
+## ***INFR 3110U GDW Project - The Statement of Contribution***
+[GDW Project Contribution.pdf](https://github.com/jeffrey9911/GDW22_23-Project-Overload-Studio/files/10136313/GDW.Project.Contribution.pdf)
+
+----------------------------------------------------------------------------------------------------------
 
 ## ***INFR 3110U Group Assignment 2 Bonus Part - Flyweight Design Pattern UML***
 ![Flyweight UML](https://user-images.githubusercontent.com/71342545/201565287-724621b8-3844-4e70-8071-0484b5491df0.png)

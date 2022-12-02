@@ -198,6 +198,7 @@ public class KartController : MonoBehaviour
                 for (int i = 0; i < exhaustTransList.Count; i++)
                 {
                     GameObject exFire;
+
                     if(isUsingOBJPOOL)
                     {
                         exFire = ObjectPool.instance.SpawnFromPool("BoostFire", exhaustTransList[i].position, Quaternion.identity);
@@ -208,7 +209,7 @@ public class KartController : MonoBehaviour
                     }
                     
                     exFire.GetComponent<ExhaustFire>().SetTimedActive();
-                    Rigidbody exFireRb =exFire.GetComponent<Rigidbody>();
+                    Rigidbody exFireRb = exFire.GetComponent<Rigidbody>();
 
                     exFireRb.velocity = Vector3.zero;
 
