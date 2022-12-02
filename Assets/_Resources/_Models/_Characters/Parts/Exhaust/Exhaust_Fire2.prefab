@@ -33,7 +33,7 @@ Transform:
   - {fileID: 3873975005206410150}
   - {fileID: 8772901288427753111}
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &122363755600079045
 MonoBehaviour:
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53d31db37b4c0234b876fc36088b1586, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activeTime: 0.5
+  activeTime: 1
 --- !u!54 &122363755600079042
 Rigidbody:
   m_ObjectHideFlags: 0

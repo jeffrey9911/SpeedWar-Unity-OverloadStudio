@@ -465,6 +465,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bba319cc1cea656418c8606c4da7b85e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isUsingOBJPOOL: 1
   _gameManager: {fileID: 0}
   vehicle_centre: {fileID: 6171467311473448057}
   _sText: {fileID: 0}
@@ -481,7 +482,8 @@ MonoBehaviour:
   - _wCollider: {fileID: 1797814507161812618}
     _wObject: {fileID: 2822955361671975038}
     _wLocation: 3
-  hbWheelStiffness: 0.5
+  hbWheelSideFric: 0.8
+  nmWheelSideFric: 2
   torque_max: 1000
   brakeTorque_max: 10000
   steerAngle_max: 30
@@ -497,7 +499,7 @@ MonoBehaviour:
   - {fileID: 1797814506607324500}
   - {fileID: 1797814507667108156}
   isBoosted: 0
-  fireTimeInterval: 0.1
+  fireTimeInterval: 0.01
 --- !u!1 &1797814507454232151
 GameObject:
   m_ObjectHideFlags: 0

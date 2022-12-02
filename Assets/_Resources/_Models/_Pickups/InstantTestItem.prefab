@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 2913546964051171798}
   - component: {fileID: 1119717143020104988}
   - component: {fileID: 576191254655484271}
+  - component: {fileID: -4718064192771601473}
   m_Layer: 6
   m_Name: InstantTestItem
-  m_TagString: Instant
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,3 +99,16 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -5801228030656462994, guid: 1a3ae00a3e8b6454ea4e48f66d206fa0, type: 3}
+--- !u!114 &-4718064192771601473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1480264529392651465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e36146ea779d994c84fcd0100eab8ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ItemName: Instant
