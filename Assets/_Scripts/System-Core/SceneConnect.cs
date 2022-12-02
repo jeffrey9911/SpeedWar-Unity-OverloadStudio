@@ -11,7 +11,14 @@ public class SceneConnect : MonoBehaviour
     private void Awake()
     {
         if (!instance)
+        {
             instance = this;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+            
 
         DontDestroyOnLoad(this.gameObject);
     }

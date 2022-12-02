@@ -40,7 +40,7 @@ public class PunManager : MonoBehaviour
         }
 
         if (_spawnPrefab == null)
-            _spawnPrefab = KartAssetManager.instance.getKart(1.01f).AssetPrefab;
+            _spawnPrefab = KartAssetManager.instance.getKart(1.03f).AssetPrefab;
 
 
         if (isSpawnPlayer)
@@ -52,9 +52,14 @@ public class PunManager : MonoBehaviour
     private void kartSpawn()
     {
         if (isOnNetWork)
+        {
             _spawnedPlayer = PhotonNetwork.Instantiate(_spawnPrefab.name, _spawnPos.position, _spawnPos.rotation);
+        }
         else
+        {
             _spawnedPlayer = Instantiate(_spawnPrefab, _spawnPos.position, _spawnPos.rotation);
+        }
+            
 
         _spawnedPlayer.GetComponent<KartController>()._gameManager = _gameManager;
     }

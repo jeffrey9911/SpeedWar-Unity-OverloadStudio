@@ -108,7 +108,10 @@ public class KartController : MonoBehaviour
     {
         isOnNetwork = PunManager.instance.isOnNetWork;
         if (isOnNetwork)
+        {
             _punView = this.transform.GetParentComponent<PhotonView>();
+        }
+            
 
         inputActions = KartInputController.inst_controller.inputActions;
 
@@ -121,8 +124,8 @@ public class KartController : MonoBehaviour
 
 
 
-        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraTrans = this.transform.Find("camController").Find("camTrans").transform;
-        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>()._cameraRotator = this.transform.Find("camController").transform;
+        GameObject.FindGameObjectWithTag("LocalCamera").GetComponent<CameraController>()._cameraTrans = this.transform.Find("camController").Find("camTrans").transform;
+        GameObject.FindGameObjectWithTag("LocalCamera").GetComponent<CameraController>()._cameraRotator = this.transform.Find("camController").transform;
 
         _rigidbody = GetComponent<Rigidbody>();
         if (vehicle_centre != null && _rigidbody != null)
@@ -175,15 +178,16 @@ public class KartController : MonoBehaviour
             if (_punView.IsMine)
             {
                 KartMove(moveActionVector);
+                UpdateVelocity();
+                UpdateGameplayUI();
             }
         }
         else
         {
             KartMove(moveActionVector);
-            //KartDrive();
+            //applyDownForce();
             UpdateVelocity();
             UpdateGameplayUI();
-            //applyDownForce();
         }
 
         
@@ -262,14 +266,30 @@ public class KartController : MonoBehaviour
     /// </summary>
     private void applyDownForce()
     {
+        this._rigidbody.AddForce(-this.transform.forward * gravMult);
+        /*
         if (wheels[0]._wCollider == null)
             return;
 
         for(int i = 0; i < wheels.Length; i++)
         {
             wheels[i]._wCollider.attachedRigidbody.AddForce(-transform.up * gravMult * wheels[i]._wCollider.attachedRigidbody.velocity.magnitude);
-        }
+        }*/
         
+    }
+
+    private void KineticRecycle()
+    {
+        this._rigidbody.AddForce(-this.transform.forward * kineticRecycleForce);
+        /*
+        if (wheels[0]._wCollider == null)
+            return;
+
+        for(int i = 0; i < wheels.Length; i++)
+        {
+            wheels[i]._wCollider.attachedRigidbody.AddForce(-transform.up * gravMult * wheels[i]._wCollider.attachedRigidbody.velocity.magnitude);
+        }*/
+
     }
 
     public float getSpeed()
@@ -303,6 +323,10 @@ public class KartController : MonoBehaviour
 
         float torqueForce = kartMoveVector.y = Mathf.Lerp(kartMoveVector.y, moveVec.y * torque_max, Time.deltaTime * torqueSensitivity);
 
+        if(moveVec.y == 0)
+        {
+            torqueForce = kartMoveVector.y = 0;
+        }
 
         for(int i = 0; i < wheels.Length; i++)
         {
@@ -337,7 +361,7 @@ public class KartController : MonoBehaviour
                         if (wheels[i]._wLocation == Wheel_Location.Front_Left || wheels[i]._wLocation == Wheel_Location.Front_Right)
                             wheels[i]._wCollider.brakeTorque = -moveVec.y * brakeTorque_max;
                         else
-                            wheels[i]._wCollider.brakeTorque = kineticRecycleForce;
+                            wheels[i]._wCollider.brakeTorque = -moveVec.y * brakeTorque_max / 2;
 
                         wheels[i]._wCollider.motorTorque = 0.0f;
                     }
@@ -348,11 +372,12 @@ public class KartController : MonoBehaviour
                         wheels[i]._wCollider.brakeTorque = 0.0f;
                     }
                 }
-                else
+                else if(moveVec.y == 0)
                 {
                     //Debug.Log("STILL!!!" + torqueForce);
                     wheels[i]._wCollider.motorTorque = 0.0f;
                     wheels[i]._wCollider.brakeTorque = kineticRecycleForce;
+
                 }
             }
             /// IS Handbraking
