@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using System.Data.Common;
+using UnityEngine.InputSystem;
 
 public class RewindController : MonoBehaviour
 {
@@ -37,6 +38,7 @@ public class RewindController : MonoBehaviour
     string fn;
 
     private float autoSaveTimer = 3;
+    private float rewindTimer = 3;
     private bool isRewind = false;
 
     public float minDist = 0.0f;
@@ -44,29 +46,20 @@ public class RewindController : MonoBehaviour
     Vector3 loadedPos = Vector3.zero;
     Vector3 loadedRot = Vector3.zero;
 
+    KartAction inputActions;
+
     private void Start()
     {
         fn = Application.dataPath + "/savedKartTransform.txt";
+
+        inputActions = KartInputController.inst_controller.inputActions;
+
+        inputActions.Player.Rewind.performed += context => RewindStart();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-
-            loadedPos.x = (float)LoadFromFile(1, fn);
-            loadedPos.y = (float)LoadFromFile(2, fn);
-            loadedPos.z = (float)LoadFromFile(3, fn);
-
-            loadedRot.x = (float)LoadFromFile(5, fn);
-            loadedRot.y = (float)LoadFromFile(6, fn);
-            loadedRot.z = (float)LoadFromFile(7, fn);
-
-            isRewind = true;
-
-            Debug.Log("Save loaded!");
-            Debug.Log("Kart is transform by: " + "[Position]: " + loadedPos + "[Rotation]: " + loadedRot);
-        }
+        
 
         if(isRewind)
         {
@@ -83,6 +76,13 @@ public class RewindController : MonoBehaviour
             else
             {
                 Debug.Log("KEEP REWIND" + " [" + Vector3.Distance(kartPos, loadedPos));
+            }
+            rewindTimer -= Time.deltaTime;
+
+            if(rewindTimer <= 0)
+            {
+                rewindTimer = 3.0f;
+                isRewind = false;
             }
         }
     }
@@ -106,5 +106,21 @@ public class RewindController : MonoBehaviour
                 autoSaveTimer -= Time.deltaTime;
             }
         }
+    }
+
+    private void RewindStart()
+    {
+        loadedPos.x = (float)LoadFromFile(1, fn);
+        loadedPos.y = (float)LoadFromFile(2, fn);
+        loadedPos.z = (float)LoadFromFile(3, fn);
+
+        loadedRot.x = (float)LoadFromFile(5, fn);
+        loadedRot.y = (float)LoadFromFile(6, fn);
+        loadedRot.z = (float)LoadFromFile(7, fn);
+
+        isRewind = true;
+
+        Debug.Log("Save loaded!");
+        Debug.Log("Kart is transform by: " + "[Position]: " + loadedPos + "[Rotation]: " + loadedRot);
     }
 }
