@@ -35,7 +35,8 @@ public class KartButton : MonoBehaviour
 
     public void kbtnOnClick()
     {
-        GameplayManager.instance.setData(GameplayManager.instance.selectedCar, _kart.KartID);
+        Debug.Log(SceneData.SelectedKart);
+        SceneDataManager.instance.setData(SceneData.SelectedKart, _kart.KartID);
         KartStat _ks = GameObject.Find("SpawnPos").GetComponent<KartStat>();
         _ks.setupKart(_kart);
     }

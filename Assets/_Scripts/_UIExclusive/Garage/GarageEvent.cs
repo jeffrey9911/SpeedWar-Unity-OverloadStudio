@@ -13,11 +13,11 @@ public class GarageEvent : MonoBehaviour
 
     public void startOnClick()
     {
-        if (GameplayManager.instance.getData(GameplayManager.instance.selectedMode) == 1f)
+        if (SceneDataManager.instance.getData(SceneData.SelectedMode) == "Offline")
         {
             SceneManager.LoadScene("Level2");
         }
-        else if (GameplayManager.instance.getData(GameplayManager.instance.selectedMode) == 2f)
+        else if (SceneDataManager.instance.getData(SceneData.SelectedMode) == "Online")
         {
             PhotonNetwork.LoadLevel("Level2");
         }

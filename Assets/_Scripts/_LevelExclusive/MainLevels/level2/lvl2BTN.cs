@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class lvl2BTN : MonoBehaviour
 {
+
+    /*
     public void car1OnClick()
     {
         GameplayManager.instance.setData(GameplayManager.instance.selectedCar, 1.001f);
@@ -39,5 +41,5 @@ public class lvl2BTN : MonoBehaviour
             PhotonNetwork.LoadLevel("Level1");
         }
 
-    }
+    }*/
 }
