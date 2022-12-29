@@ -5,17 +5,11 @@ using UnityEngine;
 
 public class KartAssetManager : MonoBehaviour
 {
-    public static KartAssetManager instance;
-
     public List<KartAsset> kartList;
 
-    private void Awake()
-    {
-        if(!instance)
-            instance = this;
-    }
+    public List<KartAsset> getKartList { get { return kartList; } }
 
-    public KartAsset getKart(float KartID)
+    public KartAsset getKart(string KartID)
     {
         foreach(var kart in kartList)
         {

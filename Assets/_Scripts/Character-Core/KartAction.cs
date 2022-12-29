@@ -62,6 +62,15 @@ public partial class @KartAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Rewind"",
+                    ""type"": ""Button"",
+                    ""id"": ""07098c07-038b-49e2-8378-d087d000c063"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -383,6 +392,28 @@ public partial class @KartAction : IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e114cce5-f7a1-46af-87b5-a7c95c2b0b40"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rewind"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""07c76bd3-f3d6-4373-889b-27408b87857e"",
+                    ""path"": ""<XInputController>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rewind"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -395,6 +426,7 @@ public partial class @KartAction : IInputActionCollection2, IDisposable
         m_Player_UseItem = m_Player.FindAction("UseItem", throwIfNotFound: true);
         m_Player_SwitchItem = m_Player.FindAction("SwitchItem", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
+        m_Player_Rewind = m_Player.FindAction("Rewind", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -458,6 +490,7 @@ public partial class @KartAction : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_UseItem;
     private readonly InputAction m_Player_SwitchItem;
     private readonly InputAction m_Player_Move;
+    private readonly InputAction m_Player_Rewind;
     public struct PlayerActions
     {
         private @KartAction m_Wrapper;
@@ -466,6 +499,7 @@ public partial class @KartAction : IInputActionCollection2, IDisposable
         public InputAction @UseItem => m_Wrapper.m_Player_UseItem;
         public InputAction @SwitchItem => m_Wrapper.m_Player_SwitchItem;
         public InputAction @Move => m_Wrapper.m_Player_Move;
+        public InputAction @Rewind => m_Wrapper.m_Player_Rewind;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -487,6 +521,9 @@ public partial class @KartAction : IInputActionCollection2, IDisposable
                 @Move.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
                 @Move.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
                 @Move.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMove;
+                @Rewind.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRewind;
+                @Rewind.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRewind;
+                @Rewind.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRewind;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -503,6 +540,9 @@ public partial class @KartAction : IInputActionCollection2, IDisposable
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
+                @Rewind.started += instance.OnRewind;
+                @Rewind.performed += instance.OnRewind;
+                @Rewind.canceled += instance.OnRewind;
             }
         }
     }
@@ -513,5 +553,6 @@ public partial class @KartAction : IInputActionCollection2, IDisposable
         void OnUseItem(InputAction.CallbackContext context);
         void OnSwitchItem(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
+        void OnRewind(InputAction.CallbackContext context);
     }
 }

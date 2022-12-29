@@ -12,16 +12,17 @@ public class Event_Select : MonoBehaviour
     private GameObject _scrContentPnlPrefab;
     [SerializeField]
     private GameObject _kartBtn;
+    
     private void Start()
     {
-        if(SceneConnect.instance != null)
+        if(SceneDataManager.instance != null)
         {
-            KartAssetManager KAM = SceneConnect.instance.gameObject.GetComponent<KartAssetManager>();
+            KartAssetManager KAM = SceneDataManager.instance.kartAssetManager;
 
             int index = 0;
             while (true)
             {
-                if (index > KAM.kartList.Count - 1)
+                if (index > KAM.getKartList.Count - 1)
                 { break; }
                 GameObject PNL = Instantiate(_scrContentPnlPrefab);
                 PNL.transform.SetParent(_ScrollContent.transform);
@@ -29,7 +30,7 @@ public class Event_Select : MonoBehaviour
                 for(int i = 0; i < 4; i++)
                 {
 
-                    if (index > KAM.kartList.Count - 1)
+                    if (index > KAM.getKartList.Count - 1)
                     {
                         break;
                     }
@@ -38,7 +39,7 @@ public class Event_Select : MonoBehaviour
                     GameObject BTN = Instantiate(_kartBtn);
                     BTN.transform.SetParent(PNL.transform);
                     KartButton KBTN = BTN.GetComponent<KartButton>();
-                    KBTN.KartButtonSetup(KAM.kartList[index]);
+                    KBTN.KartButtonSetup(KAM.getKartList[index]);
 
                     index++;
                 }
