@@ -14,7 +14,8 @@ public class KartAsset : ScriptableObject
 
     public Sprite KartImage;
 
-    //Physics
+    // Kart Stats
+    [Header("Kart Stats")]
     public float _acceleration;
     public float _maxSpeed;
     public float _drift;

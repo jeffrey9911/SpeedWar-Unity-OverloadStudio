@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 using Photon.Pun;
 using TMPro;
+using UnityEditor.Build;
 
 public class KartController : MonoBehaviour
 {
@@ -65,21 +66,40 @@ public class KartController : MonoBehaviour
     #endregion
 
     #region vehicle variables
-    [Header("Vehicle Parameters")]
+    [Header("Kart Properties")]
+
+    // Torque
     [SerializeField] private float torque_max = 1000.0f;
+
+
     [SerializeField] private float brakeTorque_max = 10000.0f;
+
+    // Steering
     [SerializeField] private float steerAngle_max = 30.0f;
-    [SerializeField] private float steerSensitivity = 1.0f;
-    public float getControl { get { return steerSensitivity; } }
-    [SerializeField] private float torqueSensitivity = 1.0f;
-    public float getAcceleration { get { return torqueSensitivity; } }
+
+
     [SerializeField] private float kineticRecycleForce = 1.0f;
     [SerializeField] private float gravMult = 100.0f;
-    [SerializeField] private float speed_max = 200, speed_min = -10;
-    public float getMaxSpeed { get { return speed_max; } }
+
+
+
+    [SerializeField] private float speed_min = -10;
+
     //[SerializeField] private static int numberOfExhaust;
     //[SerializeField] private Transform[] exhaustTrans = new Transform[numberOfExhaust];
-    [SerializeField] private List<Transform> exhaustTransList = new List<Transform>(); 
+    [SerializeField] private List<Transform> exhaustTransList = new List<Transform>();
+
+    [Header("Kart Stats")]
+    [SerializeField] private float torqueSensitivity = 1.0f;                     // Torque index
+    [SerializeField] public float speed_max = 100;                              // Max Speed
+    // drift
+
+    [SerializeField] private float steerSensitivity = 1.0f;                      // Steer index
+    [SerializeField] private float kartWeight;                              //Weight
+
+
+
+
     #endregion
 
 
@@ -129,7 +149,11 @@ public class KartController : MonoBehaviour
 
         _rigidbody = GetComponent<Rigidbody>();
         if (vehicle_centre != null && _rigidbody != null)
+        {
             _rigidbody.centerOfMass = vehicle_centre.localPosition;
+            _rigidbody.mass = kartWeight;
+        }
+            
 
         _sText = GameObject.FindGameObjectWithTag("GUI").transform.Find("PNL_UI").Find("TXT_SpeedMeter").GetComponent<TMP_Text>();
 
@@ -193,7 +217,7 @@ public class KartController : MonoBehaviour
         
 
         if (_sText != null)
-            _sText.text = ((int)calc_speed).ToString() + " KPH";
+            _sText.text = ((int)kartSpeed).ToString() + " KPH";
 
         if(isBoosted)
         {
@@ -229,19 +253,12 @@ public class KartController : MonoBehaviour
             
         }
 
-        if(calc_speed > 100.0f || isHandbrake)
+        if(kartSpeed > 100.0f || isHandbrake)
         {
             _publisher.Notify();
         }
     }
 
-    public float calc_speed
-    {
-        get
-        {
-            return _rigidbody.velocity.magnitude * 3.6f;
-        }
-    }
 
     private void syncWheel(Wheel wheel)
     {
@@ -292,10 +309,7 @@ public class KartController : MonoBehaviour
 
     }
 
-    public float getSpeed()
-    {
-        return kartSpeed;
-    }
+    public float getSpeed { get { return kartSpeed; } }
 
     private void UpdateVelocity()
     {
@@ -407,7 +421,16 @@ public class KartController : MonoBehaviour
 
     private void UpdateGameplayUI()
     {
-        GameplayUIManager.instance.UpdateSpeedometer(getSpeed() / getMaxSpeed);
+        GameplayUIManager.instance.UpdateSpeedometer(kartSpeed / speed_max);
         GameplayUIManager.instance.UpdateTorqueBar(moveActionVector.y > 0 ? moveActionVector.y : 0);
+    }
+
+    public void KartSetup(float acceleration, float maxSpeed, float drift, float control, float weight)
+    {
+        torqueSensitivity = acceleration;
+        speed_max = maxSpeed;
+
+        steerSensitivity = control;
+        kartWeight = weight;
     }
 }

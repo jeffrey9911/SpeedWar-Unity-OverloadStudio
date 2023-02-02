@@ -47,10 +47,16 @@ public class PunManager : MonoBehaviour
             }
 
             _spawnPrefab = SceneDataManager.instance.kartAssetManager.getKart(SceneDataManager.instance.getData(SceneData.SelectedKart)).AssetPrefab;
+
+            if (_spawnPrefab == null)
+                _spawnPrefab = SceneDataManager.instance.kartAssetManager.getKart("001").AssetPrefab;
+        }
+        else
+        {
+            _spawnPrefab = _gameManager.GetComponent<KartAssetManager>().getKart("002").AssetPrefab;
         }
 
-        if (_spawnPrefab == null)
-            _spawnPrefab = SceneDataManager.instance.kartAssetManager.getKart("001").AssetPrefab;
+        
 
 
         if (isSpawnPlayer)
@@ -68,8 +74,12 @@ public class PunManager : MonoBehaviour
         else
         {
             _spawnedPlayer = Instantiate(_spawnPrefab, _spawnPos.position, _spawnPos.rotation);
-        }
             
+        }
+
+
+        var _kartKAM = _gameManager.GetComponent<KartAssetManager>().getKart("002");
+        _spawnedPlayer.gameObject.GetComponent<KartController>().KartSetup(_kartKAM._acceleration, _kartKAM._maxSpeed, _kartKAM._drift, _kartKAM._control, _kartKAM._weight);
 
         _spawnedPlayer.GetComponent<KartController>()._gameManager = _gameManager;
     }

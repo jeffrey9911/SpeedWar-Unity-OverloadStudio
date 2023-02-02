@@ -35,15 +35,15 @@ public class AchievementObserver : Observer
 
             case fastPoints:
                 if(_playerSpeed > 100)
-                    scoreManager.instance.addScore(_event.pointsAchievement() * _player.GetComponent<KartController>().calc_speed * 0.1f * Time.deltaTime);
+                    scoreManager.instance.addScore(_event.pointsAchievement() * _player.GetComponent<KartController>().getSpeed * 0.1f * Time.deltaTime);
                 break;
 
             case driftPoints:
-                scoreManager.instance.addScore(_event.pointsAchievement() * _player.GetComponent<KartController>().calc_speed * 0.1f * Time.deltaTime);
+                scoreManager.instance.addScore(_event.pointsAchievement() * _player.GetComponent<KartController>().getSpeed * 0.1f * Time.deltaTime);
                 break;
 
             case hitPoints:
-                scoreManager.instance.addScore(_event.pointsAchievement() * _player.GetComponent<KartController>().calc_speed * 0.1f);
+                scoreManager.instance.addScore(_event.pointsAchievement() * _player.GetComponent<KartController>().getSpeed * 0.1f);
                 break;
 
             default:
