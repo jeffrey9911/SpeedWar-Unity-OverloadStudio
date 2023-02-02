@@ -46,7 +46,7 @@ public class CameraController : MonoBehaviour
 
     private void speedCam()
     {
-        float kartSpeed = PunManager.instance._spawnedPlayer.GetComponent<KartController>().getSpeed();
+        float kartSpeed = PunManager.instance._spawnedPlayer.GetComponent<KartController>().getSpeed;
         _cameraTrans.localEulerAngles = new Vector3(20.0f - (kartSpeed * 20.0f / adaptiveCameraModifier), 0.0f, 0.0f);
     }
 

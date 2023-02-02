@@ -30,6 +30,6 @@ public class KartSound : MonoBehaviour
 
     void Update()
     {
-        _kartSoundSource.pitch = Mathf.Lerp(minEnginePitch, maxEnginePitch, _kartController.calc_speed / _kartController.getMaxSpeed);
+        _kartSoundSource.pitch = Mathf.Lerp(minEnginePitch, maxEnginePitch, _kartController.getSpeed / _kartController.speed_max);
     }
 }

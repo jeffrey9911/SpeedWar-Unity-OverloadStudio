@@ -489,17 +489,18 @@ MonoBehaviour:
   torque_max: 800
   brakeTorque_max: 10000
   steerAngle_max: 30
-  steerSensitivity: 30
-  torqueSensitivity: 30
   kineticRecycleForce: 209.8
   gravMult: 30
-  speed_max: 180
   speed_min: -30
   exhaustTransList:
   - {fileID: 1797814506014315759}
   - {fileID: 1797814506281106411}
   - {fileID: 1797814506607324500}
   - {fileID: 1797814507667108156}
+  torqueSensitivity: 1
+  speed_max: 1
+  steerSensitivity: 1
+  kartWeight: 1
   isBoosted: 0
   fireTimeInterval: 0.01
 --- !u!114 &-7927658096776431807
