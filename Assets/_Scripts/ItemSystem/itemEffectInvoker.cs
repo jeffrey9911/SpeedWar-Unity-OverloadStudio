@@ -21,6 +21,8 @@ public class itemEffectInvoker : MonoBehaviour
         inputActions = KartInputController.inst_controller.inputActions;
 
         inputActions.Player.UseItem.performed += context => UseItem();
+        
+        
 
         effectCD = -1.0f;
 
@@ -62,6 +64,9 @@ public class itemEffectInvoker : MonoBehaviour
                 _itemInUse.useItem();
                 effectCD -= Time.deltaTime;
                 isUsingItem = effectCD > 0;
+                if(_itemInUse.getItemName() == "Booster")
+                    KartController.instance.isBoosted = isUsingItem;
+
                 Debug.Log("PERFORM EFFECT: " + _itemInUse.getItemName() + " for: [" + effectCD + "] seconds!");
             }
             else if (effectCD == -1.0f)

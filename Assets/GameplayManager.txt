@@ -1,0 +1,2 @@
+selectedCar=1.002000
+selectedMode=1.000000

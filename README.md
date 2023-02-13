@@ -4,7 +4,7 @@
 ### **Group Name**
 - Overload Studio
 ### **Group Member Information**
-- **Jeffrey Li** - Programmer <sub>/ Game Designer</sub> - yaojie.li@ontariotechu.net
+- **Jeffrey Li** - Programmer <sub>/ Game Designer / UI Designer</sub> - yaojie.li@ontariotechu.net
 - **Kevin Huang** - Project Manager <sub>/ Level Designer / Sound Designer</sub> - kevin.huang@ontariotechu.net
 - **Ewan Chang** - Programmer <sub>/ Level Designer</sub> - ewan.chang@ontariotechu.net
 - **Joshua Yap** - 2D/3D Artist - joshua.yap@ontariotechu.net

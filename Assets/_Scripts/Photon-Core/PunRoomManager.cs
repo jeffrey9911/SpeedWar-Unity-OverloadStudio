@@ -5,6 +5,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+using UnityEngine.SceneManagement;
+
 
 
 public class PunRoomManager : MonoBehaviourPunCallbacks
@@ -23,8 +25,5 @@ public class PunRoomManager : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinRoom(_roomName.text);
     }
 
-    public override void OnJoinedRoom()
-    {
-        PhotonNetwork.LoadLevel("SandboxMap");
-    }
+    
 }

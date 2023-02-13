@@ -4,19 +4,23 @@ using UnityEngine;
 
 public class CheckpointSingle : MonoBehaviour
 {
-    private TrackCheckpoints trackCheckpoints;
+    //private TrackCheckpoints trackCheckpoints;
 
     private void OnTriggerEnter(Collider other)
     {
-       if (other.transform.parent.parent.tag == "Player")
+        Debug.Log(other.transform.tag);
+        if (other.transform.tag == "KartCollider")
         {
-            trackCheckpoints.PlayerThroughCheckpoint(this);
+            TrackCheckpoints.instance.PlayerThroughCheckpoint(this);
+            //trackCheckpoints.PlayerThroughCheckpoint(this);
             Debug.Log("Player detected");
         }
+
     }
 
+    /*
     public void SetTrackCheckpoints(TrackCheckpoints trackCheckpoints)
     {
         this.trackCheckpoints = trackCheckpoints;
-    }
+    }*/
 }
