@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,10 +14,11 @@ public class KartStat : MonoBehaviour
 
     [SerializeField] private Image linePrefab;
 
-    [SerializeField] private RectTransform pent_centre;
+    public List<RectTransform> Dots = new List<RectTransform>();
+
     [SerializeField] private List<RectTransform> pentas = new List<RectTransform>();
 
-    [SerializeField] private List<Image> lines = new List<Image>();
+    [SerializeField] private List<RectTransform> lines = new List<RectTransform>();
 
     private void FixedUpdate()
     {
@@ -27,7 +29,13 @@ public class KartStat : MonoBehaviour
 
         this.transform.rotation = Quaternion.Euler(0, rotAng, 0);
 
+        //lines[0].rectTransform.rotation = Quaternion.Euler(0, 0, rotAng);
+        //lines[0].rectTransform.localPosition = new Vector3(0, 0, 0);
+
         rotAng += Time.deltaTime * rotSpeed;
+
+        //Debug.Log(Vector3.SignedAngle(pentas[2].localPosition - pentas[1].localPosition, Vector3.right, Vector3.right));
+        //Debug.Log(Vector3.Angle(pentas[1].localPosition - pentas[0].localPosition, Vector3.right));
 
     }
 
@@ -39,18 +47,26 @@ public class KartStat : MonoBehaviour
         Destroy(spawnedKart.GetComponent<KartController>());
         Destroy(spawnedKart.GetComponent<Rigidbody>());
 
-        List<float> stats = new List<float>();
-        stats.Add(_kart._acceleration / 100);
-        stats.Add(_kart._maxSpeed / 300);
-        stats.Add(_kart._drift / 100);
-        stats.Add(_kart._control / 100);
-        stats.Add(_kart._weight / 3000);
-
-        for (int i = 0; i < stats.Count; i++)
+        List<float> stats = new List<float>()
         {
-            Vector2 start = Vector2.Lerp(pentas[i].anchoredPosition, pent_centre.anchoredPosition, stats[i]);
-            Vector2 end = Vector2.Lerp(pentas[(i == (stats.Count - 1) ? 0 : i + 1)].anchoredPosition, pent_centre.anchoredPosition, stats[i]);
+            _kart._acceleration / 1000,
+            _kart._maxSpeed / 250,
+            _kart._drift / 50,
+            _kart._control / 50,
+            _kart._weight / 3000
+        };
 
+        stats.Add(stats[0]);
+        pentas.Add(pentas[0]);
+
+        for (int i = 0; i < lines.Count; i++)
+        {
+            Vector3 start = Vector3.Lerp(pentas[i].localPosition, Vector3.zero, 1.0f - stats[i]);
+            
+            Vector3 end = Vector3.Lerp(pentas[i + 1].localPosition, Vector3.zero, 1.0f - stats[i + 1]);
+
+            Dots[i].localPosition = start;
+            
             setupLines(lines[i], start, end);
         }
 
@@ -59,13 +75,29 @@ public class KartStat : MonoBehaviour
         cvsGarage.gameObject.SetActive(true);
     }
 
-    private void setupLines(Image line, Vector2 pStart, Vector2 pEnd)
+    private void setupLines(RectTransform line, Vector3 pStart, Vector3 pEnd)
     {
-        float distance = Vector2.Distance(pStart, pEnd);
-        float angle = Vector2.SignedAngle(pStart - pEnd, Vector2Int.left);
+        float angle = VectorAngle(pStart, pEnd);
 
-        line.GetComponent<RectTransform>().anchoredPosition = (pStart + pEnd) / 2;
-        line.GetComponent<RectTransform>().sizeDelta = new Vector2(distance, 5);
+        float distance = Vector3.Distance(pStart, pEnd);
+
+        line.sizeDelta = new Vector2(distance, 5);
+
+        line.anchoredPosition = pStart;
+        
         line.transform.localRotation = Quaternion.AngleAxis(-angle, Vector3.forward);
+
+    }
+
+    private float VectorAngle(Vector3 from, Vector3 to)
+    {
+        float angle;
+
+        float height = to.y - from.y;
+        //angle = Vector3.SignedAngle(to - from, Vector3.right, Vector3.right);
+        angle = Vector3.Angle(to - from, Vector3.right);
+
+
+        return height > 0 ? -angle : angle;
     }
 }
