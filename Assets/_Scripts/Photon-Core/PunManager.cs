@@ -53,7 +53,7 @@ public class PunManager : MonoBehaviour
         }
         else
         {
-            _spawnPrefab = _gameManager.GetComponent<KartAssetManager>().getKart("002").AssetPrefab;
+            _spawnPrefab = _gameManager.GetComponent<KartAssetManager>().getKart("B02").AssetPrefab;
         }
 
         

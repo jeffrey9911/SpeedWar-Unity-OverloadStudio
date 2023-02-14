@@ -16,7 +16,7 @@ MonoBehaviour:
   KartID: B02
   AssetPrefab: {fileID: 7188418520043412075, guid: 89efc45a41d1948a987d95e72631e3c3, type: 3}
   KartImage: {fileID: 21300000, guid: e1bc3d35e4f34d14c9dcc4832aabb6b3, type: 3}
-  _acceleration: 10
+  _acceleration: 300
   _maxSpeed: 180
   _drift: 20
   _control: 20

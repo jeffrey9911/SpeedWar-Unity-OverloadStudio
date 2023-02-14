@@ -49,21 +49,21 @@ public class KartStat : MonoBehaviour
 
         List<float> stats = new List<float>()
         {
-            _kart._acceleration / 100,
+            _kart._acceleration / 1000,
             _kart._maxSpeed / 250,
             _kart._drift / 50,
             _kart._control / 50,
-            _kart._weight / 3000,
-            _kart._acceleration / 100
+            _kart._weight / 3000
         };
 
+        stats.Add(stats[0]);
         pentas.Add(pentas[0]);
 
         for (int i = 0; i < lines.Count; i++)
         {
-            Vector3 start = Vector3.Lerp(pentas[i].localPosition, Vector3.zero, stats[i]);
+            Vector3 start = Vector3.Lerp(pentas[i].localPosition, Vector3.zero, 1.0f - stats[i]);
             
-            Vector3 end = Vector3.Lerp(pentas[i + 1].localPosition, Vector3.zero, stats[i + 1]);
+            Vector3 end = Vector3.Lerp(pentas[i + 1].localPosition, Vector3.zero, 1.0f - stats[i + 1]);
 
             Dots[i].localPosition = start;
             
@@ -78,8 +78,6 @@ public class KartStat : MonoBehaviour
     private void setupLines(RectTransform line, Vector3 pStart, Vector3 pEnd)
     {
         float angle = VectorAngle(pStart, pEnd);
-
-        Debug.Log(angle);
 
         float distance = Vector3.Distance(pStart, pEnd);
 

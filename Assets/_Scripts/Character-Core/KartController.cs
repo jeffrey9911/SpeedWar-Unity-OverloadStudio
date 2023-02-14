@@ -20,8 +20,9 @@ public class KartController : MonoBehaviour
 
     public KartAction inputActions;
 
-    [Header("Photon Network")]
+    [Header("Managers")]
     private bool isOnNetwork = false;
+    public bool isUsingSway = false;
 
     
     PhotonView _punView;
@@ -97,7 +98,7 @@ public class KartController : MonoBehaviour
     [SerializeField] private float steerSensitivity = 1.0f;                      // Steer index
     [SerializeField] private float kartWeight;                              //Weight
 
-
+    [SerializeField] private float antiRoll = 5000.0f;
 
 
     #endregion
@@ -209,7 +210,11 @@ public class KartController : MonoBehaviour
         else
         {
             KartMove(moveActionVector);
-            //applyDownForce();
+            if(isUsingSway)
+            {
+                AntiRoll();
+            }
+            
             UpdateVelocity();
             UpdateGameplayUI();
         }
@@ -281,10 +286,11 @@ public class KartController : MonoBehaviour
     /// <summary>
     /// Apply aerodynamics force onto the wheels
     /// </summary>
-    private void applyDownForce()
+    private void AntiRoll()
     {
-        this._rigidbody.AddForce(-this.transform.forward * gravMult);
         /*
+        this._rigidbody.AddForce(-this.transform.forward * gravMult);
+        
         if (wheels[0]._wCollider == null)
             return;
 
@@ -292,7 +298,38 @@ public class KartController : MonoBehaviour
         {
             wheels[i]._wCollider.attachedRigidbody.AddForce(-transform.up * gravMult * wheels[i]._wCollider.attachedRigidbody.velocity.magnitude);
         }*/
-        
+        float travelLeft = 1.0f;
+        float travelRight = 1.0f;
+
+        var groundHit = new WheelHit();
+
+        foreach (Wheel wheel in wheels)
+        {
+            if(wheel._wLocation == Wheel_Location.Front_Left || wheel._wLocation == Wheel_Location.Rear_Left)
+            {
+                var groundedLeft = wheel._wCollider.GetGroundHit(out groundHit);
+                if (groundedLeft)
+                {
+                    travelLeft = (-wheel._wCollider.transform.InverseTransformPoint(groundHit.point).y - wheel._wCollider.radius) / wheel._wCollider.suspensionDistance;
+
+                    float antiRollForce = (travelLeft - travelRight) * antiRoll;
+
+                    _rigidbody.AddForceAtPosition(wheel._wCollider.transform.up * antiRollForce, wheel._wCollider.transform.position);
+                }
+            }
+            else if(wheel._wLocation == Wheel_Location.Front_Right || wheel._wLocation == Wheel_Location.Rear_Right)
+            {
+                var groundedRight = wheel._wCollider.GetGroundHit(out groundHit);
+                if (groundedRight)
+                {
+                    travelRight = (-wheel._wCollider.transform.InverseTransformPoint(groundHit.point).y - wheel._wCollider.radius) / wheel._wCollider.suspensionDistance;
+
+                    float antiRollForce = (travelLeft - travelRight) * antiRoll;
+
+                    _rigidbody.AddForceAtPosition(wheel._wCollider.transform.up * antiRollForce, wheel._wCollider.transform.position);
+                }
+            }
+        }
     }
 
     private void KineticRecycle()
@@ -427,7 +464,7 @@ public class KartController : MonoBehaviour
 
     public void KartSetup(float acceleration, float maxSpeed, float drift, float control, float weight)
     {
-        torqueSensitivity = acceleration;
+        torque_max = acceleration;
         speed_max = maxSpeed;
 
         steerSensitivity = control;
