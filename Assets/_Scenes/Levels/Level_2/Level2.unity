@@ -9260,16 +9260,17 @@ MonoBehaviour:
   OQCCQQOODCScript: {fileID: 0}
   OQDQOCOCCOElement: -1
   OQQDDCOCCC: -1
-  OQOOOQOQQC: {fileID: 0}
-  OQQQDQODDO: {fileID: 0}
+  OQOOOQOQQC: {fileID: 1986434452}
+  OQQQDQODDO: {fileID: 1986434452}
   OQDCCCCOQC: {fileID: 0}
-  OODQOQCDCC: -1
+  OODQOQCDCC: 0
   selectedRoadSOMarker: -1
   selectedMarkerNode: -1
   selectedMarkerNodes: 
   selectedMarkerSONode: -1
   selectedMarkerSONodes: 
-  selectedObjects: []
+  selectedObjects:
+  - {fileID: 1868303325}
   selectedExitRoad: -1
   newRoadFlag: 0
   roadTypeUpdateFlag: 1
@@ -30901,6 +30902,23 @@ PrefabInstance:
     m_RemovedComponents: []
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 7609c1c038584cd45a92aec90d50ed72, type: 3}
+--- !u!114 &1868303325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 561528938, guid: f56d46228aee4734f9114056c53bb57e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roadScr: {fileID: 1986434452}
+  prefabScr: {fileID: 0}
+  markers: 00000000
+  startEnd: 0
+  prefab: {fileID: 0}
 --- !u!1001 &1883010107
 PrefabInstance:
   m_ObjectHideFlags: 0
