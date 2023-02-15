@@ -711,6 +711,7 @@ GameObject:
   - component: {fileID: 3569127032719179369}
   - component: {fileID: 1461630775264557038}
   - component: {fileID: 8161685625290615532}
+  - component: {fileID: 6778938103301539955}
   m_Layer: 0
   m_Name: Beta
   m_TagString: Player
@@ -789,15 +790,17 @@ MonoBehaviour:
   torque_max: 300
   brakeTorque_max: 10000
   steerAngle_max: 30
-  steerSensitivity: 10
-  torqueSensitivity: 1
   kineticRecycleForce: 1
   gravMult: 30
-  speed_max: 120
   speed_min: -30
   exhaustTransList:
   - {fileID: 8973352848952656925}
   - {fileID: 14697959724313407}
+  torqueSensitivity: 1
+  speed_max: 120
+  steerSensitivity: 10
+  kartWeight: 0
+  antiRoll: 5000
   isBoosted: 0
   fireTimeInterval: 0.01
 --- !u!114 &1461630775264557038
@@ -856,6 +859,18 @@ MonoBehaviour:
     InterpolateOption: 0
     InterpolateMoveTowardsSpeed: 1
     InterpolateLerpSpeed: 0
+--- !u!114 &6778938103301539955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7188418520043412075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28896d60a0c4bb148841976fb050eb60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7188418520245000438
 GameObject:
   m_ObjectHideFlags: 0

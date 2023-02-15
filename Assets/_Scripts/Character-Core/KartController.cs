@@ -22,7 +22,6 @@ public class KartController : MonoBehaviour
 
     [Header("Managers")]
     private bool isOnNetwork = false;
-    public bool isUsingSway = false;
 
     
     PhotonView _punView;
@@ -210,10 +209,7 @@ public class KartController : MonoBehaviour
         else
         {
             KartMove(moveActionVector);
-            if(isUsingSway)
-            {
-                AntiRoll();
-            }
+            AntiRoll();
             
             UpdateVelocity();
             UpdateGameplayUI();
