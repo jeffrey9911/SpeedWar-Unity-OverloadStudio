@@ -6,13 +6,12 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Kart-Asset")]
 public class KartAsset : ScriptableObject
 {
+    [Header("Kart Assets")]
     public string KartName;
-
     public string KartID;
-     
     public GameObject AssetPrefab;
-
     public Sprite KartImage;
+    public Material KartNameMaterial;
 
     // Kart Stats
     [Header("Kart PentaStats")]

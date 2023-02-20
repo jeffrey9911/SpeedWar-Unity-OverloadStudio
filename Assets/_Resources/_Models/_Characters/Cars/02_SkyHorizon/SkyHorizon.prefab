@@ -888,7 +888,7 @@ GameObject:
   - component: {fileID: 8831439374489132063}
   - component: {fileID: 5907233311102592622}
   m_Layer: 0
-  m_Name: Skyline
+  m_Name: SkyHorizon
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
