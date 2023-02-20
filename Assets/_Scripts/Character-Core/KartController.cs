@@ -6,7 +6,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-using Photon.Pun;
 using TMPro;
 using UnityEditor.Build;
 
@@ -14,34 +13,25 @@ public class KartController : MonoBehaviour
 {
     public static KartController instance;
 
-    public bool isUsingOBJPOOL = true;
-
-    public GameObject _gameManager;
-
     public KartAction inputActions;
 
-    [Header("Managers")]
-    private bool isOnNetwork = false;
 
-    
-    PhotonView _punView;
-
+    [Header("Manager Systems")]
+    [SerializeField] private bool isOnDisplay = false;
+    public GameObject _gameManager;
+    [SerializeField] private bool isOnNetwork = false;
     Publisher _publisher = new Publisher();
 
-    [Header("Vehicle Setup")]
+    [Space(10)]
+
+
+    
+
+    [Header("Vehicle Systems Setup")]
     [SerializeField] private Transform vehicle_centre;
-
     private Rigidbody _rigidbody;
+    [SerializeField] private List<Transform> exhaustTransList = new List<Transform>();
 
-    private float kartSpeed = 0.0f;
-
-    [SerializeField] private TMP_Text _sText; // later link to UI
-
-    /// <summary>
-    /// Setup for wheels. class of variables of wheels
-    /// </summary>
-    #region wheels variables
-    public static int numOfWheels = 4;
     public enum Wheel_Location
     {
         Front_Left,
@@ -51,71 +41,69 @@ public class KartController : MonoBehaviour
     }
 
     [Serializable]
-    class Wheel
+    public class Wheel
     {
         public WheelCollider _wCollider;
         public GameObject _wObject;
         public Wheel_Location _wLocation;
     }
-    
-
-    [Header("Wheels Setup")]
-    [SerializeField] private Wheel[] wheels = new Wheel[numOfWheels];
-    [SerializeField] private float hbWheelSideFric = 0.5f;
-    [SerializeField] private float nmWheelSideFric = 1.0f;
-    #endregion
-
-    #region vehicle variables
-    [Header("Kart Properties")]
-
-    // Torque
-    [SerializeField] private float torque_max = 1000.0f;
 
 
-    [SerializeField] private float brakeTorque_max = 10000.0f;
-
-    // Steering
-    [SerializeField] private float steerAngle_max = 30.0f;
+    public static int numOfWheels = 4;
+    [SerializeField] public Wheel[] wheels = new Wheel[numOfWheels];
 
 
-    [SerializeField] private float kineticRecycleForce = 1.0f;
-    [SerializeField] private float gravMult = 100.0f;
+    private itemCommand _itemCommandPack;
 
-
-
-    [SerializeField] private float speed_min = -10;
-
-    //[SerializeField] private static int numberOfExhaust;
-    //[SerializeField] private Transform[] exhaustTrans = new Transform[numberOfExhaust];
-    [SerializeField] private List<Transform> exhaustTransList = new List<Transform>();
-
-    [Header("Kart Stats")]
-    [SerializeField] private float torqueSensitivity = 1.0f;                     // Torque index
-    [SerializeField] public float speed_max = 100;                              // Max Speed
-    // drift
-
-    [SerializeField] private float steerSensitivity = 1.0f;                      // Steer index
-    [SerializeField] private float kartWeight;                              //Weight
-
-    [SerializeField] private float antiRoll = 5000.0f;
-
-
-    #endregion
-
-
-
-    private bool isHandbrake = false;
+    private float kartSpeed = 0.0f;
 
     private Vector2 kartMoveVector = new Vector2(0.0f, 0.0f);
     private Vector2 moveActionVector;
 
-    private itemCommand _itemCommandPack;
 
 
+
+
+
+
+    [SerializeField] private float hbWheelSideFric = 0.5f;
+    [SerializeField] private float nmWheelSideFric = 1.0f;
+
+    [Space(10)]
+
+    [Header("Kart Properties")]
+    [SerializeField] private float torque_max = 1000.0f;             // Torque
+    [SerializeField] private float brakeTorque_max = 10000.0f;      // Brake Torque
+    [SerializeField] private float steerAngle_max = 30.0f;          // Steer angle
+    [SerializeField] private float kineticRecycleForce = 1.0f;      // Kineteic Recycle
+    [SerializeField] private float gravMult = 100.0f;               // Down force
+    [SerializeField] private float speed_min = -10;                 // Min Speed
+    [SerializeField] public float speed_max = 100;                  // Max Speed
+    // drift
+    [SerializeField] private float steerSensitivity = 1.0f;         // Steer sensitivity
+    [SerializeField] private float kartWeight;                      // Weight
+    [SerializeField] private float antiRoll = 5000.0f;              // Anti roll force
+
+    [Space]
+
+    // Kart States
+    [Header("Kart States")]
+    public bool isHandbrake = false;
     public bool isBoosted = false;
 
     private float timeCounter = 0;
     [SerializeField] private float fireTimeInterval;
+
+    [Space(10)]
+
+    [Header("DEBUGGING")]
+    [SerializeField] private bool isDebugging = false;
+    public float wDampingRate = 0.25f;
+    public float sDistance = 0.2f;
+    public float sSpringConstant = 37500f;      // Normally = kart weight / num of wheels * number between 50 to 100
+    public float sSpringDamper = 4500f;
+    public bool isUsingAntiRoll = true;
+
 
 
     private void Awake()
@@ -126,42 +114,37 @@ public class KartController : MonoBehaviour
 
     void Start()
     {
-        isOnNetwork = PunManager.instance.isOnNetWork;
-        if (isOnNetwork)
+        //isOnNetwork = PunManager.instance.isOnNetWork;
+
+        if(!isOnDisplay)
         {
-            _punView = this.transform.GetParentComponent<PhotonView>();
+            inputActions = KartInputController.inst_controller.inputActions;
+
+            //inputActions
+            inputActions.Player.Move.performed += context => moveActionVector = context.ReadValue<Vector2>();
+            inputActions.Player.Move.canceled += context => moveActionVector = Vector2.zero;
+
+            inputActions.Player.Handbrake.performed += context => isHandbrake = true;
+            inputActions.Player.Handbrake.canceled += context => isHandbrake = false;
+
+
+
+            GameObject.FindGameObjectWithTag("LocalCamera").GetComponent<CameraController>()._cameraTrans = this.transform.Find("camController").Find("camTrans").transform;
+            GameObject.FindGameObjectWithTag("LocalCamera").GetComponent<CameraController>()._cameraRotator = this.transform.Find("camController").transform;
+
+            _rigidbody = GetComponent<Rigidbody>();
+            if (vehicle_centre != null && _rigidbody != null)
+            {
+                //_rigidbody.centerOfMass = vehicle_centre.localPosition;
+                _rigidbody.mass = kartWeight;
+            }
+
+            AchievementObserver fastObserver = new AchievementObserver(this.gameObject, new fastPoints());
+            _publisher.AddObserver(fastObserver);
+
+            AchievementObserver driftObserver = new AchievementObserver(this.gameObject, new driftPoints());
+            _publisher.AddObserver(driftObserver);
         }
-            
-
-        inputActions = KartInputController.inst_controller.inputActions;
-
-        //inputActions
-        inputActions.Player.Move.performed += context => moveActionVector = context.ReadValue<Vector2>();
-        inputActions.Player.Move.canceled += context => moveActionVector = Vector2.zero;
-
-        inputActions.Player.Handbrake.performed += context => isHandbrake = true;
-        inputActions.Player.Handbrake.canceled += context => isHandbrake = false;
-
-
-
-        GameObject.FindGameObjectWithTag("LocalCamera").GetComponent<CameraController>()._cameraTrans = this.transform.Find("camController").Find("camTrans").transform;
-        GameObject.FindGameObjectWithTag("LocalCamera").GetComponent<CameraController>()._cameraRotator = this.transform.Find("camController").transform;
-
-        _rigidbody = GetComponent<Rigidbody>();
-        if (vehicle_centre != null && _rigidbody != null)
-        {
-            _rigidbody.centerOfMass = vehicle_centre.localPosition;
-            _rigidbody.mass = kartWeight;
-        }
-            
-
-        _sText = GameObject.FindGameObjectWithTag("GUI").transform.Find("PNL_UI").Find("TXT_SpeedMeter").GetComponent<TMP_Text>();
-
-        AchievementObserver fastObserver = new AchievementObserver(this.gameObject, new fastPoints());
-        _publisher.AddObserver(fastObserver);
-
-        AchievementObserver driftObserver = new AchievementObserver(this.gameObject, new driftPoints());
-        _publisher.AddObserver(driftObserver);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -197,67 +180,49 @@ public class KartController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isOnNetwork)
+        if(!isOnDisplay)
         {
-            if (_punView.IsMine)
-            {
-                KartMove(moveActionVector);
-                UpdateVelocity();
-                UpdateGameplayUI();
-            }
-        }
-        else
-        {
+            if (isUsingAntiRoll) AntiRoll();
             KartMove(moveActionVector);
-            AntiRoll();
-            
             UpdateVelocity();
             UpdateGameplayUI();
+
+
+            if (isBoosted)
+            {
+                if (timeCounter <= 0)
+                {
+                    for (int i = 0; i < exhaustTransList.Count; i++)
+                    {
+                        GameObject exFire;
+
+                        exFire = ObjectPool.instance.SpawnFromPool("BoostFire", exhaustTransList[i].position, Quaternion.identity);
+
+
+                        exFire.GetComponent<ExhaustFire>().SetTimedActive();
+                        Rigidbody exFireRb = exFire.GetComponent<Rigidbody>();
+
+                        exFireRb.velocity = Vector3.zero;
+
+                        exFireRb.AddForce(exhaustTransList[i].forward.normalized, ForceMode.Impulse);
+                    }
+                    timeCounter += fireTimeInterval;
+
+                }
+                else
+                {
+                    timeCounter -= Time.deltaTime;
+                }
+
+            }
+
+            if (kartSpeed > 100.0f || isHandbrake)
+            {
+                _publisher.Notify();
+            }
         }
 
         
-
-        if (_sText != null)
-            _sText.text = ((int)kartSpeed).ToString() + " KPH";
-
-        if(isBoosted)
-        {
-            if(timeCounter <= 0)
-            {
-                for (int i = 0; i < exhaustTransList.Count; i++)
-                {
-                    GameObject exFire;
-
-                    if(isUsingOBJPOOL)
-                    {
-                        exFire = ObjectPool.instance.SpawnFromPool("BoostFire", exhaustTransList[i].position, Quaternion.identity);
-                    }
-                    else
-                    {
-                        exFire = Instantiate(ObjectPool.instance.pools[0]._prefab, exhaustTransList[i].position, Quaternion.identity);
-                    }
-                    
-                    exFire.GetComponent<ExhaustFire>().SetTimedActive();
-                    Rigidbody exFireRb = exFire.GetComponent<Rigidbody>();
-
-                    exFireRb.velocity = Vector3.zero;
-
-                    exFireRb.AddForce(exhaustTransList[i].forward.normalized, ForceMode.Impulse);
-                }
-                timeCounter += fireTimeInterval;
-
-            }
-            else
-            {
-                timeCounter -= Time.deltaTime;
-            }
-            
-        }
-
-        if(kartSpeed > 100.0f || isHandbrake)
-        {
-            _publisher.Notify();
-        }
     }
 
 
@@ -278,53 +243,77 @@ public class KartController : MonoBehaviour
         wheel._wObject.transform.rotation = wRot;
     }
 
-    
-    /// <summary>
-    /// Apply aerodynamics force onto the wheels
-    /// </summary>
+    private void debugKart(Wheel wheel)
+    {
+        if (vehicle_centre != null && _rigidbody != null)
+        {
+            _rigidbody.centerOfMass = vehicle_centre.localPosition;
+            _rigidbody.mass = kartWeight;
+        }
+
+        if (wheel._wObject != null || wheel._wCollider != null)
+        {
+            wheel._wCollider.wheelDampingRate = wDampingRate;
+            wheel._wCollider.suspensionDistance = sDistance;
+            JointSpring spring = new JointSpring();
+            spring.spring = sSpringConstant;
+            spring.damper = sSpringDamper;
+            spring.targetPosition = 0.5f;
+            wheel._wCollider.suspensionSpring = spring;
+        }
+        
+    }
+
     private void AntiRoll()
     {
-        /*
-        this._rigidbody.AddForce(-this.transform.forward * gravMult);
-        
-        if (wheels[0]._wCollider == null)
-            return;
-
-        for(int i = 0; i < wheels.Length; i++)
-        {
-            wheels[i]._wCollider.attachedRigidbody.AddForce(-transform.up * gravMult * wheels[i]._wCollider.attachedRigidbody.velocity.magnitude);
-        }*/
-        float travelLeft = 1.0f;
-        float travelRight = 1.0f;
-
-        var groundHit = new WheelHit();
+        WheelCollider wcFL = new();
+        WheelCollider wcFR = new();
+        WheelCollider wcRL = new();
+        WheelCollider wcRR = new();
 
         foreach (Wheel wheel in wheels)
         {
-            if(wheel._wLocation == Wheel_Location.Front_Left || wheel._wLocation == Wheel_Location.Rear_Left)
-            {
-                var groundedLeft = wheel._wCollider.GetGroundHit(out groundHit);
-                if (groundedLeft)
-                {
-                    travelLeft = (-wheel._wCollider.transform.InverseTransformPoint(groundHit.point).y - wheel._wCollider.radius) / wheel._wCollider.suspensionDistance;
+            if (wheel._wLocation == Wheel_Location.Front_Left) wcFL = wheel._wCollider;
+            if (wheel._wLocation == Wheel_Location.Front_Right) wcFR = wheel._wCollider;
+            if (wheel._wLocation == Wheel_Location.Rear_Left) wcRL = wheel._wCollider;
+            if (wheel._wLocation == Wheel_Location.Rear_Right) wcRR = wheel._wCollider;
+        }
 
-                    float antiRollForce = (travelLeft - travelRight) * antiRoll;
+        if (wcFL == null || wcFR == null || wcRL == null || wcRR == null) return;
 
-                    _rigidbody.AddForceAtPosition(wheel._wCollider.transform.up * antiRollForce, wheel._wCollider.transform.position);
-                }
-            }
-            else if(wheel._wLocation == Wheel_Location.Front_Right || wheel._wLocation == Wheel_Location.Rear_Right)
-            {
-                var groundedRight = wheel._wCollider.GetGroundHit(out groundHit);
-                if (groundedRight)
-                {
-                    travelRight = (-wheel._wCollider.transform.InverseTransformPoint(groundHit.point).y - wheel._wCollider.radius) / wheel._wCollider.suspensionDistance;
+        WheelBalance(wcFL, wcFR);
+        WheelBalance(wcRL, wcRR);
+    }
 
-                    float antiRollForce = (travelLeft - travelRight) * antiRoll;
+    private void WheelBalance(WheelCollider wcLeft, WheelCollider wcRight)
+    {
+        WheelHit wheelHit;
 
-                    _rigidbody.AddForceAtPosition(wheel._wCollider.transform.up * antiRollForce, wheel._wCollider.transform.position);
-                }
-            }
+        float travelLeft = 1.0f;
+        float travelRight = 1.0f;
+
+        bool isGroundedLeft = wcLeft.GetGroundHit(out wheelHit);
+        if (isGroundedLeft)
+        {
+            travelLeft = (-wcLeft.transform.InverseTransformPoint(wheelHit.point).y - wcLeft.radius) / wcLeft.suspensionDistance;
+        }
+
+        bool isGroundedRight = wcRight.GetGroundHit(out wheelHit);
+        if (isGroundedRight)
+        {
+            travelRight = (-wcRight.transform.InverseTransformPoint(wheelHit.point).y - wcRight.radius) / wcRight.suspensionDistance;
+        }
+
+        float balanceForce = (travelLeft - travelRight) * antiRoll;
+
+        if (isGroundedLeft)
+        {
+            _rigidbody.AddForceAtPosition(wcLeft.transform.up * -balanceForce, wcLeft.transform.position);
+        }
+
+        if (isGroundedRight)
+        {
+            _rigidbody.AddForceAtPosition(wcRight.transform.up * balanceForce, wcRight.transform.position);
         }
     }
 
@@ -368,7 +357,7 @@ public class KartController : MonoBehaviour
 
         float steerAng = kartMoveVector.x = Mathf.Lerp(kartMoveVector.x, moveVec.x * steerAngle_max, Time.deltaTime * steerSensitivity);
 
-        float torqueForce = kartMoveVector.y = Mathf.Lerp(kartMoveVector.y, moveVec.y * torque_max, Time.deltaTime * torqueSensitivity);
+        float torqueForce = kartMoveVector.y = Mathf.Lerp(kartMoveVector.y, moveVec.y * torque_max, Time.deltaTime);
 
         if(moveVec.y == 0)
         {
@@ -442,6 +431,11 @@ public class KartController : MonoBehaviour
             }
 
             syncWheel(wheels[i]);
+
+            if (isDebugging)
+            {
+                debugKart(wheels[i]);
+            }
         }
     }
 
