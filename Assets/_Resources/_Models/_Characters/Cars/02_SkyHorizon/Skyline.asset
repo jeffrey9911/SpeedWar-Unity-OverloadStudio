@@ -10,14 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 50ebbe3ed0bf8ec43a997e40af0bed4e, type: 3}
-  m_Name: SportCar
+  m_Name: Skyline
   m_EditorClassIdentifier: 
-  KartName: SportCar
-  KartID: 001
-  AssetPrefab: {fileID: 1797814507197140498, guid: 4b0a67c664a402640a4e570604cf788b, type: 3}
-  KartImage: {fileID: 21300000, guid: 061ebed21ced9634b97cb39d1a1ebca9, type: 3}
+  KartName: Skyline
+  KartID: 002
+  AssetPrefab: {fileID: 7107370674672592234, guid: dd12ee6d1c5da444b81afc53572a6b1b, type: 3}
+  KartImage: {fileID: 21300000, guid: ae3c321552d6e824195de4a4e5391f11, type: 3}
+  KartNameMaterial: {fileID: 2100000, guid: e481c41bceed44228b4847a4e6cb3b01, type: 2}
   _acceleration: 700
-  _maxSpeed: 180
-  _drift: 30
+  _maxSpeed: 200
+  _drift: 40
   _control: 30
   _weight: 1500

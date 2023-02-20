@@ -821,7 +821,7 @@ GameObject:
   - component: {fileID: -1140707669013770897}
   - component: {fileID: 2588572538446620032}
   m_Layer: 0
-  m_Name: Skyline
+  m_Name: Skyline-OLD
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

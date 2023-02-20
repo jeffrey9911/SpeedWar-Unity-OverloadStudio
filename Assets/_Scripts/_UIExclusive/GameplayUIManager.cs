@@ -9,8 +9,8 @@ public class GameplayUIManager : MonoBehaviour
 
     // Speedometer
     [SerializeField] private RectTransform _pointerRect;
-    private float minPointer = 115;
-    private float maxPointer = -35;
+    private float minPointer = 296;
+    private float maxPointer = 143;
 
     // Torque
     [SerializeField] private Image _energy;

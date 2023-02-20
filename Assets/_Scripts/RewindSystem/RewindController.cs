@@ -89,6 +89,7 @@ public class RewindController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        /*
         if(!isRewind)
         {
             if (autoSaveTimer <= 0)
@@ -106,6 +107,7 @@ public class RewindController : MonoBehaviour
                 autoSaveTimer -= Time.deltaTime;
             }
         }
+        */
     }
 
     private void RewindStart()
