@@ -15,6 +15,7 @@ public class PunManager : MonoBehaviour
     public GameObject _gameManager;
 
     public Transform _spawnPos;
+    public string _defaultKartID = "001";
 
     [SerializeField]
     public GameObject _spawnedPlayer;
@@ -49,11 +50,11 @@ public class PunManager : MonoBehaviour
             _spawnPrefab = SceneDataManager.instance.kartAssetManager.getKart(SceneDataManager.instance.getData(SceneData.SelectedKart)).AssetPrefab;
 
             if (_spawnPrefab == null)
-                _spawnPrefab = SceneDataManager.instance.kartAssetManager.getKart("001").AssetPrefab;
+                _spawnPrefab = SceneDataManager.instance.kartAssetManager.getKart(_defaultKartID).AssetPrefab;
         }
         else
         {
-            _spawnPrefab = _gameManager.GetComponent<KartAssetManager>().getKart("002").AssetPrefab;
+            _spawnPrefab = _gameManager.GetComponent<KartAssetManager>().getKart(_defaultKartID).AssetPrefab;
         }
 
         
@@ -78,7 +79,7 @@ public class PunManager : MonoBehaviour
         }
 
 
-        var _kartKAM = _gameManager.GetComponent<KartAssetManager>().getKart("002");
+        var _kartKAM = _gameManager.GetComponent<KartAssetManager>().getKart(_defaultKartID);
         _spawnedPlayer.gameObject.GetComponent<KartController>().KartSetup(_kartKAM._acceleration, _kartKAM._maxSpeed, _kartKAM._drift, _kartKAM._control, _kartKAM._weight);
 
         _spawnedPlayer.GetComponent<KartController>()._gameManager = _gameManager;
