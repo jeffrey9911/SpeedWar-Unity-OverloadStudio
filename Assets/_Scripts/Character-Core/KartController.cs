@@ -455,6 +455,7 @@ public class KartController : MonoBehaviour
     {
         GameplayUIManager.instance.UpdateSpeedometer(kartSpeed / speed_max);
         GameplayUIManager.instance.UpdateTorqueBar(moveActionVector.y > 0 ? moveActionVector.y : 0);
+        GameplayUIManager.instance.UpdateSpeedValue((int)kartSpeed);
     }
 
     public void KartSetup(float acceleration, float maxSpeed, float drift, float control, float weight)

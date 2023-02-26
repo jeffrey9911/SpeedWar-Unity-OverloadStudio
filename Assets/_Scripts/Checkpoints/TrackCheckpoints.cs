@@ -20,11 +20,7 @@ public class TrackCheckpoints : MonoBehaviour
 
     private float _gTimer = 0.0f;
 
-    [SerializeField] private TMP_Text _completionText;
     [SerializeField] private TMP_Text _lapText;
-
-    [SerializeField] private TMP_Text _gTimerText;
-    
 
     [SerializeField] private Canvas _GUI;
     [SerializeField] private Canvas _Winlose;
@@ -117,7 +113,6 @@ public class TrackCheckpoints : MonoBehaviour
             {
                 perc = 0;
             }
-            _completionText.text = (int)perc + "%";
         }
     }
 
@@ -135,7 +130,7 @@ public class TrackCheckpoints : MonoBehaviour
         if (cpQueue.Count > 0)
         {
             _gTimer += Time.deltaTime;
-            _gTimerText.text = (int)_gTimer + " S";
+            GameplayUIManager.instance.UpdateGameTime(_gTimer);
         }
     }
 
