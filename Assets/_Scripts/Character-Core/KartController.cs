@@ -17,7 +17,8 @@ public class KartController : MonoBehaviour
 
 
     [Header("Manager Systems")]
-    [SerializeField] private bool isOnDisplay = false;
+    [SerializeField] public bool isOnDisplay = false;
+    [SerializeField] public float onDisplayScale = 1.0f;
     public GameObject _gameManager;
     [SerializeField] private bool isOnNetwork = false;
     Publisher _publisher = new Publisher();
@@ -144,6 +145,10 @@ public class KartController : MonoBehaviour
 
             AchievementObserver driftObserver = new AchievementObserver(this.gameObject, new driftPoints());
             _publisher.AddObserver(driftObserver);
+        }
+        else
+        {
+            this.transform.localScale = new Vector3(onDisplayScale, onDisplayScale, onDisplayScale);
         }
     }
 

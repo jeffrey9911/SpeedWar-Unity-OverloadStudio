@@ -1220,7 +1220,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -51.013428}
-  m_SizeDelta: {x: 822.634, y: 197.97302}
+  m_SizeDelta: {x: 1474.741, y: 354.907}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &418472900
 MonoBehaviour:
@@ -3266,6 +3266,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 634885a870eb4f149af1bbddc2808d09, type: 2}
   - {fileID: 11400000, guid: 51855d7b9fba90046a6a1d5d2e3dcb80, type: 2}
   - {fileID: 11400000, guid: 6c4e937e5edf5a341a5c03e60dcee188, type: 2}
+  - {fileID: 11400000, guid: 4d1134e9cc6fc4ea9adf6d9b78103df5, type: 2}
+  - {fileID: 11400000, guid: b3356a746c8e24a1a9965f2ac7cc9df7, type: 2}
 --- !u!114 &1727806713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3279,7 +3281,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kartAssetManager: {fileID: 0}
-  sceneData: {fileID: 0}
 --- !u!1 &1747928455
 GameObject:
   m_ObjectHideFlags: 0
