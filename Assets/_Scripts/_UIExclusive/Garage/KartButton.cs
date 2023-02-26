@@ -41,7 +41,7 @@ public class KartButton : MonoBehaviour
         KartName _kn = GameObject.Find("KartName").GetComponent<KartName>();
         _kn.SwapMaterial(_kart.KartNameMaterial);
 
-        KartStat _ks = GameObject.Find("SpawnPos").GetComponent<KartStat>();
+        KartStat _ks = GameObject.Find("KartSpawn").GetComponent<KartStat>();
         _ks.setupKart(_kart);
         
     }
