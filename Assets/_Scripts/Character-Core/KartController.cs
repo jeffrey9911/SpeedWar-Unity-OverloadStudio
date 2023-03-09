@@ -4,10 +4,6 @@ using System.Collections.Generic;
 using UnityEditor;
 //using UnityEditorInternal;
 using UnityEngine;
-using UnityEngine.UI;
-
-using TMPro;
-using UnityEditor.Build;
 
 public class KartController : MonoBehaviour
 {
