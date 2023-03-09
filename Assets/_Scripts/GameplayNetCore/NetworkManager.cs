@@ -21,10 +21,12 @@ public class NetworkManager : MonoBehaviour
 
     public static short localPlayerID;
 
-    public static Dictionary<short, GameObject> onNetPlayerDList = new Dictionary<short, GameObject>();
+    //public static Dictionary<short, GameObject> onNetPlayerDList = new Dictionary<short, GameObject>();
 
     public float sendInterval = 1.0f;
     float timer = 0.0f;
+
+    private static bool isUpdatingNetPlayer = false;
 
     // Start is called before the first frame update
     void Start()
@@ -137,12 +139,8 @@ public class NetworkManager : MonoBehaviour
             Buffer.BlockCopy(playerTrans, 0, buffer, 4, 24);
             clientUDPSocket.SendTo(buffer, remoteEP);
 
-            //Debug.Log("ROT Sent: " + playerTrans[3] + " " + playerTrans[4] + " " + playerTrans[5]);
-
-            //float[] testPos = { 0, 0, 0 };
-            //Buffer.BlockCopy(buffer, 4, testPos, 0, 24);
-           // Debug.Log("POSITION SENT: " + testPos[0] + " " + testPos[1] + " " + testPos[2]);
             timer -= sendInterval;
+            if (!isUpdatingNetPlayer) isUpdatingNetPlayer = true;
         }
         else
         {
@@ -152,29 +150,43 @@ public class NetworkManager : MonoBehaviour
 
     static void PlayerUpdate()
     {
-        byte[] buffer = new byte[26];
-        clientUDPSocket.Receive(buffer);
-        short[] shortBuffer = new short[1];
-        Buffer.BlockCopy(buffer, 0, shortBuffer, 0, 2);
-        float[] fPos = { 0, 0, 0 };
-        float[] fRot = { 0, 0, 0 };
-        Buffer.BlockCopy(buffer, 2, fPos, 0, fPos.Length * 4);
-        Buffer.BlockCopy(buffer, 2 + fPos.Length * 4, fRot, 0, fRot.Length * 4);
-
-        Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
-        Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
-
-        if (!onNetPlayerDList.ContainsKey(shortBuffer[0]) && shortBuffer[0] != localPlayerID)
+        if (isUpdatingNetPlayer)
         {
-            Debug.Log("CREATED!!!!!!!!!!!!!");
-            GameObject spawnedKart = Instantiate(GameplayManager.instance.kartAssetManager.getKart("006").AssetPrefab, new Vector3(fPos[0], fPos[1], fPos[2]), Quaternion.Euler(fRot[0], fRot[1], fRot[2]));
-            onNetPlayerDList.Add(shortBuffer[0], spawnedKart);
+            byte[] buffer = new byte[260];
+            int recv = clientUDPSocket.Receive(buffer);
+            short[] shortBuffer = new short[1];
+            float[] fPos = { 0, 0, 0 };
+            float[] fRot = { 0, 0, 0 };
+
+            for (int i = 0; i < recv / 26; i++)
+            {
+                Buffer.BlockCopy(buffer, i * 26, shortBuffer, 0, 2);
+                
+                Buffer.BlockCopy(buffer, i * 26 + 2, fPos, 0, fPos.Length * 4);
+                Buffer.BlockCopy(buffer, i * 26 + 2 + 12, fRot, 0, fRot.Length * 4);
+
+                Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
+                Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
+
+                Array.Clear(shortBuffer, 0, shortBuffer.Length);
+                Array.Clear(fPos, 0, fPos.Length);
+                Array.Clear(fRot, 0, fRot.Length);
+            }
+
+            
+
+            /*
+            if (shortBuffer[0] != localPlayerID)
+            {
+                GameplayManager.instance.playerManager.UpdateOnNetPlayer(shortBuffer[0], new Vector3(fPos[0], fPos[1], fPos[2]), new Vector3(fRot[0], fRot[1], fRot[2]));
+            }
+            */
+
         }
-
-        onNetPlayerDList[shortBuffer[0]].transform.position = new Vector3(fPos[0], fPos[1], fPos[2]);
-        onNetPlayerDList[shortBuffer[0]].transform.localRotation = Quaternion.Euler(fRot[0], fRot[1], fRot[2]);
-
-
+        else
+        {
+            Debug.Log("IS NOT UPDATING");
+        }
         PlayerUpdate();
     }
 

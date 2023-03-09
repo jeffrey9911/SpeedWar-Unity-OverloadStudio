@@ -13,7 +13,7 @@ public class PlayerManager : MonoBehaviour
 
     public GameObject localPlayer;
 
-
+    public static Dictionary<short, GameObject> onNetPlayerDList = new Dictionary<short, GameObject>();
 
     private GameObject _spawnPrefab;
 
@@ -46,25 +46,33 @@ public class PlayerManager : MonoBehaviour
 
 
 
-        kartSpawn();
+        PlayerSpawn();
     }
 
-    private void kartSpawn()
+    private void PlayerSpawn()
     {
-        if (isOnNetWork)
-        {
-            //_spawnedPlayer = PhotonNetwork.Instantiate(_spawnPrefab.name, _spawnPos.position, _spawnPos.rotation);
-        }
-        else
-        {
-            localPlayer = Instantiate(_spawnPrefab, _spawnPos.position, _spawnPos.rotation);
-
-        }
-
+        
+        localPlayer = Instantiate(_spawnPrefab, _spawnPos.position, _spawnPos.rotation);
 
         var _kartKAM = GameplayManager.instance.kartAssetManager.getKart(_defaultKartID);
         localPlayer.gameObject.GetComponent<KartController>().KartSetup(_kartKAM._acceleration, _kartKAM._maxSpeed, _kartKAM._drift, _kartKAM._control, _kartKAM._weight);
 
         localPlayer.GetComponent<KartController>()._gameManager = GameplayManager.instance._gameManager;
+    }
+
+    private void NetPlayerSpawn(short playerID)
+    {
+        var _kartKAM = GameplayManager.instance.kartAssetManager.getKart(_defaultKartID);
+        onNetPlayerDList.Add(playerID, Instantiate(_kartKAM.AssetPrefab, _spawnPos.position, _spawnPos.rotation));
+        onNetPlayerDList[playerID].GetComponent<KartController>().isOnDisplay = true;
+    }
+
+    public void UpdateOnNetPlayer(short playerID, Vector3 pos, Vector3 rot)
+    {
+        if (!onNetPlayerDList.ContainsKey(playerID)) NetPlayerSpawn(playerID);
+
+
+        onNetPlayerDList[playerID].transform.position = pos;
+        onNetPlayerDList[playerID].transform.rotation = Quaternion.Euler(rot);
     }
 }
