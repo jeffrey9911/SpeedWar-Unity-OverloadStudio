@@ -59,7 +59,6 @@ public class NetworkManager : MonoBehaviour
     void Update()
     {
         timer += Time.deltaTime;
-
         clientUDPUpdateTrans();
         
     }

@@ -67,6 +67,7 @@ public class PlayerManager : MonoBehaviour
         var _kartKAM = GameplayManager.instance.kartAssetManager.getKart(_defaultKartID);
         onNetPlayerDList.Add(playerID, Instantiate(_kartKAM.AssetPrefab, _spawnPos.position, _spawnPos.rotation));
         onNetPlayerDList[playerID].GetComponent<KartController>().isOnDisplay = true;
+        onNetPlayerDList[playerID].GetComponent<KartController>().displayPlayerID = playerID;
     }
 
     public static void UpdateOnNetPlayer(byte[] buffer)

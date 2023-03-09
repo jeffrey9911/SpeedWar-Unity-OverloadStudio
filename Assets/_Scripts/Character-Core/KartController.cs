@@ -11,6 +11,7 @@ public class KartController : MonoBehaviour
 
     public KartAction inputActions;
 
+    public short displayPlayerID;
 
     [Header("Manager Systems")]
     [SerializeField] public bool isOnDisplay = false;
