@@ -32,7 +32,7 @@ public class NetworkManager : MonoBehaviour
     void Start()
     {
         IPAddress ip;
-        ip = IPAddress.Parse("127.0.0.1");
+        ip = IPAddress.Parse("192.168.2.43");
         //ip = Dns.GetHostAddresses("jeffrey9911.ddns.net")[0];
         Debug.Log(ip.Address.ToString());
         remoteEP = new IPEndPoint(ip, 12581);
@@ -150,6 +150,7 @@ public class NetworkManager : MonoBehaviour
 
     static void PlayerUpdate()
     {
+        Debug.Log("PlayerUpdate!!!!");
         if (isUpdatingNetPlayer)
         {
             byte[] buffer = new byte[260];
@@ -167,6 +168,23 @@ public class NetworkManager : MonoBehaviour
 
                 Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
                 Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
+
+                try
+                {
+                    if (shortBuffer[0] != localPlayerID)
+                    {
+                        
+
+                        UnityMainThreadDispatcher.Instance().Enqueue(()
+                                => GameplayManager.instance.playerManager.UpdateOnNetPlayer(shortBuffer[0], new Vector3(fPos[0], fPos[1], fPos[2]), new Vector3(fRot[0], fRot[1], fRot[2])));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.Log(ex.ToString());
+                    throw;
+                }
+                
 
                 Array.Clear(shortBuffer, 0, shortBuffer.Length);
                 Array.Clear(fPos, 0, fPos.Length);
