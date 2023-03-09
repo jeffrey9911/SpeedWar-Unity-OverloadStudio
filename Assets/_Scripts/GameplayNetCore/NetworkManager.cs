@@ -150,7 +150,6 @@ public class NetworkManager : MonoBehaviour
 
     static void PlayerUpdate()
     {
-        Debug.Log("PlayerUpdate!!!!");
         if (isUpdatingNetPlayer)
         {
             byte[] buffer = new byte[260];
@@ -159,6 +158,8 @@ public class NetworkManager : MonoBehaviour
             float[] fPos = { 0, 0, 0 };
             float[] fRot = { 0, 0, 0 };
 
+            byte[] testBuffer = new byte[26];
+
             for (int i = 0; i < recv / 26; i++)
             {
                 Buffer.BlockCopy(buffer, i * 26, shortBuffer, 0, 2);
@@ -166,17 +167,15 @@ public class NetworkManager : MonoBehaviour
                 Buffer.BlockCopy(buffer, i * 26 + 2, fPos, 0, fPos.Length * 4);
                 Buffer.BlockCopy(buffer, i * 26 + 2 + 12, fRot, 0, fRot.Length * 4);
 
-                Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
-                Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
+                //Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
+                // Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
+                Buffer.BlockCopy(buffer, i * 26, testBuffer, 0, 26);
 
                 try
                 {
                     if (shortBuffer[0] != localPlayerID)
                     {
-                        
-
-                        UnityMainThreadDispatcher.Instance().Enqueue(()
-                                => GameplayManager.instance.playerManager.UpdateOnNetPlayer(shortBuffer[0], new Vector3(fPos[0], fPos[1], fPos[2]), new Vector3(fRot[0], fRot[1], fRot[2])));
+                        UnityMainThreadDispatcher.Instance().Enqueue(() => PlayerManager.UpdateOnNetPlayer(testBuffer));
                     }
                 }
                 catch (Exception ex)
@@ -207,6 +206,22 @@ public class NetworkManager : MonoBehaviour
         }
         PlayerUpdate();
     }
+
+
+    /*
+    public static void ConPrint(byte[] buffer)
+    {
+        short[] shortBuffer = new short[1];
+        float[] fPos = { 0, 0, 0 };
+        float[] fRot = { 0, 0, 0 };
+
+        Buffer.BlockCopy(buffer, 0, shortBuffer, 0, 2);
+        Buffer.BlockCopy(buffer, 0 + 2, fPos, 0, fPos.Length * 4);
+        Buffer.BlockCopy(buffer, 0 + 2 + 12, fRot, 0, fRot.Length * 4);
+
+        Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
+        Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
+    }*/
 
     private void OnApplicationQuit()
     {
