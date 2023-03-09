@@ -1,5 +1,3 @@
-using Photon.Pun.Demo.Asteroids;
-using Photon.Pun.Demo.PunBasics;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -9,10 +7,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
-using Photon.Pun;
-using Photon.Realtime;
 
-public class lvl1BTN : MonoBehaviourPunCallbacks
+public class lvl1BTN : MonoBehaviour
 {
 
     [SerializeField] private TMP_Text _buttonText;
@@ -36,38 +32,12 @@ public class lvl1BTN : MonoBehaviourPunCallbacks
         //GameplayManager.instance.setData(GameplayManager.instance.selectedMode, 2f);
         SceneDataManager.instance.setData(SceneData.SelectedMode, "Online");
         _PNLCON.gameObject.SetActive(true);
-        PhotonNetwork.ConnectUsingSettings();
+        //PhotonNetwork.ConnectUsingSettings();
     }
 
-    public override void OnConnectedToMaster()
-    {
-        PhotonNetwork.JoinLobby();
-    }
+    
 
-    public override void OnJoinedLobby()
-    {
-        _PNLCON.gameObject.SetActive(false);
-        _PNLRoomCon.gameObject.SetActive(true);
-    }
+    
 
-    public void connectRoom()
-    {
-        PhotonNetwork.NickName = _playerName.text;
-        PhotonNetwork.JoinRoom(_roomName.text);
-    }
-
-    public override void OnJoinedRoom()
-    {
-        SceneManager.LoadScene("MainSelect");
-    }
-
-    public override void OnJoinRoomFailed(short returnCode, string message)
-    {
-        createRoom(_roomName.text);
-    }
-
-    private void createRoom(string roomName)
-    {
-        PhotonNetwork.CreateRoom(roomName);
-    }
+    
 }
