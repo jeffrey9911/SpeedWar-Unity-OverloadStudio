@@ -19,6 +19,7 @@ public class NetworkManager : MonoBehaviour
     private static Socket clientTCPSocket;
     private static Socket clientUDPSocket;
 
+    public short displayedPlayerID;
     public static short localPlayerID;
 
     //public static Dictionary<short, GameObject> onNetPlayerDList = new Dictionary<short, GameObject>();
@@ -60,7 +61,7 @@ public class NetworkManager : MonoBehaviour
     {
         timer += Time.deltaTime;
         clientUDPUpdateTrans();
-        
+        displayedPlayerID = localPlayerID;
     }
 
     static void clientTCPConnect(Socket clientSocket, IPEndPoint serverEP)
@@ -163,17 +164,16 @@ public class NetworkManager : MonoBehaviour
             {
                 Buffer.BlockCopy(buffer, i * 26, shortBuffer, 0, 2);
                 
-                Buffer.BlockCopy(buffer, i * 26 + 2, fPos, 0, fPos.Length * 4);
-                Buffer.BlockCopy(buffer, i * 26 + 2 + 12, fRot, 0, fRot.Length * 4);
-
                 //Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
                 // Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
                 Buffer.BlockCopy(buffer, i * 26, testBuffer, 0, 26);
 
                 try
                 {
+                    
                     if (shortBuffer[0] != localPlayerID)
                     {
+                        Debug.Log(shortBuffer[0]);
                         UnityMainThreadDispatcher.Instance().Enqueue(() => PlayerManager.UpdateOnNetPlayer(testBuffer));
                     }
                 }
@@ -185,8 +185,6 @@ public class NetworkManager : MonoBehaviour
                 
 
                 Array.Clear(shortBuffer, 0, shortBuffer.Length);
-                Array.Clear(fPos, 0, fPos.Length);
-                Array.Clear(fRot, 0, fRot.Length);
             }
 
             

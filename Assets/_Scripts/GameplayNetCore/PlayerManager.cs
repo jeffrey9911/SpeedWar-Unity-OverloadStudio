@@ -80,14 +80,21 @@ public class PlayerManager : MonoBehaviour
         Buffer.BlockCopy(buffer, 0 + 2, fPos, 0, fPos.Length * 4);
         Buffer.BlockCopy(buffer, 0 + 2 + 12, fRot, 0, fRot.Length * 4);
 
-        Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
-        Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
+        //Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
+        //Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
+
+        if (shortBuffer[0] >= 1000 && !onNetPlayerDList.ContainsKey(shortBuffer[0]))
+        {
+            NetPlayerSpawn(shortBuffer[0]);
+        }
         
-        if (!onNetPlayerDList.ContainsKey(shortBuffer[0])) NetPlayerSpawn(shortBuffer[0]);
 
-
-        onNetPlayerDList[shortBuffer[0]].transform.position = new Vector3(fPos[0], fPos[1], fPos[2]);
-        onNetPlayerDList[shortBuffer[0]].transform.rotation = Quaternion.Euler(new Vector3(fRot[0], fRot[1], fRot[2]));
+        if(onNetPlayerDList.ContainsKey(shortBuffer[0]))
+        {
+            onNetPlayerDList[shortBuffer[0]].transform.position = new Vector3(fPos[0], fPos[1], fPos[2]);
+            onNetPlayerDList[shortBuffer[0]].transform.rotation = Quaternion.Euler(new Vector3(fRot[0], fRot[1], fRot[2]));
+        }
+        
     }
 
     public static void ConPrint(byte[] buffer)
