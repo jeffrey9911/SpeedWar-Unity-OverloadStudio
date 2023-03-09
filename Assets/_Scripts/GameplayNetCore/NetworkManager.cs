@@ -30,7 +30,7 @@ public class NetworkManager : MonoBehaviour
     void Start()
     {
         IPAddress ip;
-        ip = IPAddress.Parse("192.168.2.43");
+        ip = IPAddress.Parse("127.0.0.1");
         //ip = Dns.GetHostAddresses("jeffrey9911.ddns.net")[0];
         Debug.Log(ip.Address.ToString());
         remoteEP = new IPEndPoint(ip, 12581);
@@ -40,7 +40,18 @@ public class NetworkManager : MonoBehaviour
 
 
         Task.Run(() => { clientTCPConnect(clientTCPSocket, remoteEP); }, cts.Token);
+        //ask.Run(() => { TestUDPReceive(); }, cts.Token);
     }
+
+    /*
+    static void TestUDPReceive()
+    {
+        byte[] buffer = new byte[512];
+        clientUDPSocket.Receive(buffer);
+        Debug.Log(Encoding.ASCII.GetString(buffer));
+        TestUDPReceive();
+    }
+    */
 
     // Update is called once per frame
     void Update()
@@ -120,11 +131,13 @@ public class NetworkManager : MonoBehaviour
             float[] playerTrans = { GameplayManager.instance.playerManager.localPlayer.transform.position.x,
                                         GameplayManager.instance.playerManager.localPlayer.transform.position.y,
                                         GameplayManager.instance.playerManager.localPlayer.transform.position.z,
-                                        GameplayManager.instance.playerManager.localPlayer.transform.rotation.x,
-                                        GameplayManager.instance.playerManager.localPlayer.transform.rotation.y,
-                                        GameplayManager.instance.playerManager.localPlayer.transform.rotation.z};
+                                        GameplayManager.instance.playerManager.localPlayer.transform.rotation.eulerAngles.x,
+                                        GameplayManager.instance.playerManager.localPlayer.transform.rotation.eulerAngles.y,
+                                        GameplayManager.instance.playerManager.localPlayer.transform.rotation.eulerAngles.z};
             Buffer.BlockCopy(playerTrans, 0, buffer, 4, 24);
             clientUDPSocket.SendTo(buffer, remoteEP);
+
+            //Debug.Log("ROT Sent: " + playerTrans[3] + " " + playerTrans[4] + " " + playerTrans[5]);
 
             //float[] testPos = { 0, 0, 0 };
             //Buffer.BlockCopy(buffer, 4, testPos, 0, 24);
@@ -146,11 +159,12 @@ public class NetworkManager : MonoBehaviour
         float[] fPos = { 0, 0, 0 };
         float[] fRot = { 0, 0, 0 };
         Buffer.BlockCopy(buffer, 2, fPos, 0, fPos.Length * 4);
-        Buffer.BlockCopy(buffer, 2, fRot, 0, fRot.Length * 4);
+        Buffer.BlockCopy(buffer, 2 + fPos.Length * 4, fRot, 0, fRot.Length * 4);
 
         Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
+        Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
 
-        if (!onNetPlayerDList.ContainsKey(shortBuffer[0]))
+        if (!onNetPlayerDList.ContainsKey(shortBuffer[0]) && shortBuffer[0] != localPlayerID)
         {
             Debug.Log("CREATED!!!!!!!!!!!!!");
             GameObject spawnedKart = Instantiate(GameplayManager.instance.kartAssetManager.getKart("006").AssetPrefab, new Vector3(fPos[0], fPos[1], fPos[2]), Quaternion.Euler(fRot[0], fRot[1], fRot[2]));
@@ -158,7 +172,8 @@ public class NetworkManager : MonoBehaviour
         }
 
         onNetPlayerDList[shortBuffer[0]].transform.position = new Vector3(fPos[0], fPos[1], fPos[2]);
-        onNetPlayerDList[shortBuffer[0]].transform.rotation = Quaternion.Euler(fRot[0], fRot[1], fRot[2]);
+        onNetPlayerDList[shortBuffer[0]].transform.localRotation = Quaternion.Euler(fRot[0], fRot[1], fRot[2]);
+
 
         PlayerUpdate();
     }
