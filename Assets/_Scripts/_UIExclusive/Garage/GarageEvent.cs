@@ -1,4 +1,3 @@
-using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +18,7 @@ public class GarageEvent : MonoBehaviour
         }
         else if (SceneDataManager.instance.getData(SceneData.SelectedMode) == "Online")
         {
-            PhotonNetwork.LoadLevel("Level2");
+            //PhotonNetwork.LoadLevel("Level2");
         }
     }
 }

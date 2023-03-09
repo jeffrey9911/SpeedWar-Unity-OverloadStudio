@@ -68,7 +68,7 @@ public class CameraController : MonoBehaviour
 
     private void speedCam()
     {
-        float kartSpeedIndex = PunManager.instance._spawnedPlayer.GetComponent<KartController>().getSpeed / 230f;
+        float kartSpeedIndex = GameplayManager.instance.playerManager.localPlayer.GetComponent<KartController>().getSpeed / 230f;
         _camera.fieldOfView = 70.0f + (kartSpeedIndex * 30);
         _cameraRotator.localPosition = new Vector3(_cameraRotator.localPosition.x, defaultHeight + kartSpeedIndex * 3, _cameraRotator.localPosition.z);
     }

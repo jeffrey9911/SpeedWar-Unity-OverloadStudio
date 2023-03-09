@@ -709,7 +709,6 @@ GameObject:
   - component: {fileID: 7188418520043412074}
   - component: {fileID: 7188418520043412084}
   - component: {fileID: 3569127032719179369}
-  - component: {fileID: 6778938103301539955}
   m_Layer: 0
   m_Name: Beta
   m_TagString: Player
@@ -808,18 +807,6 @@ MonoBehaviour:
   sSpringConstant: 37500
   sSpringDamper: 4500
   isUsingAntiRoll: 1
---- !u!114 &6778938103301539955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7188418520043412075}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28896d60a0c4bb148841976fb050eb60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &7188418520245000438
 GameObject:
   m_ObjectHideFlags: 0
