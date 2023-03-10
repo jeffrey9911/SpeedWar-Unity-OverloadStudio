@@ -4,10 +4,6 @@ using System.Collections.Generic;
 using UnityEditor;
 //using UnityEditorInternal;
 using UnityEngine;
-using UnityEngine.UI;
-
-using TMPro;
-using UnityEditor.Build;
 
 public class KartController : MonoBehaviour
 {
@@ -15,6 +11,7 @@ public class KartController : MonoBehaviour
 
     public KartAction inputActions;
 
+    public short displayPlayerID;
 
     [Header("Manager Systems")]
     [SerializeField] public bool isOnDisplay = false;
