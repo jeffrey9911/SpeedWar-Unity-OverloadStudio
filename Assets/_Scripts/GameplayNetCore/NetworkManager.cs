@@ -22,12 +22,13 @@ public class NetworkManager : MonoBehaviour
     public short displayedPlayerID;
     public static short localPlayerID;
 
-    //public static Dictionary<short, GameObject> onNetPlayerDList = new Dictionary<short, GameObject>();
+
 
     public float sendInterval = 1.0f;
     float timer = 0.0f;
 
     private static bool isUpdatingNetPlayer = false;
+    private static bool isLocalPlayerSetup = false;
 
 
     // Start is called before the first frame update
@@ -47,21 +48,12 @@ public class NetworkManager : MonoBehaviour
         //ask.Run(() => { TestUDPReceive(); }, cts.Token);
     }
 
-    /*
-    static void TestUDPReceive()
-    {
-        byte[] buffer = new byte[512];
-        clientUDPSocket.Receive(buffer);
-        Debug.Log(Encoding.ASCII.GetString(buffer));
-        TestUDPReceive();
-    }
-    */
 
     // Update is called once per frame
     void Update()
     {
         timer += Time.deltaTime;
-        clientUDPUpdateTrans();
+        clientUDPSend("Transform");
         displayedPlayerID = localPlayerID;
     }
 
@@ -85,7 +77,7 @@ public class NetworkManager : MonoBehaviour
         Debug.Log("FIRST SEND");
 
         Task.Run(() => { clientTCPReceive(); }, cts.Token);
-        Task.Run(() => { PlayerUpdate(); }, cts.Token);
+        Task.Run(() => { clientUDPReceive(); }, cts.Token);
     }
 
     static void clientTCPReceive()
@@ -109,6 +101,7 @@ public class NetworkManager : MonoBehaviour
                     Buffer.BlockCopy(byContent, 0, shortBuffer, 0, byContent.Length);
                     localPlayerID = shortBuffer[0];
                     Debug.Log("PlayerID Set TO:" + localPlayerID);
+                    isLocalPlayerSetup = true;
                     break;
 
                 default:
@@ -124,89 +117,66 @@ public class NetworkManager : MonoBehaviour
 
     }
 
-    void clientUDPUpdateTrans()
+    void clientUDPSend(string sendType)
     {
-        if (localPlayerID > 100 && timer >= sendInterval)
+        switch (sendType)
         {
-            byte[] buffer = new byte[28];
-            short[] shortBuffer = { 0, localPlayerID };
-            Buffer.BlockCopy(shortBuffer, 0, buffer, 0, 4);
-            float[] playerTrans = { GameplayManager.instance.playerManager.localPlayer.transform.position.x,
+            case "Transform":
+                if (localPlayerID >= 1000 && timer >= sendInterval)
+                {
+                    byte[] buffer = new byte[28];
+                    short[] shortBuffer = { 0, localPlayerID };
+                    Buffer.BlockCopy(shortBuffer, 0, buffer, 0, 4);
+                    float[] playerTrans = { GameplayManager.instance.playerManager.localPlayer.transform.position.x,
                                         GameplayManager.instance.playerManager.localPlayer.transform.position.y,
                                         GameplayManager.instance.playerManager.localPlayer.transform.position.z,
                                         GameplayManager.instance.playerManager.localPlayer.transform.rotation.eulerAngles.x,
                                         GameplayManager.instance.playerManager.localPlayer.transform.rotation.eulerAngles.y,
                                         GameplayManager.instance.playerManager.localPlayer.transform.rotation.eulerAngles.z};
-            Buffer.BlockCopy(playerTrans, 0, buffer, 4, 24);
-            clientUDPSocket.SendTo(buffer, remoteEP);
+                    Buffer.BlockCopy(playerTrans, 0, buffer, 4, 24);
+                    clientUDPSocket.SendTo(buffer, remoteEP);
 
-            timer -= sendInterval;
-            if (!isUpdatingNetPlayer) isUpdatingNetPlayer = true;
+                    timer -= sendInterval;
+                    if (!isUpdatingNetPlayer) isUpdatingNetPlayer = true;
+                }
+                break;
+
+            default:
+                break;
         }
-        else
-        {
-            //Debug.Log("NOT SENDING");
-        }
+
+        
     }
 
-    static void PlayerUpdate()
+    static void clientUDPReceive()
     {
         if (isUpdatingNetPlayer)
         {
             byte[] buffer = new byte[260];
             int recv = clientUDPSocket.Receive(buffer);
-            //short[] shortBuffer = new short[1];
-            //float[] fPos = { 0, 0, 0 };
-            //float[] fRot = { 0, 0, 0 };
-
-            
 
             for (int i = 0; i < recv / 26; i++)
             {
-                //Buffer.BlockCopy(buffer, i * 26, shortBuffer, 0, 2);
-
-                //Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
-                // Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
                 byte[] transBuffer = new byte[26];
-                //Buffer.BlockCopy(buffer, i * 26, PlayerManager.playerUpdateByte, 0, 26);
                 Buffer.BlockCopy(buffer, i * 26, transBuffer, 0, 26);
 
                 try
                 {
-                    /*
-                    short[] shorts = new short[1];
-                    Buffer.BlockCopy(testBuffer, 0, shorts, 0, 2);
-                    Debug.Log("Time: " + i + " iD?: " + shorts[0]);
-                    */
                     UnityMainThreadDispatcher.Instance().Enqueue(() => PlayerManager.UpdateOnNetPlayer(ref transBuffer));
-
-                    
                 }
                 catch (Exception ex)
                 {
                     Debug.Log(ex.ToString());
                     throw;
                 }
-
-                //Array.Clear(PlayerManager.playerUpdateByte, 0, PlayerManager.playerUpdateByte.Length);
-                //Array.Clear(shortBuffer, 0, shortBuffer.Length);
             }
-
-            
-
-            /*
-            if (shortBuffer[0] != localPlayerID)
-            {
-                GameplayManager.instance.playerManager.UpdateOnNetPlayer(shortBuffer[0], new Vector3(fPos[0], fPos[1], fPos[2]), new Vector3(fRot[0], fRot[1], fRot[2]));
-            }
-            */
 
         }
         else
         {
             Debug.Log("IS NOT UPDATING");
         }
-        PlayerUpdate();
+        clientUDPReceive();
     }
 
 

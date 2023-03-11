@@ -12,7 +12,31 @@ public class PlayerManager : MonoBehaviour
     public static Transform _spawnPos;
     public static string _defaultKartID = "006";
 
+    public struct InputState
+    {
+        public int tick;
+        public Vector2 input;
+
+    }
+
+    public struct TransformState
+    {
+        public int tick;
+        public Vector3 position;
+        public Vector3 rotation;
+    }
+    
+
+    public struct NetPlayer
+    {
+        public GameObject playerObj;
+        
+
+    }
+
     public GameObject localPlayer;
+
+
 
     public static Dictionary<short, GameObject> onNetPlayerDList = new Dictionary<short, GameObject>();
 
@@ -131,4 +155,6 @@ public class PlayerManager : MonoBehaviour
         buffer = null;
         //Array.Clear(shortBuffer, 0, shortBuffer.Length);
     }
+
+
 }
