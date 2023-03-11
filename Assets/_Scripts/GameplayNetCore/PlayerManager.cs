@@ -83,6 +83,8 @@ public class PlayerManager : MonoBehaviour
         //Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
         //Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
 
+        Debug.Log("LocalID: " + NetworkManager.localPlayerID + " IDin: " + shortBuffer[0] + " is in?: " + onNetPlayerDList.ContainsKey(shortBuffer[0]));
+
         if (shortBuffer[0] >= 1000 && !onNetPlayerDList.ContainsKey(shortBuffer[0]))
         {
             NetPlayerSpawn(shortBuffer[0]);

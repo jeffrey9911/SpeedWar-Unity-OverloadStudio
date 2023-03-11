@@ -33,8 +33,8 @@ public class NetworkManager : MonoBehaviour
     void Start()
     {
         IPAddress ip;
-        ip = IPAddress.Parse("192.168.2.43");
-        //ip = Dns.GetHostAddresses("jeffrey9911.ddns.net")[0];
+        //ip = IPAddress.Parse("192.168.2.43");
+        ip = Dns.GetHostAddresses("jeffrey9911.ddns.net")[0];
         Debug.Log(ip.Address.ToString());
         remoteEP = new IPEndPoint(ip, 12581);
 
@@ -173,7 +173,7 @@ public class NetworkManager : MonoBehaviour
                     
                     if (shortBuffer[0] != localPlayerID)
                     {
-                        Debug.Log(shortBuffer[0]);
+                        //Debug.Log(shortBuffer[0]);
                         UnityMainThreadDispatcher.Instance().Enqueue(() => PlayerManager.UpdateOnNetPlayer(testBuffer));
                     }
                 }
