@@ -12360,6 +12360,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameplayManager
       objectReference: {fileID: 0}
+    - target: {fileID: 4019572091518825759, guid: 43c2c43cf171c364da00d0871b3ab489, type: 3}
+      propertyPath: sendInterval
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 7269961235085329563, guid: 43c2c43cf171c364da00d0871b3ab489, type: 3}
       propertyPath: kartList.Array.size
       value: 8

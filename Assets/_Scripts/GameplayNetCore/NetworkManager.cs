@@ -29,6 +29,7 @@ public class NetworkManager : MonoBehaviour
 
     private static bool isUpdatingNetPlayer = false;
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -158,20 +159,26 @@ public class NetworkManager : MonoBehaviour
             //float[] fPos = { 0, 0, 0 };
             //float[] fRot = { 0, 0, 0 };
 
-            byte[] testBuffer = new byte[26];
+            
 
             for (int i = 0; i < recv / 26; i++)
             {
                 //Buffer.BlockCopy(buffer, i * 26, shortBuffer, 0, 2);
-                
+
                 //Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
                 // Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
-                Buffer.BlockCopy(buffer, i * 26, testBuffer, 0, 26);
+                byte[] transBuffer = new byte[26];
+                //Buffer.BlockCopy(buffer, i * 26, PlayerManager.playerUpdateByte, 0, 26);
+                Buffer.BlockCopy(buffer, i * 26, transBuffer, 0, 26);
 
                 try
                 {
-
-                    UnityMainThreadDispatcher.Instance().Enqueue(() => PlayerManager.UpdateOnNetPlayer(testBuffer));
+                    /*
+                    short[] shorts = new short[1];
+                    Buffer.BlockCopy(testBuffer, 0, shorts, 0, 2);
+                    Debug.Log("Time: " + i + " iD?: " + shorts[0]);
+                    */
+                    UnityMainThreadDispatcher.Instance().Enqueue(() => PlayerManager.UpdateOnNetPlayer(ref transBuffer));
 
                     
                 }
@@ -181,7 +188,7 @@ public class NetworkManager : MonoBehaviour
                     throw;
                 }
 
-                Array.Clear(testBuffer, 0, testBuffer.Length);
+                //Array.Clear(PlayerManager.playerUpdateByte, 0, PlayerManager.playerUpdateByte.Length);
                 //Array.Clear(shortBuffer, 0, shortBuffer.Length);
             }
 
