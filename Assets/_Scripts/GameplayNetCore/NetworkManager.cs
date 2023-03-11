@@ -154,15 +154,15 @@ public class NetworkManager : MonoBehaviour
         {
             byte[] buffer = new byte[260];
             int recv = clientUDPSocket.Receive(buffer);
-            short[] shortBuffer = new short[1];
-            float[] fPos = { 0, 0, 0 };
-            float[] fRot = { 0, 0, 0 };
+            //short[] shortBuffer = new short[1];
+            //float[] fPos = { 0, 0, 0 };
+            //float[] fRot = { 0, 0, 0 };
 
             byte[] testBuffer = new byte[26];
 
             for (int i = 0; i < recv / 26; i++)
             {
-                Buffer.BlockCopy(buffer, i * 26, shortBuffer, 0, 2);
+                //Buffer.BlockCopy(buffer, i * 26, shortBuffer, 0, 2);
                 
                 //Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
                 // Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
@@ -170,21 +170,19 @@ public class NetworkManager : MonoBehaviour
 
                 try
                 {
+
+                    UnityMainThreadDispatcher.Instance().Enqueue(() => PlayerManager.UpdateOnNetPlayer(testBuffer));
+
                     
-                    if (shortBuffer[0] != localPlayerID)
-                    {
-                        //Debug.Log(shortBuffer[0]);
-                        UnityMainThreadDispatcher.Instance().Enqueue(() => PlayerManager.UpdateOnNetPlayer(testBuffer));
-                    }
                 }
                 catch (Exception ex)
                 {
                     Debug.Log(ex.ToString());
                     throw;
                 }
-                
 
-                Array.Clear(shortBuffer, 0, shortBuffer.Length);
+                Array.Clear(testBuffer, 0, testBuffer.Length);
+                //Array.Clear(shortBuffer, 0, shortBuffer.Length);
             }
 
             

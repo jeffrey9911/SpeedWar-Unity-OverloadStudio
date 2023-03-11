@@ -62,45 +62,54 @@ public class PlayerManager : MonoBehaviour
         localPlayer.GetComponent<KartController>()._gameManager = GameplayManager.instance._gameManager;
     }
 
-    private static void NetPlayerSpawn(short playerID)
+    private static void NetPlayerSpawn(short playerID/*, float posX, float posY, float posZ, float rotX, float rotY, float rotZ*/)
     {
         var _kartKAM = GameplayManager.instance.kartAssetManager.getKart(_defaultKartID);
         onNetPlayerDList.Add(playerID, Instantiate(_kartKAM.AssetPrefab, _spawnPos.position, _spawnPos.rotation));
         onNetPlayerDList[playerID].GetComponent<KartController>().isOnDisplay = true;
         onNetPlayerDList[playerID].GetComponent<KartController>().displayPlayerID = playerID;
+        //onNetPlayerDList[playerID].transform.position = new Vector3(posX, posY, posZ);
+        //onNetPlayerDList[playerID].transform.rotation = Quaternion.Euler(new Vector3(rotX, rotY, rotZ));
     }
 
     public static void UpdateOnNetPlayer(byte[] buffer)
     {
         short[] shortBuffer = new short[1];
-        float[] fPos = { 0, 0, 0 };
-        float[] fRot = { 0, 0, 0 };
-
         Buffer.BlockCopy(buffer, 0, shortBuffer, 0, 2);
-        Buffer.BlockCopy(buffer, 0 + 2, fPos, 0, fPos.Length * 4);
-        Buffer.BlockCopy(buffer, 0 + 2 + 12, fRot, 0, fRot.Length * 4);
+        short playerIDin = shortBuffer[0];
 
-        //Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
-        //Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
-
-        Debug.Log("LocalID: " + NetworkManager.localPlayerID + " IDin: " + shortBuffer[0] + " is in?: " + onNetPlayerDList.ContainsKey(shortBuffer[0]));
-
-        if (shortBuffer[0] >= 1000 && !onNetPlayerDList.ContainsKey(shortBuffer[0]))
+        if(playerIDin != NetworkManager.localPlayerID)
         {
-            NetPlayerSpawn(shortBuffer[0]);
-        }
-        
+            float[] fPos = { 0, 0, 0 };
+            float[] fRot = { 0, 0, 0 };
 
-        if(onNetPlayerDList.ContainsKey(shortBuffer[0]))
-        {
-            onNetPlayerDList[shortBuffer[0]].transform.position = new Vector3(fPos[0], fPos[1], fPos[2]);
-            onNetPlayerDList[shortBuffer[0]].transform.rotation = Quaternion.Euler(new Vector3(fRot[0], fRot[1], fRot[2]));
-        }
-        
-    }
 
-    public static void ConPrint(byte[] buffer)
-    {
-        
+
+            Buffer.BlockCopy(buffer, 0 + 2, fPos, 0, fPos.Length * 4);
+            Buffer.BlockCopy(buffer, 0 + 2 + 12, fRot, 0, fRot.Length * 4);
+
+            //Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
+            //Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
+
+
+            Debug.Log("LocalID: " + NetworkManager.localPlayerID + " IDin: " + playerIDin + " is in?: " + onNetPlayerDList.ContainsKey(playerIDin));
+
+            if (playerIDin >= 1000 && !onNetPlayerDList.ContainsKey(playerIDin))
+            {
+                NetPlayerSpawn(playerIDin);
+            }
+
+
+            if (onNetPlayerDList.ContainsKey(shortBuffer[0]))
+            {
+                onNetPlayerDList[shortBuffer[0]].transform.position = new Vector3(fPos[0], fPos[1], fPos[2]);
+                onNetPlayerDList[shortBuffer[0]].transform.rotation = Quaternion.Euler(new Vector3(fRot[0], fRot[1], fRot[2]));
+            }
+
+            Array.Clear(fPos, 0, fPos.Length);
+            Array.Clear(fRot, 0, fRot.Length);
+        }
+
+        Array.Clear(shortBuffer, 0, shortBuffer.Length);
     }
 }
