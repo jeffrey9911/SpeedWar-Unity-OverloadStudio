@@ -6,9 +6,6 @@ using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
-
-    public bool isOnNetWork = false;
-
     public static Transform _spawnPos;
     public static string _defaultKartID = "006";
 
@@ -54,12 +51,12 @@ public class PlayerManager : MonoBehaviour
 
             if (SceneDataManager.instance.getData(SceneData.SelectedMode) == "Online")
             {
-                isOnNetWork = true;
+                NetworkManager.isOnNetwork = true;
             }
 
             if (SceneDataManager.instance.getData(SceneData.SelectedMode) == "Offline")
             {
-                isOnNetWork = false;
+                NetworkManager.isOnNetwork = false;
             }
 
             _spawnPrefab = SceneDataManager.instance.kartAssetManager.getKart(SceneDataManager.instance.getData(SceneData.SelectedKart)).AssetPrefab;

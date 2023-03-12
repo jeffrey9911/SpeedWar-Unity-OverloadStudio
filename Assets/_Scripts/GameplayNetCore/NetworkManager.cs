@@ -15,49 +15,83 @@ public class NetworkManager : MonoBehaviour
 {
     private static CancellationTokenSource cts = new CancellationTokenSource();
 
+    public static bool isOnNetwork = true;
+
+    // Sockets
     private static IPEndPoint remoteEP;
     private static Socket clientTCPSocket;
     private static Socket clientUDPSocket;
 
+    // Player ID
     public short displayedPlayerID;
     public static short localPlayerID;
 
 
-
+    // UDP Send
     public float sendInterval = 1.0f;
-    float timer = 0.0f;
+    float udpTimer = 0.0f;
 
-    private static bool isUpdatingNetPlayer = false;
+    // Latency
+    public float latencyDetectInterval = 1.0f;
+    float latencyCheckTimer = 0.0f;
+    static float checkedLatency = 0.0f;
+    private static bool isStartedCalculateLatency = false;
+
+
+    private static bool isUDPReceiving = false;
     private static bool isLocalPlayerSetup = false;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        IPAddress ip;
-        //ip = IPAddress.Parse("192.168.2.43");
-        ip = Dns.GetHostAddresses("jeffrey9911.ddns.net")[0];
-        Debug.Log(ip.Address.ToString());
-        remoteEP = new IPEndPoint(ip, 12581);
+        if(isOnNetwork)
+        {
+            IPAddress ip;
+            //ip = IPAddress.Parse("192.168.2.43");
+            ip = Dns.GetHostAddresses("jeffrey9911.ddns.net")[0];
+            Debug.Log(ip.Address.ToString());
+            remoteEP = new IPEndPoint(ip, 12581);
 
-        clientTCPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        clientUDPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            clientTCPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            clientUDPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
 
-        Task.Run(() => { clientTCPConnect(clientTCPSocket, remoteEP); }, cts.Token);
-        //ask.Run(() => { TestUDPReceive(); }, cts.Token);
+            Task.Run(() => { clientTCPConnect(clientTCPSocket, remoteEP); }, cts.Token);        // TCP Connect Thread
+        }
     }
 
 
     // Update is called once per frame
     void Update()
     {
-        timer += Time.deltaTime;
-        clientUDPSend("Transform");
-        displayedPlayerID = localPlayerID;
+        udpTimer += Time.deltaTime;
+        latencyCheckTimer += Time.deltaTime;
+
+        if(isLocalPlayerSetup && udpTimer >= sendInterval)
+        {
+            clientUDPSend("Transform");
+
+            udpTimer -= sendInterval;
+        }
+
+        if(latencyCheckTimer >= latencyDetectInterval)
+        {
+
+            clientTCPSend("Latency");
+            latencyCheckTimer -= latencyDetectInterval;
+        }
+
+        if(isStartedCalculateLatency)
+        {
+            checkedLatency += Time.deltaTime;
+        }
+
+        
+        
     }
 
-    static void clientTCPConnect(Socket clientSocket, IPEndPoint serverEP)
+    static void clientTCPConnect(Socket clientSocket, IPEndPoint serverEP)                  // TCP Connect
     {
         clientSocket.Connect(serverEP);
 
@@ -76,13 +110,14 @@ public class NetworkManager : MonoBehaviour
 
         Debug.Log("FIRST SEND");
 
-        Task.Run(() => { clientTCPReceive(); }, cts.Token);
-        Task.Run(() => { clientUDPReceive(); }, cts.Token);
+        Task.Run(() => { clientTCPReceive(); }, cts.Token);                     // TCP Receive Thread
+        Task.Run(() => { clientUDPReceive(); }, cts.Token);             // UDP Receive Thread
+
     }
 
-    static void clientTCPReceive()
+    static void clientTCPReceive()                                              // TCP Receive
     {
-        Debug.Log("Start Receive");
+        //Debug.Log("Start Receive");
         try
         {
             byte[] buffer = new byte[1024];
@@ -90,18 +125,24 @@ public class NetworkManager : MonoBehaviour
 
             short[] shortBuffer = new short[1];
             Buffer.BlockCopy(buffer, 0, shortBuffer, 0, 2);
-            byte[] byContent = new byte[recv - 2];
-            Buffer.BlockCopy(buffer, 2, byContent, 0, byContent.Length);
-            Debug.Log("Received!");
+            
+            //Debug.Log("Received!");
 
             switch (shortBuffer[0])
             {
                 // First Login
                 case 0:
+                    byte[] byContent = new byte[recv - 2];
+                    Buffer.BlockCopy(buffer, 2, byContent, 0, byContent.Length);
                     Buffer.BlockCopy(byContent, 0, shortBuffer, 0, byContent.Length);
-                    localPlayerID = shortBuffer[0];
+                    if (shortBuffer[0] >= 1000) localPlayerID = shortBuffer[0];
                     Debug.Log("PlayerID Set TO:" + localPlayerID);
                     isLocalPlayerSetup = true;
+                    
+                    break;
+
+                case 1:
+                    UnityMainThreadDispatcher.Instance().Enqueue(() => CalculateLatency(1));
                     break;
 
                 default:
@@ -113,8 +154,35 @@ public class NetworkManager : MonoBehaviour
         {
             Debug.Log(ex.ToString());
         }
-        
 
+        clientTCPReceive();
+    }
+
+    void clientTCPSend(string sendType)
+    {
+        switch (sendType)
+        {
+            case "Latency":
+                if(!isStartedCalculateLatency)
+                {
+                    byte[] buffer = new byte[2];
+                    short[] shortBuffer = { 1 };
+                    Buffer.BlockCopy(shortBuffer, 0, buffer, 0, buffer.Length);
+
+                    clientTCPSocket.Send(buffer);
+
+                    CalculateLatency(0);
+                }
+                
+                
+                break;
+
+
+            default:
+                break;
+        }
+
+        
     }
 
     void clientUDPSend(string sendType)
@@ -122,7 +190,7 @@ public class NetworkManager : MonoBehaviour
         switch (sendType)
         {
             case "Transform":
-                if (localPlayerID >= 1000 && timer >= sendInterval)
+                if (isLocalPlayerSetup)
                 {
                     byte[] buffer = new byte[28];
                     short[] shortBuffer = { 0, localPlayerID };
@@ -136,64 +204,84 @@ public class NetworkManager : MonoBehaviour
                     Buffer.BlockCopy(playerTrans, 0, buffer, 4, 24);
                     clientUDPSocket.SendTo(buffer, remoteEP);
 
-                    timer -= sendInterval;
-                    if (!isUpdatingNetPlayer) isUpdatingNetPlayer = true;
+                    // First UDP sent
+                    if (!isUDPReceiving) isUDPReceiving = true;
                 }
                 break;
 
             default:
                 break;
         }
-
-        
     }
 
-    static void clientUDPReceive()
+    static void clientUDPReceive()                                      // UDP Receive
     {
-        if (isUpdatingNetPlayer)
+        while (!isUDPReceiving)
         {
-            byte[] buffer = new byte[260];
-            int recv = clientUDPSocket.Receive(buffer);
+            // Waiting for first UDP Sent
+        }
 
-            for (int i = 0; i < recv / 26; i++)
+        if (isUDPReceiving)
+        {
+            byte[] receiveBuffer = new byte[1024];
+            int recv = clientUDPSocket.Receive(receiveBuffer);
+            short[] receiveHeader = new short[1];
+            Buffer.BlockCopy(receiveBuffer, 0, receiveHeader, 0, 2);
+
+            switch (receiveHeader[0])
             {
-                byte[] transBuffer = new byte[26];
-                Buffer.BlockCopy(buffer, i * 26, transBuffer, 0, 26);
+                // Player Transform
+                case 0:
+                    byte[] buffer = new byte[recv - 2];
+                    Buffer.BlockCopy(receiveBuffer, 2, buffer, 0, buffer.Length);
 
-                try
-                {
-                    UnityMainThreadDispatcher.Instance().Enqueue(() => PlayerManager.UpdateOnNetPlayer(ref transBuffer));
-                }
-                catch (Exception ex)
-                {
-                    Debug.Log(ex.ToString());
-                    throw;
-                }
+                    for (int i = 0; i < recv / 26; i++)
+                    {
+                        byte[] transBuffer = new byte[26];
+                        Buffer.BlockCopy(buffer, i * 26, transBuffer, 0, 26);
+
+                        try
+                        {
+                            UnityMainThreadDispatcher.Instance().Enqueue(() => PlayerManager.UpdateOnNetPlayer(ref transBuffer));
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.Log(ex.ToString());
+                            throw;
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
             }
 
+            
+
         }
-        else
-        {
-            Debug.Log("IS NOT UPDATING");
-        }
+
+
         clientUDPReceive();
     }
 
-
-    /*
-    public static void ConPrint(byte[] buffer)
+    static void CalculateLatency(int operate)
     {
-        short[] shortBuffer = new short[1];
-        float[] fPos = { 0, 0, 0 };
-        float[] fRot = { 0, 0, 0 };
+        switch (operate)
+        {
+            case 0:
+                checkedLatency = 0.0f;
+                isStartedCalculateLatency = true;
+                break;
 
-        Buffer.BlockCopy(buffer, 0, shortBuffer, 0, 2);
-        Buffer.BlockCopy(buffer, 0 + 2, fPos, 0, fPos.Length * 4);
-        Buffer.BlockCopy(buffer, 0 + 2 + 12, fRot, 0, fRot.Length * 4);
+            case 1:
+                GameplayManager.instance.gameplayUIManager.UpdateLatency(checkedLatency);
+                isStartedCalculateLatency = false;
+                break;
 
-        Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
-        Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
-    }*/
+            default:
+                break;
+        }
+    }
 
     private void OnApplicationQuit()
     {

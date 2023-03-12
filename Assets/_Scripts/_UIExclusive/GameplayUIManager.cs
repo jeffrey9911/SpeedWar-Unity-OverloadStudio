@@ -18,6 +18,7 @@ public class GameplayUIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _speedValue;
     [SerializeField] private TextMeshProUGUI _gTimer;
     [SerializeField] private TextMeshProUGUI _gScore;
+    [SerializeField] private TextMeshProUGUI _netLatency;
 
     private void Awake()
     {
@@ -57,4 +58,14 @@ public class GameplayUIManager : MonoBehaviour
         string gScore = string.Format("{0:00000}", score);
         _gScore.text = gScore;
     }
+
+    public void UpdateLatency(float latency)
+    {
+        if(NetworkManager.isOnNetwork)
+        {
+
+            _netLatency.text = ((int)(latency * 1000)).ToString() + "ms";
+        }
+    }
+
 }
