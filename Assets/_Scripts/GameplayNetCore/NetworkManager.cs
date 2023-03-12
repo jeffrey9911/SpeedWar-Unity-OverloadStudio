@@ -34,7 +34,7 @@ public class NetworkManager : MonoBehaviour
     // Latency
     public float latencyDetectInterval = 1.0f;
     float latencyCheckTimer = 0.0f;
-    static float checkedLatency = 0.0f;
+    public static float checkedLatency = 0.0f;
     private static bool isStartedCalculateLatency = false;
 
 
@@ -101,7 +101,7 @@ public class NetworkManager : MonoBehaviour
         short[] header = { 0 };
 
         //string initString = GameplayManager.instance.playerManager.localPlayerName + "#" + GameplayManager.instance.playerManager.localPlayerKartID;
-        string initString = "TestTestName" + "#" + "003";
+        string initString = "TestTestName" + "#" + "006";
         Debug.Log("To Send: " + header[0].ToString() + initString);
         byte[] initByte = Encoding.ASCII.GetBytes(initString);
         byte[] initMsg = new byte[header.Length * 2 + initString.Length];
@@ -203,7 +203,7 @@ public class NetworkManager : MonoBehaviour
             case "Transform":
                 if (isLocalPlayerSetup)
                 {
-                    byte[] buffer = new byte[28];
+                    byte[] buffer = new byte[36];
                     short[] shortBuffer = { 0, localPlayerID };
                     Buffer.BlockCopy(shortBuffer, 0, buffer, 0, 4);
                     float[] playerTrans = { GameplayManager.instance.playerManager.localPlayer.transform.position.x,
@@ -211,8 +211,10 @@ public class NetworkManager : MonoBehaviour
                                         GameplayManager.instance.playerManager.localPlayer.transform.position.z,
                                         GameplayManager.instance.playerManager.localPlayer.transform.rotation.eulerAngles.x,
                                         GameplayManager.instance.playerManager.localPlayer.transform.rotation.eulerAngles.y,
-                                        GameplayManager.instance.playerManager.localPlayer.transform.rotation.eulerAngles.z};
-                    Buffer.BlockCopy(playerTrans, 0, buffer, 4, 24);
+                                        GameplayManager.instance.playerManager.localPlayer.transform.rotation.eulerAngles.z,
+                                        GameplayManager.instance.playerManager.localPlayer.GetComponent<KartController>().GetMoveAction().x,
+                                        GameplayManager.instance.playerManager.localPlayer.GetComponent<KartController>().GetMoveAction().y};
+                    Buffer.BlockCopy(playerTrans, 0, buffer, 4, 32);
                     clientUDPSocket.SendTo(buffer, remoteEP);
 
                     // First UDP sent
@@ -246,10 +248,10 @@ public class NetworkManager : MonoBehaviour
                     byte[] buffer = new byte[recv - 2];
                     Buffer.BlockCopy(receiveBuffer, 2, buffer, 0, buffer.Length);
 
-                    for (int i = 0; i < recv / 26; i++)
+                    for (int i = 0; i < recv / 34; i++)
                     {
-                        byte[] transBuffer = new byte[26];
-                        Buffer.BlockCopy(buffer, i * 26, transBuffer, 0, 26);
+                        byte[] transBuffer = new byte[34];
+                        Buffer.BlockCopy(buffer, i * 34, transBuffer, 0, 34);
 
                         try
                         {
@@ -293,6 +295,7 @@ public class NetworkManager : MonoBehaviour
                 break;
         }
     }
+
 
     private void OnApplicationQuit()
     {

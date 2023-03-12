@@ -5,6 +5,20 @@ using System.Text;
 using Unity.VisualScripting;
 using UnityEngine;
 
+public struct TransformState
+{
+    public Vector3 position;
+    public Vector3 rotation;
+    public Vector2 input;
+
+    public TransformState(Vector3 consPos, Vector3 consRot, Vector2 consIn)
+    {
+        position = consPos;
+        rotation = consRot;
+        input = consIn;
+    }
+}
+
 public class PlayerManager : MonoBehaviour
 {
     public static Transform _spawnPos;
@@ -92,27 +106,31 @@ public class PlayerManager : MonoBehaviour
 
         foreach (string player in players)
         {
-            Debug.Log(player);
+            //Debug.Log(player);
             string[] pInfo = player.Split(",");
-
+            short id = short.Parse(pInfo[0]);
+            if(id != NetworkManager.localPlayerID)
+            {
+                if(onNetPlayerDList.ContainsKey(id))
+                {
+                    if (onNetPlayerDList[id].playerID != id) onNetPlayerDList[id].playerID = id;
+                    if (onNetPlayerDList[id].playerName != pInfo[1]) onNetPlayerDList[id].playerName = pInfo[1];
+                    if (onNetPlayerDList[id].playerKartID != pInfo[2]) onNetPlayerDList[id].playerKartID = pInfo[2];
+                }
+                else
+                {
+                    var _kartKAM = GameplayManager.instance.kartAssetManager.getKart(pInfo[2]);
+                    NetPlayer newPlayer = Instantiate(_kartKAM.AssetPrefab, _spawnPos.position, _spawnPos.rotation).AddComponent<NetPlayer>();
+                    newPlayer.playerObj.GetComponent<KartController>().spawnMode = 2;
+                    newPlayer.playerID = id;
+                    newPlayer.playerName = pInfo[1];
+                    newPlayer.playerKartID = pInfo[2];
+                    onNetPlayerDList.Add(id, newPlayer);
+                }
+            }
         }
 
-        /*
-        short[] header = new short[1];
-        Buffer.BlockCopy(spawnInfo, 0, header, 0, header.Length);
-        string[] contents = Encoding.ASCII.GetString(spawnInfo, 2, spawnInfo.Length - 2).Split("#");
-        Debug.Log("Player Spawn ID: " + header[0] + " Name: " + contents[0] + " KartID: " + contents[1]);
-        var _kartKAM = GameplayManager.instance.kartAssetManager.getKart(contents[1]);
-        NetPlayer netPlayer = Instantiate(_kartKAM.AssetPrefab, _spawnPos.position, _spawnPos.rotation).AddComponent<NetPlayer>();
-        Destroy(netPlayer.playerObj.GetComponent<KartController>());
-        netPlayer.playerID = header[0];
-        netPlayer.playerName = contents[0];
-        netPlayer.playerKartID = contents[1];
-        
-
-        onNetPlayerDList.Add(header[0], netPlayer);*/
-        //onNetPlayerDList[playerID].transform.position = new Vector3(posX, posY, posZ);
-        //onNetPlayerDList[playerID].transform.rotation = Quaternion.Euler(new Vector3(rotX, rotY, rotZ));
+        spawnInfo = null;
     }
 
     public static void UpdateOnNetPlayer(ref byte[] buffer)
@@ -133,33 +151,32 @@ public class PlayerManager : MonoBehaviour
         //Debug.Log("LocalID: " + NetworkManager.localPlayerID + " IDin: " + shortBuffer[0] + " is in?: " + onNetPlayerDList.ContainsKey(playerIDin));
 
 
-        if (playerIDin != NetworkManager.localPlayerID)
+        if (playerIDin != NetworkManager.localPlayerID && onNetPlayerDList.ContainsKey(shortBuffer[0]))
         {
             float[] fPos = { 0, 0, 0 };
             float[] fRot = { 0, 0, 0 };
-
+            float[] fInput = { 0, 0 };
 
 
             Buffer.BlockCopy(buffer, 0 + 2, fPos, 0, fPos.Length * 4);
             Buffer.BlockCopy(buffer, 0 + 2 + 12, fRot, 0, fRot.Length * 4);
-
+            Buffer.BlockCopy(buffer, 0 + 2 + 12 + 12, fInput, 0, fInput.Length * 4);
+            
             Debug.Log(shortBuffer[0] + ": " + fPos[0] + " " + fPos[1] + " " + fPos[2]);
             Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
+            Debug.Log(shortBuffer[0] + ": " + fInput[0] + " " + fInput[1]);
+            
+            onNetPlayerDList[shortBuffer[0]].ServerStateUpdate(new Vector3(fPos[0], fPos[1], fPos[2]), new Vector3(fRot[0], fRot[1], fRot[2]), new Vector2(fInput[0], fInput[1]));
 
-
-            if (onNetPlayerDList.ContainsKey(shortBuffer[0]))
-            {
-                onNetPlayerDList[shortBuffer[0]].playerObj.transform.position = new Vector3(fPos[0], fPos[1], fPos[2]);
-                onNetPlayerDList[shortBuffer[0]].playerObj.transform.rotation = Quaternion.Euler(new Vector3(fRot[0], fRot[1], fRot[2]));
-            }
 
             fPos = null;
             fRot = null;
-
+            fInput = null;
             //Array.Clear(fPos, 0, fPos.Length);
             //Array.Clear(fRot, 0, fRot.Length);
         }
 
+        shortBuffer = null;
         buffer = null;
         //Array.Clear(shortBuffer, 0, shortBuffer.Length);
     }

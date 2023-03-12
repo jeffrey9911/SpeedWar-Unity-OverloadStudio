@@ -42,7 +42,7 @@ public class KartStat : MonoBehaviour
     public void setupKart(KartAsset _kart)
     {
         GameObject spawnedKart = Instantiate(_kart.AssetPrefab, this.transform.position, Quaternion.identity);
-        spawnedKart.GetComponent<KartController>().isOnDisplay = true;
+        spawnedKart.GetComponent<KartController>().spawnMode = 1;
         spawnedKart.GetComponent<KartController>().onDisplayScale = 0.9f;
         spawnedKart.transform.SetParent(this.transform);
         spawnedKart.transform.localPosition = Vector3.zero;

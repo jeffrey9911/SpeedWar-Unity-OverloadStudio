@@ -14,7 +14,7 @@ public class KartController : MonoBehaviour
     public short displayPlayerID;
 
     [Header("Manager Systems")]
-    [SerializeField] public bool isOnDisplay = false;
+    [SerializeField] public int spawnMode = 0;
     [SerializeField] public float onDisplayScale = 1.0f;
     public GameObject _gameManager;
     [SerializeField] private bool isOnNetwork = false;
@@ -114,38 +114,55 @@ public class KartController : MonoBehaviour
     {
         //isOnNetwork = PunManager.instance.isOnNetWork;
 
-        if(!isOnDisplay)
+        switch (spawnMode)
         {
-            inputActions = KartInputController.inst_controller.inputActions;
+            // Local Player
+            case 0:
+                inputActions = KartInputController.inst_controller.inputActions;
 
-            //inputActions
-            inputActions.Player.Move.performed += context => moveActionVector = context.ReadValue<Vector2>();
-            inputActions.Player.Move.canceled += context => moveActionVector = Vector2.zero;
+                //inputActions
+                inputActions.Player.Move.performed += context => moveActionVector = context.ReadValue<Vector2>();
+                inputActions.Player.Move.canceled += context => moveActionVector = Vector2.zero;
 
-            inputActions.Player.Handbrake.performed += context => isHandbrake = true;
-            inputActions.Player.Handbrake.canceled += context => isHandbrake = false;
+                inputActions.Player.Handbrake.performed += context => isHandbrake = true;
+                inputActions.Player.Handbrake.canceled += context => isHandbrake = false;
 
 
 
-            GameObject.FindGameObjectWithTag("LocalCamera").GetComponent<CameraController>()._cameraTrans = this.transform.Find("camController").Find("camTrans").transform;
-            GameObject.FindGameObjectWithTag("LocalCamera").GetComponent<CameraController>()._cameraRotator = this.transform.Find("camController").transform;
+                GameObject.FindGameObjectWithTag("LocalCamera").GetComponent<CameraController>()._cameraTrans = this.transform.Find("camController").Find("camTrans").transform;
+                GameObject.FindGameObjectWithTag("LocalCamera").GetComponent<CameraController>()._cameraRotator = this.transform.Find("camController").transform;
 
-            _rigidbody = GetComponent<Rigidbody>();
-            if (vehicle_centre != null && _rigidbody != null)
-            {
-                //_rigidbody.centerOfMass = vehicle_centre.localPosition;
-                _rigidbody.mass = kartWeight;
-            }
+                _rigidbody = GetComponent<Rigidbody>();
+                if (vehicle_centre != null && _rigidbody != null)
+                {
+                    //_rigidbody.centerOfMass = vehicle_centre.localPosition;
+                    _rigidbody.mass = kartWeight;
+                }
 
-            AchievementObserver fastObserver = new AchievementObserver(this.gameObject, new fastPoints());
-            _publisher.AddObserver(fastObserver);
+                AchievementObserver fastObserver = new AchievementObserver(this.gameObject, new fastPoints());
+                _publisher.AddObserver(fastObserver);
 
-            AchievementObserver driftObserver = new AchievementObserver(this.gameObject, new driftPoints());
-            _publisher.AddObserver(driftObserver);
-        }
-        else
-        {
-            this.transform.localScale = new Vector3(onDisplayScale, onDisplayScale, onDisplayScale);
+                AchievementObserver driftObserver = new AchievementObserver(this.gameObject, new driftPoints());
+                _publisher.AddObserver(driftObserver);
+                break;
+
+            // Display mode
+            case 1:
+                this.transform.localScale = new Vector3(onDisplayScale, onDisplayScale, onDisplayScale);
+                break;
+            
+            // On Net Player
+            case 2:
+                _rigidbody = GetComponent<Rigidbody>();
+                if (vehicle_centre != null && _rigidbody != null)
+                {
+                    //_rigidbody.centerOfMass = vehicle_centre.localPosition;
+                    _rigidbody.mass = kartWeight;
+                }
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -182,49 +199,59 @@ public class KartController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(!isOnDisplay)
+        switch (spawnMode)
         {
-            if (isUsingAntiRoll) AntiRoll();
-            KartMove(moveActionVector);
-            UpdateVelocity();
-            UpdateGameplayUI();
+            // Local player
+            case 0:
+                if (isUsingAntiRoll) AntiRoll();
+                KartMove(moveActionVector);
+                UpdateVelocity();
+                UpdateGameplayUI();
 
 
-            if (isBoosted)
-            {
-                if (timeCounter <= 0)
+                if (isBoosted)
                 {
-                    for (int i = 0; i < exhaustTransList.Count; i++)
+                    if (timeCounter <= 0)
                     {
-                        GameObject exFire;
+                        for (int i = 0; i < exhaustTransList.Count; i++)
+                        {
+                            GameObject exFire;
 
-                        exFire = ObjectPool.instance.SpawnFromPool("BoostFire", exhaustTransList[i].position, Quaternion.identity);
+                            exFire = ObjectPool.instance.SpawnFromPool("BoostFire", exhaustTransList[i].position, Quaternion.identity);
 
 
-                        exFire.GetComponent<ExhaustFire>().SetTimedActive();
-                        Rigidbody exFireRb = exFire.GetComponent<Rigidbody>();
+                            exFire.GetComponent<ExhaustFire>().SetTimedActive();
+                            Rigidbody exFireRb = exFire.GetComponent<Rigidbody>();
 
-                        exFireRb.velocity = Vector3.zero;
+                            exFireRb.velocity = Vector3.zero;
 
-                        exFireRb.AddForce(exhaustTransList[i].forward.normalized, ForceMode.Impulse);
+                            exFireRb.AddForce(exhaustTransList[i].forward.normalized, ForceMode.Impulse);
+                        }
+                        timeCounter += fireTimeInterval;
+
                     }
-                    timeCounter += fireTimeInterval;
+                    else
+                    {
+                        timeCounter -= Time.deltaTime;
+                    }
 
                 }
-                else
+
+                if (kartSpeed > 100.0f || isHandbrake)
                 {
-                    timeCounter -= Time.deltaTime;
+                    _publisher.Notify();
                 }
+                break;
 
-            }
+            // Net player
+            case 2:
+                if (isUsingAntiRoll) AntiRoll();
+                KartMove(moveActionVector);
+                break;
 
-            if (kartSpeed > 100.0f || isHandbrake)
-            {
-                _publisher.Notify();
-            }
+            default:
+                break;
         }
-
-        
     }
 
 
@@ -462,5 +489,19 @@ public class KartController : MonoBehaviour
 
         steerSensitivity = control;
         kartWeight = weight;
+    }
+
+    public void UpdateMoveAction(Vector2 input)
+    {
+        if(spawnMode == 2)
+        {
+            moveActionVector = input;
+        }
+        
+    }
+
+    public Vector2 GetMoveAction()
+    {
+        return moveActionVector;
     }
 }
