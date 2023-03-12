@@ -44,20 +44,20 @@ public class NetPlayer : MonoBehaviour
         {
             timeDifference = GameplayManager.instance.networkManager.sendInterval + NetworkManager.checkedLatency;
             this.transform.position = Vector3.Lerp(serverState.position, processedState.position, timer / timeDifference);
-            this.transform.rotation = Quaternion.Euler(Vector3.Lerp(serverState.rotation, processedState.rotation, timer / timeDifference));
+            this.transform.rotation = Quaternion.Lerp(serverState.rotation, processedState.rotation, timer / timeDifference);
             this.transform.GetComponent<KartController>().UpdateMoveAction(Vector2.Lerp(serverState.input, processedState.input, timer / timeDifference));
         }
     }
 
-    public void ServerStateUpdate(Vector3 pos, Vector3 rot, Vector2 input)
+    public void ServerStateUpdate(Vector3 pos, Quaternion rot, Vector2 input)
     {
         obsoleteState = serverState;
         serverState = new TransformState(pos, rot, input);
         processedState.position = serverState.position + (serverState.position - obsoleteState.position);
-        processedState.rotation = serverState.rotation + (serverState.rotation - obsoleteState.rotation);
+        processedState.rotation = serverState.rotation * (serverState.rotation * Quaternion.Inverse(obsoleteState.rotation));
         processedState.input = serverState.input + (serverState.input - obsoleteState.input);
         this.transform.position = pos;
-        this.transform.rotation = Quaternion.Euler(rot);
+        this.transform.rotation = rot;
         timer = 0;
     }
 

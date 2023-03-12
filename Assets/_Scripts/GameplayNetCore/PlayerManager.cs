@@ -8,10 +8,10 @@ using UnityEngine;
 public struct TransformState
 {
     public Vector3 position;
-    public Vector3 rotation;
+    public Quaternion rotation;
     public Vector2 input;
 
-    public TransformState(Vector3 consPos, Vector3 consRot, Vector2 consIn)
+    public TransformState(Vector3 consPos, Quaternion consRot, Vector2 consIn)
     {
         position = consPos;
         rotation = consRot;
@@ -166,7 +166,7 @@ public class PlayerManager : MonoBehaviour
             Debug.Log(shortBuffer[0] + ": " + fRot[0] + " " + fRot[1] + " " + fRot[2]);
             Debug.Log(shortBuffer[0] + ": " + fInput[0] + " " + fInput[1]);
             
-            onNetPlayerDList[shortBuffer[0]].ServerStateUpdate(new Vector3(fPos[0], fPos[1], fPos[2]), new Vector3(fRot[0], fRot[1], fRot[2]), new Vector2(fInput[0], fInput[1]));
+            onNetPlayerDList[shortBuffer[0]].ServerStateUpdate(new Vector3(fPos[0], fPos[1], fPos[2]), Quaternion.Euler(new Vector3(fRot[0], fRot[1], fRot[2])), new Vector2(fInput[0], fInput[1]));
 
 
             fPos = null;
