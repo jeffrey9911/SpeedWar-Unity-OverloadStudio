@@ -65401,6 +65401,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localPlayer: {fileID: 0}
+  localPlayerName: 
+  localPlayerKartID: 
 --- !u!1 &4019572092117209607
 GameObject:
   m_ObjectHideFlags: 0
@@ -65482,7 +65484,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   displayedPlayerID: 0
-  sendInterval: 0.2
+  sendInterval: 2
   latencyDetectInterval: 1
 --- !u!114 &4019572092117209627
 MonoBehaviour:

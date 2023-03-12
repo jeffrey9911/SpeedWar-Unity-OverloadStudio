@@ -41,7 +41,6 @@ public class NetworkManager : MonoBehaviour
     private static bool isUDPReceiving = false;
     private static bool isLocalPlayerSetup = false;
 
-
     // Start is called before the first frame update
     void Start()
     {
@@ -50,7 +49,7 @@ public class NetworkManager : MonoBehaviour
             IPAddress ip;
             //ip = IPAddress.Parse("192.168.2.43");
             ip = Dns.GetHostAddresses("jeffrey9911.ddns.net")[0];
-            Debug.Log(ip.Address.ToString());
+            Debug.Log(ip.Address);
             remoteEP = new IPEndPoint(ip, 12581);
 
             clientTCPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -65,29 +64,31 @@ public class NetworkManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        udpTimer += Time.deltaTime;
-        latencyCheckTimer += Time.deltaTime;
-
-        if(isLocalPlayerSetup && udpTimer >= sendInterval)
+        if(isOnNetwork)
         {
-            clientUDPSend("Transform");
+            udpTimer += Time.deltaTime;
+            latencyCheckTimer += Time.deltaTime;
 
-            udpTimer -= sendInterval;
+            if (isLocalPlayerSetup && udpTimer >= sendInterval)
+            {
+                clientUDPSend("Transform");
+
+                udpTimer -= sendInterval;
+            }
+
+            if (latencyCheckTimer >= latencyDetectInterval)
+            {
+
+                clientTCPSend("Latency");
+                latencyCheckTimer -= latencyDetectInterval;
+            }
+
+            if (isStartedCalculateLatency)
+            {
+                checkedLatency += Time.deltaTime;
+            }
+            displayedPlayerID = localPlayerID;
         }
-
-        if(latencyCheckTimer >= latencyDetectInterval)
-        {
-
-            clientTCPSend("Latency");
-            latencyCheckTimer -= latencyDetectInterval;
-        }
-
-        if(isStartedCalculateLatency)
-        {
-            checkedLatency += Time.deltaTime;
-        }
-
-        
         
     }
 
@@ -98,13 +99,16 @@ public class NetworkManager : MonoBehaviour
         Debug.Log("Connected!");
 
         short[] header = { 0 };
-        byte[] playerName = Encoding.ASCII.GetBytes("TestPlayerName");
 
-        byte[] initMsg = new byte[header.Length * 2 + playerName.Length];
+        //string initString = GameplayManager.instance.playerManager.localPlayerName + "#" + GameplayManager.instance.playerManager.localPlayerKartID;
+        string initString = "TestTestName" + "#" + "003";
+        Debug.Log("To Send: " + header[0].ToString() + initString);
+        byte[] initByte = Encoding.ASCII.GetBytes(initString);
+        byte[] initMsg = new byte[header.Length * 2 + initString.Length];
 
         Buffer.BlockCopy(header, 0, initMsg, 0, header.Length * 2);
 
-        Buffer.BlockCopy(playerName, 0, initMsg, header.Length * 2, playerName.Length);
+        Buffer.BlockCopy(initByte, 0, initMsg, header.Length * 2, initByte.Length);
 
         clientSocket.Send(initMsg);
 
@@ -132,9 +136,9 @@ public class NetworkManager : MonoBehaviour
             {
                 // First Login
                 case 0:
-                    byte[] byContent = new byte[recv - 2];
-                    Buffer.BlockCopy(buffer, 2, byContent, 0, byContent.Length);
-                    Buffer.BlockCopy(byContent, 0, shortBuffer, 0, byContent.Length);
+                    byte[] idInfo = new byte[recv - 2];
+                    Buffer.BlockCopy(buffer, 2, idInfo, 0, idInfo.Length);
+                    Buffer.BlockCopy(idInfo, 0, shortBuffer, 0, idInfo.Length);
                     if (shortBuffer[0] >= 1000) localPlayerID = shortBuffer[0];
                     Debug.Log("PlayerID Set TO:" + localPlayerID);
                     isLocalPlayerSetup = true;
@@ -142,6 +146,12 @@ public class NetworkManager : MonoBehaviour
                     break;
 
                 case 1:
+                    byte[] newPlayerInfo = new byte[recv - 2];
+                    Buffer.BlockCopy(buffer, 2, newPlayerInfo, 0, recv - 2);
+                    UnityMainThreadDispatcher.Instance().Enqueue(() => PlayerManager.CheckPlayerDList(ref newPlayerInfo));
+                    break;
+
+                case 9:
                     UnityMainThreadDispatcher.Instance().Enqueue(() => CalculateLatency(1));
                     break;
 
@@ -153,6 +163,7 @@ public class NetworkManager : MonoBehaviour
         catch (Exception ex)
         {
             Debug.Log(ex.ToString());
+            throw;
         }
 
         clientTCPReceive();
@@ -166,7 +177,7 @@ public class NetworkManager : MonoBehaviour
                 if(!isStartedCalculateLatency)
                 {
                     byte[] buffer = new byte[2];
-                    short[] shortBuffer = { 1 };
+                    short[] shortBuffer = { 9 };
                     Buffer.BlockCopy(shortBuffer, 0, buffer, 0, buffer.Length);
 
                     clientTCPSocket.Send(buffer);
@@ -288,5 +299,6 @@ public class NetworkManager : MonoBehaviour
         cts.Cancel();
         clientTCPSocket.Close();
         clientUDPSocket.Close();
+        Destroy(UnityMainThreadDispatcher.Instance());
     }
 }
