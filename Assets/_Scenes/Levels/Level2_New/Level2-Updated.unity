@@ -65484,7 +65484,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   displayedPlayerID: 0
-  sendInterval: 2
+  sendInterval: 0.5
   latencyDetectInterval: 1
 --- !u!114 &4019572092117209627
 MonoBehaviour:
