@@ -22,7 +22,7 @@ public struct TransformState
 public class PlayerManager : MonoBehaviour
 {
     public static Transform _spawnPos;
-    public static string _defaultKartID = "006";
+    public static string _defaultKartID = "007";
 
     public struct InputState
     {
@@ -40,8 +40,7 @@ public class PlayerManager : MonoBehaviour
     
 
     public GameObject localPlayer;
-    public string localPlayerName;
-    public string localPlayerKartID;
+    
 
 
 
@@ -61,21 +60,24 @@ public class PlayerManager : MonoBehaviour
 
             if (SceneDataManager.instance.getData(SceneData.SelectedMode) == "Online")
             {
+                Debug.Log("Play Online Mode!");
+                NetworkManager networkManager = GameplayManager.instance.gameObject.AddComponent<NetworkManager>();
                 NetworkManager.isOnNetwork = true;
             }
 
             if (SceneDataManager.instance.getData(SceneData.SelectedMode) == "Offline")
             {
-                NetworkManager.isOnNetwork = false;
+                //NetworkManager.isOnNetwork = false;
             }
 
 
             _spawnPrefab = SceneDataManager.instance.kartAssetManager.getKart(SceneDataManager.instance.getData(SceneData.SelectedKart)).AssetPrefab;
-            localPlayerName = "Tees";
-            localPlayerKartID = SceneData.SelectedKart;
+            
 
             if (_spawnPrefab == null)
                 _spawnPrefab = SceneDataManager.instance.kartAssetManager.getKart(_defaultKartID).AssetPrefab;
+
+
         }
         else
         {
@@ -91,9 +93,18 @@ public class PlayerManager : MonoBehaviour
     private void PlayerSpawn()
     {
         
+        
+        KartAsset _kartKAM;
+        if(SceneDataManager.instance)
+        {
+            _kartKAM = SceneDataManager.instance.kartAssetManager.getKart(SceneDataManager.instance.getData(SceneData.SelectedKart));
+        }
+        else
+        {
+            _kartKAM = GameplayManager.instance.kartAssetManager.getKart(_defaultKartID);
+        }
         localPlayer = Instantiate(_spawnPrefab, _spawnPos.position, _spawnPos.rotation);
 
-        var _kartKAM = GameplayManager.instance.kartAssetManager.getKart(_defaultKartID);
         localPlayer.gameObject.GetComponent<KartController>().KartSetup(_kartKAM._acceleration, _kartKAM._maxSpeed, _kartKAM._drift, _kartKAM._control, _kartKAM._weight);
 
         localPlayer.GetComponent<KartController>()._gameManager = GameplayManager.instance._gameManager;

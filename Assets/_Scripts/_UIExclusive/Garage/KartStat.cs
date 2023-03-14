@@ -20,6 +20,8 @@ public class KartStat : MonoBehaviour
 
     [SerializeField] private List<RectTransform> lines = new List<RectTransform>();
 
+    private GameObject spawnedKart;
+
     private void FixedUpdate()
     {
         if(rotAng >= 360.0f)
@@ -41,7 +43,8 @@ public class KartStat : MonoBehaviour
 
     public void setupKart(KartAsset _kart)
     {
-        GameObject spawnedKart = Instantiate(_kart.AssetPrefab, this.transform.position, Quaternion.identity);
+        if(spawnedKart != null) Destroy(spawnedKart);
+        spawnedKart = Instantiate(_kart.AssetPrefab, this.transform.position, this.transform.rotation);
         spawnedKart.GetComponent<KartController>().spawnMode = 1;
         spawnedKart.GetComponent<KartController>().onDisplayScale = 0.9f;
         spawnedKart.transform.SetParent(this.transform);

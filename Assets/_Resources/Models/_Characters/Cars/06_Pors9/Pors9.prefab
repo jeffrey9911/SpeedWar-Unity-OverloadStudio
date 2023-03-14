@@ -277,7 +277,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bba319cc1cea656418c8606c4da7b85e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isOnDisplay: 0
+  displayPlayerID: 0
+  spawnMode: 0
   onDisplayScale: 1
   _gameManager: {fileID: 0}
   isOnNetwork: 0
@@ -666,7 +667,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6331159483386575537}
   m_LocalRotation: {x: 0.04721303, y: 0.0000000037252899, z: -3.222169e-10, w: 0.9988849}
-  m_LocalPosition: {x: 0, y: 1.98, z: -5.385}
+  m_LocalPosition: {x: -0, y: 1.7, z: -4.42}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

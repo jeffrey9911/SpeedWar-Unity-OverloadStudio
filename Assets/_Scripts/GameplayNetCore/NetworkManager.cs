@@ -28,7 +28,7 @@ public class NetworkManager : MonoBehaviour
 
 
     // UDP Send
-    public float sendInterval = 1.0f;
+    public float sendInterval = 0.4f;
     float udpTimer = 0.0f;
 
     // Latency
@@ -41,22 +41,52 @@ public class NetworkManager : MonoBehaviour
     private static bool isUDPReceiving = false;
     private static bool isLocalPlayerSetup = false;
 
+    private static string localPlayerName = "DefualtName";
+    private static string localPlayerKartID = "008";
+
     // Start is called before the first frame update
     void Start()
     {
-        if(isOnNetwork)
+        
+    }
+
+    private void Awake()
+    {
+        if (SceneDataManager.instance)
         {
-            IPAddress ip;
-            //ip = IPAddress.Parse("192.168.2.43");
-            ip = Dns.GetHostAddresses("jeffrey9911.ddns.net")[0];
-            Debug.Log(ip.Address);
-            remoteEP = new IPEndPoint(ip, 12581);
+            if (SceneDataManager.instance.getData(SceneData.SelectedMode) == "Online")
+            {
+                IPAddress ip;
+                //ip = IPAddress.Parse("192.168.2.43");
+                ip = Dns.GetHostAddresses("jeffrey9911.ddns.net")[0];
+                Debug.Log(ip.Address);
+                remoteEP = new IPEndPoint(ip, 12581);
 
-            clientTCPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            clientUDPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                clientTCPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                clientUDPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+                localPlayerName = SceneDataManager.instance.getData(SceneData.SelectedName);
+                localPlayerKartID = SceneDataManager.instance.getData(SceneData.SelectedKart);
+
+                Task.Run(() => { clientTCPConnect(clientTCPSocket, remoteEP); }, cts.Token);        // TCP Connect Thread
+            }
+        }
+        else
+        {
+            if (isOnNetwork)
+            {
+                IPAddress ip;
+                //ip = IPAddress.Parse("192.168.2.43");
+                ip = Dns.GetHostAddresses("jeffrey9911.ddns.net")[0];
+                Debug.Log(ip.Address);
+                remoteEP = new IPEndPoint(ip, 12581);
+
+                clientTCPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                clientUDPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
 
-            Task.Run(() => { clientTCPConnect(clientTCPSocket, remoteEP); }, cts.Token);        // TCP Connect Thread
+                Task.Run(() => { clientTCPConnect(clientTCPSocket, remoteEP); }, cts.Token);        // TCP Connect Thread
+            }
         }
     }
 
@@ -101,7 +131,11 @@ public class NetworkManager : MonoBehaviour
         short[] header = { 0 };
 
         //string initString = GameplayManager.instance.playerManager.localPlayerName + "#" + GameplayManager.instance.playerManager.localPlayerKartID;
-        string initString = "TestTestName" + "#" + "006";
+        if(SceneDataManager.instance)
+        {
+
+        }
+        string initString = localPlayerName + "#" + localPlayerKartID;
         Debug.Log("To Send: " + header[0].ToString() + initString);
         byte[] initByte = Encoding.ASCII.GetBytes(initString);
         byte[] initMsg = new byte[header.Length * 2 + initString.Length];

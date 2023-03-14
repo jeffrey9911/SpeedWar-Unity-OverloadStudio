@@ -411,8 +411,6 @@ GameObject:
   - component: {fileID: 1797814507197140501}
   - component: {fileID: 1797814507197140500}
   - component: {fileID: 1797814507197140499}
-  - component: {fileID: -7927658096776431807}
-  - component: {fileID: -4603809118373810767}
   m_Layer: 0
   m_Name: FerraPort
   m_TagString: Player
@@ -467,7 +465,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bba319cc1cea656418c8606c4da7b85e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isOnDisplay: 0
+  displayPlayerID: 0
+  spawnMode: 0
   onDisplayScale: 1
   _gameManager: {fileID: 0}
   isOnNetwork: 0
@@ -511,62 +510,6 @@ MonoBehaviour:
   sSpringConstant: 37500
   sSpringDamper: 4500
   isUsingAntiRoll: 1
---- !u!114 &-7927658096776431807
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1797814507197140498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents:
-  - {fileID: -4603809118373810767}
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
---- !u!114 &-4603809118373810767
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1797814507197140498}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8efc6b1d64977384eb3405357896c656, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PositionModel:
-    SynchronizeEnabled: 1
-    TeleportEnabled: 1
-    TeleportIfDistanceGreaterThan: 3
-    InterpolateOption: 2
-    InterpolateMoveTowardsSpeed: 1
-    InterpolateLerpSpeed: 1
-    ExtrapolateOption: 0
-    ExtrapolateSpeed: 1
-    ExtrapolateIncludingRoundTripTime: 1
-    ExtrapolateNumberOfStoredPositions: 1
-  m_RotationModel:
-    SynchronizeEnabled: 1
-    InterpolateOption: 1
-    InterpolateRotateTowardsSpeed: 180
-    InterpolateLerpSpeed: 5
-  m_ScaleModel:
-    SynchronizeEnabled: 0
-    InterpolateOption: 0
-    InterpolateMoveTowardsSpeed: 1
-    InterpolateLerpSpeed: 0
 --- !u!1 &1797814507454232151
 GameObject:
   m_ObjectHideFlags: 0
@@ -770,7 +713,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5143428384124434292}
   m_LocalRotation: {x: 0.069750614, y: -0, z: -0.000000003980688, w: 0.99756444}
-  m_LocalPosition: {x: 0, y: 1.77, z: -4.28}
+  m_LocalPosition: {x: 0, y: 1.77, z: -4.61}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -788,7 +731,11 @@ GameObject:
   - component: {fileID: 4628218195594455495}
   - component: {fileID: 8616899531451606626}
   - component: {fileID: 5796580435860902568}
-  - component: {fileID: 8616899531451606627}
+  - component: {fileID: 3832617198088076476}
+  - component: {fileID: 3989598455251609403}
+  - component: {fileID: 5507541829188173913}
+  - component: {fileID: 894040022030391188}
+  - component: {fileID: 7072772136394103835}
   m_Layer: 0
   m_Name: SportsCar2
   m_TagString: KartCollider
@@ -876,8 +823,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &8616899531451606627
-MeshCollider:
+--- !u!65 &3832617198088076476
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -886,10 +833,61 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -4696667188155458734, guid: 2d21ec7f8b107d9428cfd866216cdf23, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 37.489468, y: 10.782997, z: 10.155067}
+  m_Center: {x: 0.12383461, y: -2.50893, z: 53.032856}
+--- !u!65 &3989598455251609403
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5436244156053222269}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 37.489468, y: 3.4320545, z: 63.449707}
+  m_Center: {x: 0.12383461, y: 5.166328, z: 16.44043}
+--- !u!65 &5507541829188173913
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5436244156053222269}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 37.489468, y: 8.945261, z: 35.234375}
+  m_Center: {x: 0.12383461, y: -1.8062633, z: 15.197144}
+--- !u!65 &894040022030391188
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5436244156053222269}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 37.489468, y: 12.512629, z: 10.587425}
+  m_Center: {x: 0.12383461, y: 0.30172825, z: -23.179455}
+--- !u!65 &7072772136394103835
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5436244156053222269}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 37.489468, y: 4.621179, z: 45.720825}
+  m_Center: {x: 0.12383461, y: 9.976872, z: -1.7208862}
 --- !u!1 &5962254332585585387
 GameObject:
   m_ObjectHideFlags: 0
@@ -1117,7 +1115,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8700794623328135935}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.05999756}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

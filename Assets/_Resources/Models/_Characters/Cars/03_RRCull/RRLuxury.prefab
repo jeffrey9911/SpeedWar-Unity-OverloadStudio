@@ -442,8 +442,6 @@ GameObject:
   - component: {fileID: 2279894067461655157}
   - component: {fileID: 9098647923911600450}
   - component: {fileID: 2264713164017375684}
-  - component: {fileID: 8271329388659022544}
-  - component: {fileID: 765924467214216276}
   m_Layer: 0
   m_Name: RRLuxury
   m_TagString: Untagged
@@ -498,7 +496,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bba319cc1cea656418c8606c4da7b85e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isOnDisplay: 0
+  displayPlayerID: 0
+  spawnMode: 0
   onDisplayScale: 1
   _gameManager: {fileID: 0}
   isOnNetwork: 0
@@ -540,62 +539,6 @@ MonoBehaviour:
   sSpringConstant: 37500
   sSpringDamper: 4500
   isUsingAntiRoll: 1
---- !u!114 &8271329388659022544
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2279894067461655158}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents:
-  - {fileID: 765924467214216276}
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
---- !u!114 &765924467214216276
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2279894067461655158}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8efc6b1d64977384eb3405357896c656, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PositionModel:
-    SynchronizeEnabled: 1
-    TeleportEnabled: 1
-    TeleportIfDistanceGreaterThan: 3
-    InterpolateOption: 2
-    InterpolateMoveTowardsSpeed: 1
-    InterpolateLerpSpeed: 1
-    ExtrapolateOption: 0
-    ExtrapolateSpeed: 1
-    ExtrapolateIncludingRoundTripTime: 1
-    ExtrapolateNumberOfStoredPositions: 1
-  m_RotationModel:
-    SynchronizeEnabled: 1
-    InterpolateOption: 1
-    InterpolateRotateTowardsSpeed: 180
-    InterpolateLerpSpeed: 5
-  m_ScaleModel:
-    SynchronizeEnabled: 0
-    InterpolateOption: 0
-    InterpolateMoveTowardsSpeed: 1
-    InterpolateLerpSpeed: 0
 --- !u!1 &2279894067971827480
 GameObject:
   m_ObjectHideFlags: 0
@@ -755,7 +698,11 @@ GameObject:
   - component: {fileID: 4311765795148117718}
   - component: {fileID: 898929577356999027}
   - component: {fileID: 3142761547464723897}
-  - component: {fileID: 8274569339240434008}
+  - component: {fileID: 9167048078387058299}
+  - component: {fileID: 124889695729769422}
+  - component: {fileID: 9137490287444275565}
+  - component: {fileID: 6719665644957595136}
+  - component: {fileID: 5208628234373380725}
   m_Layer: 0
   m_Name: rollsroycetest
   m_TagString: KartCollider
@@ -829,8 +776,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &8274569339240434008
-MeshCollider:
+--- !u!65 &9167048078387058299
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -839,10 +786,61 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -462981019419857548, guid: e73ace2db54a33147babcc7eb414c75d, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 6.230186, y: 2.5203056, z: 0.96826077}
+  m_Center: {x: 0.0048287706, y: -0.4736318, z: -5.800084}
+--- !u!65 &124889695729769422
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3503141394829798508}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 6.230186, y: 1.538601, z: 6.0834317}
+  m_Center: {x: 0.0048287706, y: -1.2572702, z: 0.7359866}
+--- !u!65 &9137490287444275565
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3503141394829798508}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 6.230186, y: 1.4008192, z: 11.680866}
+  m_Center: {x: 0.0048287706, y: 0.46501416, z: 0.65847754}
+--- !u!65 &6719665644957595136
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3503141394829798508}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 6.230186, y: 3.3642247, z: 1.2782637}
+  m_Center: {x: 0.0048287706, y: -0.086117834, z: 7.409833}
+--- !u!65 &5208628234373380725
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3503141394829798508}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 6.230186, y: 1.1080316, z: 7.065137}
+  m_Center: {x: 0.0048287706, y: 1.8686757, z: 2.966345}
 --- !u!1 &6383345090368142068
 GameObject:
   m_ObjectHideFlags: 0
@@ -1040,11 +1038,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7595217845307931886, guid: 9074e7adee4154ddd8a607b45abc4c19, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.68
+      value: 1.72
       objectReference: {fileID: 0}
     - target: {fileID: 7595217845307931886, guid: 9074e7adee4154ddd8a607b45abc4c19, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.12
+      value: -5.34
       objectReference: {fileID: 0}
     - target: {fileID: 7595217845307931886, guid: 9074e7adee4154ddd8a607b45abc4c19, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1080,7 +1078,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8009924874774649624, guid: 9074e7adee4154ddd8a607b45abc4c19, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.26800013
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8009924874774649624, guid: 9074e7adee4154ddd8a607b45abc4c19, type: 3}
       propertyPath: m_LocalRotation.w

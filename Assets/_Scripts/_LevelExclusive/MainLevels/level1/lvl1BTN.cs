@@ -22,20 +22,22 @@ public class lvl1BTN : MonoBehaviour
 
     public void SinglePlayOnClick()
     {
-        //GameplayManager.instance.setData(GameplayManager.instance.selectedMode, 1f);
         SceneDataManager.instance.setData(SceneData.SelectedMode, "Offline");
         SceneManager.LoadScene("MainSelect");
     }
 
     public void MultPlayOnClick()
     {
-        //GameplayManager.instance.setData(GameplayManager.instance.selectedMode, 2f);
         SceneDataManager.instance.setData(SceneData.SelectedMode, "Online");
-        _PNLCON.gameObject.SetActive(true);
-        //PhotonNetwork.ConnectUsingSettings();
+        _PNLRoomCon.gameObject.SetActive(true);
     }
 
-    
+    public void  ConnectOnClick()
+    {
+        SceneDataManager.instance.setData(SceneData.SelectedMode, "Online");
+        SceneDataManager.instance.setData(SceneData.SelectedName, _playerName.text);
+        SceneManager.LoadScene("MainSelect");
+    }
 
     
 

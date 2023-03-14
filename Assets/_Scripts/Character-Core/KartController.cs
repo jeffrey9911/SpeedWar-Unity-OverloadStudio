@@ -35,7 +35,9 @@ public class KartController : MonoBehaviour
         Front_Left,
         Front_Right,
         Rear_Left,
-        Rear_Right
+        Rear_Right,
+        Middle_Left,
+        Middle_Right
     }
 
     [Serializable]
@@ -433,7 +435,7 @@ public class KartController : MonoBehaviour
                     else if(kartSpeed < 0 || Mathf.Approximately(kartSpeed, 0.0f))
                     {
                         //Debug.Log("BACKING!!!" + torqueForce);
-                        wheels[i]._wCollider.motorTorque = torqueForce * 0.1f;
+                        wheels[i]._wCollider.motorTorque = torqueForce;
                         wheels[i]._wCollider.brakeTorque = 0.0f;
                     }
                 }
@@ -448,7 +450,8 @@ public class KartController : MonoBehaviour
             /// IS Handbraking
             else
             {
-                if (wheels[i]._wLocation == Wheel_Location.Rear_Left || wheels[i]._wLocation == Wheel_Location.Rear_Right)
+                if (wheels[i]._wLocation == Wheel_Location.Rear_Left || wheels[i]._wLocation == Wheel_Location.Rear_Right 
+                    || wheels[i]._wLocation == Wheel_Location.Middle_Left || wheels[i]._wLocation == Wheel_Location.Middle_Right)
                 {
                     wheels[i]._wCollider.brakeTorque = brakeTorque_max;
                     SetSideFriction(wheels[i], hbWheelSideFric);
