@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Scenes/Levels/Level2_New/Level2-New.unity
     guid: e1e80b244c8bec342b3765b37d8f2f84
+  - enabled: 1
+    path: Assets/_Scenes/Levels/Level_3/WinterTrack.unity
+    guid: 28148bdbfb0da5243b14609abe0dd451
   m_configObjects: {}

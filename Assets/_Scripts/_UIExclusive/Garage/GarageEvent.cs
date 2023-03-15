@@ -23,9 +23,14 @@ public class GarageEvent : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public void startOnClick()
+    public void startOnClickLV2()
     {
         SceneManager.LoadScene(2);
+    }
+
+    public void startOnClick()
+    {
+        SceneManager.LoadScene(3);
     }
 
 

@@ -130,7 +130,7 @@ public class PlayerManager : MonoBehaviour
                 }
                 else
                 {
-                    var _kartKAM = GameplayManager.instance.kartAssetManager.getKart(pInfo[2]);
+                    var _kartKAM = SceneDataManager.instance.kartAssetManager.getKart(pInfo[2]);
                     NetPlayer newPlayer = Instantiate(_kartKAM.AssetPrefab, _spawnPos.position, _spawnPos.rotation).AddComponent<NetPlayer>();
                     newPlayer.playerObj.GetComponent<KartController>().spawnMode = 2;
                     newPlayer.playerID = id;

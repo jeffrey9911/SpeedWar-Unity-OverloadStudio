@@ -28,7 +28,7 @@ public class NetworkManager : MonoBehaviour
 
 
     // UDP Send
-    public float sendInterval = 0.4f;
+    public float sendInterval = 0.3f;
     float udpTimer = 0.0f;
 
     // Latency

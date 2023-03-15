@@ -42,7 +42,7 @@ public class NetPlayer : MonoBehaviour
     {
         if (!obsoleteState.Equals(default(TransformState))  && !serverState.Equals(default(TransformState)))
         {
-            timeDifference = GameplayManager.instance.networkManager.sendInterval + NetworkManager.checkedLatency;
+            timeDifference = 0.3f;//GameplayManager.instance.networkManager.sendInterval;// + NetworkManager.checkedLatency;
             this.transform.position = Vector3.Lerp(serverState.position, processedState.position, timer / timeDifference);
             this.transform.rotation = Quaternion.Lerp(serverState.rotation, processedState.rotation, timer / timeDifference);
             this.transform.GetComponent<KartController>().UpdateMoveAction(Vector2.Lerp(serverState.input, processedState.input, timer / timeDifference));

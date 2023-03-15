@@ -970,7 +970,7 @@ MonoBehaviour:
   steerAngle_max: 30
   kineticRecycleForce: 1
   gravMult: 30
-  speed_min: -30
+  speed_min: -10
   speed_max: 1
   steerSensitivity: 1
   kartWeight: 1
@@ -991,14 +991,14 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7107370674672592234}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: b9e0a4606af27254c951f04461c4aa11, type: 3}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: c01edef36c23fb44aa2140c64db5e940, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1092,9 +1092,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98db0ab2fa426f241b3ba61d5118cb70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxEnginePitch: 2
-  minEnginePitch: 0.5
-  _kartSound: {fileID: 8300000, guid: b9e0a4606af27254c951f04461c4aa11, type: 3}
 --- !u!1 &7107370675113716477
 GameObject:
   m_ObjectHideFlags: 0
