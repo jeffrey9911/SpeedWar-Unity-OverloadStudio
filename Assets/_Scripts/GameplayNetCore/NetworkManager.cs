@@ -13,19 +13,28 @@ using System.Threading;
 
 public class NetworkManager : MonoBehaviour
 {
-    private static CancellationTokenSource cts = new CancellationTokenSource();
-
+    // Connect control
     public static bool isOnNetwork = true;
+
+    // Thread control
+    private static Mutex mutex = new Mutex();
+    public static List<Thread> threads = new List<Thread>();
 
     // Sockets
     private static IPEndPoint remoteEP;
     private static Socket clientTCPSocket;
     private static Socket clientUDPSocket;
 
+    // Memory
+    public static byte[] tcpReceiveBuffer = new byte[1024];
+    public static byte[] tcpSendBuffer = new byte[1024];
+
+    public static byte[] udpReceiveBuffer = new byte[1024];
+    public static byte[] udpSendBuffer = new byte[1024];
+
     // Player ID
     public short displayedPlayerID;
     public static short localPlayerID;
-
 
     // UDP Send
     public float sendInterval = 0.3f;
@@ -36,6 +45,11 @@ public class NetworkManager : MonoBehaviour
     float latencyCheckTimer = 0.0f;
     public static float checkedLatency = 0.0f;
     private static bool isStartedCalculateLatency = false;
+
+    // FLAGS
+    public static bool isLogin = false;
+    public static bool isUDPSetup = false;
+    public static bool isReceiveUDP = false;
 
 
     private static bool isUDPReceiving = false;
@@ -59,7 +73,7 @@ public class NetworkManager : MonoBehaviour
                 IPAddress ip;
                 //ip = IPAddress.Parse("192.168.2.43");
                 ip = Dns.GetHostAddresses("jeffrey9911.ddns.net")[0];
-                Debug.Log(ip.Address);
+                
                 remoteEP = new IPEndPoint(ip, 12581);
 
                 clientTCPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -68,7 +82,8 @@ public class NetworkManager : MonoBehaviour
                 localPlayerName = SceneDataManager.instance.getData(SceneData.SelectedName);
                 localPlayerKartID = SceneDataManager.instance.getData(SceneData.SelectedKart);
 
-                Task.Run(() => { clientTCPConnect(clientTCPSocket, remoteEP); }, cts.Token);        // TCP Connect Thread
+                Thread thread = new Thread(() => clientTCPConnect(clientTCPSocket, remoteEP));
+                //Task.Run(() => { clientTCPConnect(clientTCPSocket, remoteEP); }, cts.Token);        // TCP Connect Thread
             }
         }
         else
@@ -78,14 +93,14 @@ public class NetworkManager : MonoBehaviour
                 IPAddress ip;
                 //ip = IPAddress.Parse("192.168.2.43");
                 ip = Dns.GetHostAddresses("jeffrey9911.ddns.net")[0];
-                Debug.Log(ip.Address);
+                
                 remoteEP = new IPEndPoint(ip, 12581);
 
                 clientTCPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 clientUDPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-
-                Task.Run(() => { clientTCPConnect(clientTCPSocket, remoteEP); }, cts.Token);        // TCP Connect Thread
+                Thread thread = new Thread(() => clientTCPConnect(clientTCPSocket, remoteEP));
+                //Task.Run(() => { clientTCPConnect(clientTCPSocket, remoteEP); }, cts.Token);        // TCP Connect Thread
             }
         }
     }
