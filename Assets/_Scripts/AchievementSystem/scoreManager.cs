@@ -13,9 +13,6 @@ public class scoreManager : MonoBehaviour
 
     private bool isScoreChanged = false;
 
-    [SerializeField]
-    private TMP_Text uiScore;
-
     private void Awake()
     {
         if(!instance)
@@ -39,7 +36,7 @@ public class scoreManager : MonoBehaviour
         if(isScoreChanged)
         {
             dynamicScore = Mathf.Lerp(dynamicScore, playerScore, Time.deltaTime);
-            uiScore.text = ((int)dynamicScore).ToString();
+            GameplayUIManager.instance.UpdateScore((int)dynamicScore);
             isScoreChanged = Mathf.Approximately(dynamicScore, playerScore);
         }
     }

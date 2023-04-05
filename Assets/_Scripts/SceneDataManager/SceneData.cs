@@ -7,6 +7,7 @@ public class SceneData : MonoBehaviour
     public static string AudioVolume { get { return "AudioVolume"; } }
     public static string SelectedKart { get { return "SelectedKart"; } }
     public static string SelectedMode { get { return "SelectedMode"; } }
+    public static string SelectedName { get { return "SelectedName"; } }
 
     public List<string> DataTypes;
 
@@ -16,7 +17,8 @@ public class SceneData : MonoBehaviour
         {
             AudioVolume,
             SelectedKart,
-            SelectedMode
+            SelectedMode,
+            SelectedName
         };
     }
 }

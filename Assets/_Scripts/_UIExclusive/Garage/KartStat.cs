@@ -20,6 +20,8 @@ public class KartStat : MonoBehaviour
 
     [SerializeField] private List<RectTransform> lines = new List<RectTransform>();
 
+    private GameObject spawnedKart;
+
     private void FixedUpdate()
     {
         if(rotAng >= 360.0f)
@@ -41,29 +43,31 @@ public class KartStat : MonoBehaviour
 
     public void setupKart(KartAsset _kart)
     {
-        GameObject spawnedKart = Instantiate(_kart.AssetPrefab, this.transform.position, Quaternion.identity);
+        if(spawnedKart != null) Destroy(spawnedKart);
+        spawnedKart = Instantiate(_kart.AssetPrefab, this.transform.position, this.transform.rotation);
+        spawnedKart.GetComponent<KartController>().spawnMode = 1;
+        spawnedKart.GetComponent<KartController>().onDisplayScale = 0.9f;
         spawnedKart.transform.SetParent(this.transform);
         spawnedKart.transform.localPosition = Vector3.zero;
-        Destroy(spawnedKart.GetComponent<KartController>());
-        Destroy(spawnedKart.GetComponent<Rigidbody>());
+
 
         List<float> stats = new List<float>()
         {
-            _kart._acceleration / 100,
+            _kart._acceleration / 1000,
             _kart._maxSpeed / 250,
             _kart._drift / 50,
             _kart._control / 50,
-            _kart._weight / 3000,
-            _kart._acceleration / 100
+            _kart._weight / 3000
         };
 
+        stats.Add(stats[0]);
         pentas.Add(pentas[0]);
 
         for (int i = 0; i < lines.Count; i++)
         {
-            Vector3 start = Vector3.Lerp(pentas[i].localPosition, Vector3.zero, stats[i]);
+            Vector3 start = Vector3.Lerp(pentas[i].localPosition, Vector3.zero, 1.0f - stats[i]);
             
-            Vector3 end = Vector3.Lerp(pentas[i + 1].localPosition, Vector3.zero, stats[i + 1]);
+            Vector3 end = Vector3.Lerp(pentas[i + 1].localPosition, Vector3.zero, 1.0f - stats[i + 1]);
 
             Dots[i].localPosition = start;
             
@@ -78,8 +82,6 @@ public class KartStat : MonoBehaviour
     private void setupLines(RectTransform line, Vector3 pStart, Vector3 pEnd)
     {
         float angle = VectorAngle(pStart, pEnd);
-
-        Debug.Log(angle);
 
         float distance = Vector3.Distance(pStart, pEnd);
 

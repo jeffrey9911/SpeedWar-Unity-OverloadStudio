@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50ebbe3ed0bf8ec43a997e40af0bed4e, type: 3}
+  m_Name: Corv8
+  m_EditorClassIdentifier: 
+  KartName: Corv8
+  KartID: 005
+  AssetPrefab: {fileID: 3669441432622449600, guid: 286bbee47e62d48cb95f1d8d2a390c4b, type: 3}
+  KartImage: {fileID: 21300000, guid: f1bac561e733d48aca20832db61adf3b, type: 3}
+  KartNameMaterial: {fileID: 2100000, guid: 9bea88d05491947ce92020d234476822, type: 2}
+  _acceleration: 700
+  _maxSpeed: 220
+  _drift: 30
+  _control: 30
+  _weight: 1800

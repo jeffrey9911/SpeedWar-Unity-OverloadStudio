@@ -6,81 +6,122 @@ public class CameraController : MonoBehaviour
 {
 
     public Transform _cameraTrans;
+    private float defaultHeight;
 
     public Transform _cameraRotator;
+
+    private Vector2 cameraRotVec = Vector2.zero;
 
     public Camera _camera;
 
     // Modifier
-    public float cameraFollowSensitivity = 3.0f;
-    public float cameraRotateSensitivity = 3.0f;
+    public float cameraFollowSensitivity = 10.0f;
+    public float cameraRotateSensitivity = 15.0f;
+
+    private float cFS = 0.0f;
+    private float cRS = 0.0f;
 
     public float adaptiveCameraModifier = 100.0f;
 
-    private bool cameraRot()
+    private bool isInitializing = true;
+
+    private bool isViewing = false;
+
+    private void cameraRot(Vector2 rotVec)
     {
-        if(Input.GetKey(KeyCode.LeftArrow))
+        if(rotVec.x < 0)
         {
-            if (!Input.GetKey(KeyCode.RightArrow))
-            {
-                _cameraRotator.localEulerAngles = new Vector3(0.0f, 90.0f, 0.0f);
-                return true;
-            }
+            _cameraRotator.localEulerAngles = new Vector3(0.0f, 90f * (rotVec.y + 1.0f), 0.0f);
         }
-        else if(Input.GetKey(KeyCode.RightArrow))
+
+        if(rotVec.x >= 0)
         {
-            _cameraRotator.localEulerAngles = new Vector3(0.0f, -90.0f, 0.0f);
-            return true;
+            _cameraRotator.localEulerAngles = new Vector3(0.0f, -90f * (rotVec.y + 1.0f), 0.0f);
         }
-        else if(Input.GetKey(KeyCode.DownArrow))
+
+        
+
+        if (rotVec.y == 0 && rotVec.x == 0)
         {
-            _cameraRotator.localEulerAngles = new Vector3(0.0f, 180.0f, 0.0f);
-            return true;
+            _cameraRotator.localEulerAngles = Vector3.zero;
         }
-        else
-        {
-            _cameraRotator.localEulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
-        }
-        return false;
+        
     }
 
     private void speedCam()
     {
-        float kartSpeed = PunManager.instance._spawnedPlayer.GetComponent<KartController>().getSpeed;
-        _cameraTrans.localEulerAngles = new Vector3(20.0f - (kartSpeed * 20.0f / adaptiveCameraModifier), 0.0f, 0.0f);
+        float kartSpeedIndex = GameplayManager.instance.playerManager.localPlayer.GetComponent<KartController>().getSpeed / 230f;
+
+        float targetView = 70.0f + (kartSpeedIndex * 30);
+        if (isViewing) targetView = 70.0f + (kartSpeedIndex * 50);
+
+        _camera.fieldOfView = targetView;
+        if (!isViewing)
+        {
+            _cameraRotator.localPosition = new Vector3(_cameraRotator.localPosition.x, defaultHeight + kartSpeedIndex * 3, _cameraRotator.localPosition.z);
+        }
+        else
+        {
+            _cameraRotator.localPosition = new Vector3(_cameraRotator.localPosition.x, defaultHeight, _cameraRotator.localPosition.z);
+        }
+        
     }
 
     private void Awake()
     {
-        if(_cameraTrans == null)
+        
+    }
+
+    private void Start()
+    {
+        if (_cameraTrans == null)
         {
-            _cameraTrans = this.transform.Find("");
+            //_cameraTrans = this.transform.Find("");
         }
 
-        if(this == Camera.main)
+        if (this == Camera.main)
         {
             _camera = this.GetComponent<Camera>();
         }
+
+        cFS = cameraFollowSensitivity;
+        cRS = cameraRotateSensitivity;
+        defaultHeight = _cameraRotator.localPosition.y;
     }
 
     private void FixedUpdate()
     {
-        float camRotMult = 1.0f;
-        float camFolMult = 1.0f;
-        if(cameraRot())
+        if (isInitializing && KartController.instance != null)
         {
-            camRotMult = 3.0f;
-            camFolMult = 3.0f;
+            Debug.Log("SETUP CAMERA!");
+            KartController.instance.inputActions.Camera.CameraRotation.performed += context => cameraRot(context.ReadValue<Vector2>());
+            KartController.instance.inputActions.Camera.CameraRotation.performed += context => cFS = 30f;
+            KartController.instance.inputActions.Camera.CameraRotation.performed += context => cRS = 40f;
+            KartController.instance.inputActions.Camera.CameraRotation.performed += context => isViewing = true;
+            KartController.instance.inputActions.Camera.CameraRotation.canceled += context => cameraRot(Vector2.zero);
+            KartController.instance.inputActions.Camera.CameraRotation.canceled += context => cFS = cameraFollowSensitivity;
+            KartController.instance.inputActions.Camera.CameraRotation.canceled += context => cRS = cameraRotateSensitivity;
+            KartController.instance.inputActions.Camera.CameraRotation.canceled += context => isViewing = false;
+            isInitializing = false;
         }
 
         speedCam();
 
-        _camera.transform.position = 
+        _camera.transform.position =
             Vector3.Lerp(_camera.transform.position, _cameraTrans.position,
-                        Vector3.Distance(_camera.transform.position, _cameraTrans.position) * Time.deltaTime * cameraFollowSensitivity * camFolMult);
+                        Vector3.Distance(_camera.transform.position, _cameraTrans.position) * Time.deltaTime * cFS);
 
         _camera.transform.rotation =
             Quaternion.Lerp(_camera.transform.rotation, Quaternion.LookRotation(_cameraTrans.forward),
-                                (_camera.transform.forward - _cameraTrans.forward).magnitude * Time.deltaTime * cameraRotateSensitivity * camRotMult);
+                                (_camera.transform.forward - _cameraTrans.forward).magnitude * Time.deltaTime * cRS);
+    }
+
+    private void Update()
+    {
+        //cameraRot(Vector2.zero);
+        
+        //speedCam();
+
+        
     }
 }

@@ -37,7 +37,12 @@ public class KartButton : MonoBehaviour
     {
         Debug.Log(SceneData.SelectedKart);
         SceneDataManager.instance.setData(SceneData.SelectedKart, _kart.KartID);
-        KartStat _ks = GameObject.Find("SpawnPos").GetComponent<KartStat>();
+
+        KartName _kn = GameObject.Find("KartName").GetComponent<KartName>();
+        _kn.SwapMaterial(_kart.KartNameMaterial);
+
+        KartStat _ks = GameObject.Find("KartSpawn").GetComponent<KartStat>();
         _ks.setupKart(_kart);
+        
     }
 }

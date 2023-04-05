@@ -45,7 +45,7 @@ public class SceneDataManager : MonoBehaviour
         {
             if (!sceneDataSet.ContainsKey(str))
             {
-                sceneDataSet.Add(str, null);
+                sceneDataSet.Add(str, string.Empty);
             }
         }
 

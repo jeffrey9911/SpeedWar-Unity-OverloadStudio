@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50ebbe3ed0bf8ec43a997e40af0bed4e, type: 3}
+  m_Name: RRCull
+  m_EditorClassIdentifier: 
+  KartName: RRCull
+  KartID: 003
+  AssetPrefab: {fileID: 2279894067461655158, guid: 94848120cf34e374dbcaec971ea2d770, type: 3}
+  KartImage: {fileID: 21300000, guid: 841a5ae2c32ebd74c8220d222230fd57, type: 3}
+  KartNameMaterial: {fileID: 2100000, guid: 81528425f49ba4a2380c2e436af30273, type: 2}
+  _acceleration: 800
+  _maxSpeed: 220
+  _drift: 10
+  _control: 20
+  _weight: 2300

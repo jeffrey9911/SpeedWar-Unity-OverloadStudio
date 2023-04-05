@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50ebbe3ed0bf8ec43a997e40af0bed4e, type: 3}
+  m_Name: DGMuscle
+  m_EditorClassIdentifier: 
+  KartName: DGMuscle
+  KartID: 007
+  AssetPrefab: {fileID: 5610585659096420452, guid: 23c6d0ad875735145be09bf043a0f3ee, type: 3}
+  KartImage: {fileID: 21300000, guid: d0ab8775a168eda4aa77cb86b54e475a, type: 3}
+  KartNameMaterial: {fileID: 2100000, guid: baea42973d6f0ec4bb1609600d7acfef, type: 2}
+  _acceleration: 700
+  _maxSpeed: 210
+  _drift: 30
+  _control: 30
+  _weight: 1900
