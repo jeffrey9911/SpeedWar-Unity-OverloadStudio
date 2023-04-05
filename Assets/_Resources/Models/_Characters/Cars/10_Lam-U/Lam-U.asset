@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50ebbe3ed0bf8ec43a997e40af0bed4e, type: 3}
+  m_Name: Lam-U
+  m_EditorClassIdentifier: 
+  KartName: Lambo-U
+  KartID: 010
+  AssetPrefab: {fileID: 7911312396160623222, guid: 4ea6bb0b936141d4095622b9efaaef5f, type: 3}
+  KartImage: {fileID: 0}
+  KartNameMaterial: {fileID: 2100000, guid: afa8710377cdc5a458b26b94a76139b5, type: 2}
+  _acceleration: 700
+  _maxSpeed: 230
+  _drift: 30
+  _control: 30
+  _weight: 2200
