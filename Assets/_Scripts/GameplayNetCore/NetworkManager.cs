@@ -58,6 +58,8 @@ public class NetworkManager : MonoBehaviour
     private static string localPlayerName = "DefualtName";
     private static string localPlayerKartID = "008";
 
+    public static CancellationTokenSource cts = new CancellationTokenSource();
+
     // Start is called before the first frame update
     void Start()
     {
