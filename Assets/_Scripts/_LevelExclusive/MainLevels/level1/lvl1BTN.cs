@@ -23,7 +23,7 @@ public class lvl1BTN : MonoBehaviour
     public void SinglePlayOnClick()
     {
         SceneDataManager.instance.setData(SceneData.SelectedMode, "Offline");
-        SceneManager.LoadScene("MainSelect");
+        SceneManager.LoadScene(4);
     }
 
     public void MultPlayOnClick()
@@ -36,7 +36,7 @@ public class lvl1BTN : MonoBehaviour
     {
         SceneDataManager.instance.setData(SceneData.SelectedMode, "Online");
         SceneDataManager.instance.setData(SceneData.SelectedName, _playerName.text);
-        SceneManager.LoadScene("MainSelect");
+        SceneManager.LoadScene(4);
     }
 
     
