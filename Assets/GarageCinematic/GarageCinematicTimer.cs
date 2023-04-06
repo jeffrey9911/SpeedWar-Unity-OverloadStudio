@@ -16,5 +16,11 @@ public class GarageCinematicTimer : MonoBehaviour
             SceneManager.LoadScene(1);
             SceneManager.UnloadSceneAsync(4);
         }
+
+        if(Input.GetKeyUp(KeyCode.Escape))
+        {
+            SceneManager.LoadScene(1);
+            SceneManager.UnloadSceneAsync(4);
+        }
     }
 }

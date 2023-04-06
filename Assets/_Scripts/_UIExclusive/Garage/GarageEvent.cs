@@ -65,5 +65,6 @@ public class GarageEvent : MonoBehaviour
     public void backOnClick()
     {
         SceneManager.LoadScene("MainMenu");
+        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
     }
 }

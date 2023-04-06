@@ -9,16 +9,21 @@ public class KartController : MonoBehaviour
 {
     public static KartController instance;
 
+    private CameraController camController;
     public KartAction inputActions;
+    private bool isLogitechSetup = false;   
 
     public short displayPlayerID;
 
     [Header("Manager Systems")]
+    
     [SerializeField] public int spawnMode = 0;
     [SerializeField] public float onDisplayScale = 1.0f;
     public GameObject _gameManager;
     [SerializeField] private bool isOnNetwork = false;
     Publisher _publisher = new Publisher();
+
+    
 
     [Space(10)]
 
@@ -122,6 +127,9 @@ public class KartController : MonoBehaviour
             case 0:
                 inputActions = KartInputController.inst_controller.inputActions;
 
+
+                isLogitechSetup = LogitechGSDK.LogiSteeringInitialize(false);
+
                 //inputActions
                 inputActions.Player.Move.performed += context => moveActionVector = context.ReadValue<Vector2>();
                 inputActions.Player.Move.canceled += context => moveActionVector = Vector2.zero;
@@ -130,9 +138,11 @@ public class KartController : MonoBehaviour
                 inputActions.Player.Handbrake.canceled += context => isHandbrake = false;
 
 
+                camController = GameObject.FindGameObjectWithTag("LocalCamera").GetComponent<CameraController>();
+                camController._cameraTrans = this.transform.Find("camController").Find("camTrans").transform;
+                camController._cameraRotator = this.transform.Find("camController").transform;
 
-                GameObject.FindGameObjectWithTag("LocalCamera").GetComponent<CameraController>()._cameraTrans = this.transform.Find("camController").Find("camTrans").transform;
-                GameObject.FindGameObjectWithTag("LocalCamera").GetComponent<CameraController>()._cameraRotator = this.transform.Find("camController").transform;
+
 
                 _rigidbody = GetComponent<Rigidbody>();
                 if (vehicle_centre != null && _rigidbody != null)
@@ -186,6 +196,8 @@ public class KartController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if (isLogitechSetup) SteeringWheelOverwriteMove();
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             Debug.Log("==== SHOW ITEMS IN THE PACK ====");
@@ -197,6 +209,8 @@ public class KartController : MonoBehaviour
             Debug.Log(scoreManager.instance.getScore());
             Debug.Log("================================");
         }
+
+        
     }
 
     private void FixedUpdate()
@@ -506,5 +520,62 @@ public class KartController : MonoBehaviour
     public Vector2 GetMoveAction()
     {
         return moveActionVector;
+    }
+
+    private void SteeringWheelOverwriteMove()
+    {
+        if(LogitechGSDK.LogiUpdate() && LogitechGSDK.LogiIsConnected(0))
+        {
+            LogitechGSDK.DIJOYSTATE2ENGINES stw;
+            stw = LogitechGSDK.LogiGetStateUnity(0);
+
+            //Debug.Log("==========================");
+            //Debug.Log(stw.lX); // -6500 - 6500
+            //Debug.Log(stw.lY); // 31488 - 32767
+            //Debug.Log(stw.lRz); // -32768 - 32767
+            //Debug.Log("==========================");
+
+            
+            float xNorm = stw.lX / 6500f;
+            if(xNorm > 1) xNorm = 1;
+            if(xNorm < -1) xNorm = -1;
+            moveActionVector.x = xNorm;
+
+            float upNorm = (stw.lY + 31400f) / (32760f + 31400f);
+            if(upNorm > 1) upNorm = 1;
+            if(upNorm < 0) upNorm = 0;
+            float downNorm = (stw.lRz + 32760f) / (32760f + 32760f);
+            if(downNorm > 1) downNorm = 1;
+            if(upNorm < 0) upNorm = 0;
+
+            //Debug.Log("==========================");
+            //Debug.Log(moveActionVector.x); // -6500 - 6500
+            //Debug.Log(upNorm); // 31488 - 32767
+            //Debug.Log(downNorm); // -32768 - 32767
+            //Debug.Log("==========================");
+
+            Vector2 cameraRotVector = Vector2.zero;
+            float camRotAngle = stw.rgdwPOV[0];
+            camRotAngle /= 100;
+            if (camRotAngle < 360f)
+            {
+                //camRotAngle -= 180f;
+                cameraRotVector = new Vector2(Mathf.Sin(camRotAngle * Mathf.Deg2Rad), Mathf.Cos(camRotAngle * Mathf.Deg2Rad));
+                //Debug.Log(cameraRotVector);
+            }
+
+            camController.cameraRot(cameraRotVector);
+
+
+            isHandbrake = stw.rgbButtons[0] == 128;
+
+            moveActionVector.y = downNorm - upNorm;
+
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        Debug.Log("SteeringShutdown:" + LogitechGSDK.LogiSteeringShutdown());
     }
 }

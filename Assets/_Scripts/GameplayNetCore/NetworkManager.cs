@@ -73,8 +73,8 @@ public class NetworkManager : MonoBehaviour
             if (SceneDataManager.instance.getData(SceneData.SelectedMode) == "Online")
             {
                 IPAddress ip;
-                //ip = IPAddress.Parse("192.168.2.43");
-                ip = Dns.GetHostAddresses("jeffrey9911.ddns.net")[0];
+                ip = IPAddress.Parse("127.0.0.1");
+                
                 
                 remoteEP = new IPEndPoint(ip, 12581);
 
@@ -93,8 +93,8 @@ public class NetworkManager : MonoBehaviour
             if (isOnNetwork)
             {
                 IPAddress ip;
-                //ip = IPAddress.Parse("192.168.2.43");
-                ip = Dns.GetHostAddresses("jeffrey9911.ddns.net")[0];
+                ip = IPAddress.Parse("127.0.0.1");
+                
                 
                 remoteEP = new IPEndPoint(ip, 12581);
 
