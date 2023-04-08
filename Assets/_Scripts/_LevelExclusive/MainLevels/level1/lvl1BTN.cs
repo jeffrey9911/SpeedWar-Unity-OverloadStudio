@@ -13,12 +13,12 @@ public class lvl1BTN : MonoBehaviour
 
     [SerializeField] private TMP_Text _buttonText;
 
-    [SerializeField] private RectTransform _PNLCON;
+    [SerializeField] private RectTransform _PNLLobby;
 
     [SerializeField] private RectTransform _PNLRoomCon;
 
     [SerializeField] private TMP_InputField _playerName;
-    [SerializeField] private TMP_InputField _roomName;
+    [SerializeField] private TMP_InputField _ipAddress;
 
     public void SinglePlayOnClick()
     {
@@ -36,7 +36,11 @@ public class lvl1BTN : MonoBehaviour
     {
         SceneDataManager.instance.setData(SceneData.SelectedMode, "Online");
         SceneDataManager.instance.setData(SceneData.SelectedName, _playerName.text);
-        SceneManager.LoadScene("MainSelect");
+
+        NetworkManager.instance.ConnectOnClick(_playerName.text, _ipAddress.text);
+
+        _PNLRoomCon.gameObject.SetActive(false);
+        _PNLLobby.gameObject.SetActive(true);
     }
 
     

@@ -63,7 +63,6 @@ public class GameplayUIManager : MonoBehaviour
     {
         if(NetworkManager.isOnNetwork)
         {
-
             _netLatency.text = ((int)(latency * 1000)).ToString() + "ms";
         }
     }

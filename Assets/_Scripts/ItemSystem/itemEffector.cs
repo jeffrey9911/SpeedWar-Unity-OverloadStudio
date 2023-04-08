@@ -17,7 +17,7 @@ public class itemEffector : MonoBehaviour
 
     private static void performBooster()
     {
-        Rigidbody playerRB = GameplayManager.instance.playerManager.localPlayer.GetComponent<Rigidbody>();
+        Rigidbody playerRB = NetworkManager.localPlayer.playerTransform.GetComponent<Rigidbody>();
         playerRB.velocity += playerRB.velocity.normalized * 10.0f * Time.deltaTime;
     }
 }

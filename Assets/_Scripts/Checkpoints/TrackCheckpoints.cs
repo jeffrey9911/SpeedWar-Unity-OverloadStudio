@@ -107,7 +107,7 @@ public class TrackCheckpoints : MonoBehaviour
     {
         if (cpQueue.Count > 0)
         {
-            currentDist = Vector3.Distance(GameplayManager.instance.playerManager.localPlayer.transform.position, cpPosList[0]) + calcDistance();
+            currentDist = Vector3.Distance(NetworkManager.localPlayer.playerTransform.position, cpPosList[0]) + calcDistance();
             float perc = (totalDist - currentDist) / totalDist * 100;
             if(perc < 0)
             {
