@@ -49,7 +49,7 @@ public class KartSound : MonoBehaviour
             shiftSpeedList.Add(new ShiftSpeed(80, 100));//5
             shiftSpeedList.Add(new ShiftSpeed(100, 130));//6
             shiftSpeedList.Add(new ShiftSpeed(130, 170));//7
-            //8
+            shiftSpeedList.Add(new ShiftSpeed(170, 300));//8
             _kartSoundSource.Play();
         }
     }

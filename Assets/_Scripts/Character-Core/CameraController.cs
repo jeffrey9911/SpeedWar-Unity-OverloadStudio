@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-
     public Transform _cameraTrans;
     private float defaultHeight;
 
@@ -27,8 +26,9 @@ public class CameraController : MonoBehaviour
 
     private bool isViewing = false;
 
-    private void cameraRot(Vector2 rotVec)
+    public void cameraRot(Vector2 rotVec)
     {
+        //Debug.Log(rotVec);
         if(rotVec.x < 0)
         {
             _cameraRotator.localEulerAngles = new Vector3(0.0f, 90f * (rotVec.y + 1.0f), 0.0f);
@@ -87,6 +87,7 @@ public class CameraController : MonoBehaviour
         cFS = cameraFollowSensitivity;
         cRS = cameraRotateSensitivity;
         defaultHeight = _cameraRotator.localPosition.y;
+
     }
 
     private void FixedUpdate()
@@ -114,14 +115,12 @@ public class CameraController : MonoBehaviour
         _camera.transform.rotation =
             Quaternion.Lerp(_camera.transform.rotation, Quaternion.LookRotation(_cameraTrans.forward),
                                 (_camera.transform.forward - _cameraTrans.forward).magnitude * Time.deltaTime * cRS);
+
+        
     }
 
     private void Update()
     {
-        //cameraRot(Vector2.zero);
-        
-        //speedCam();
-
-        
     }
+
 }
