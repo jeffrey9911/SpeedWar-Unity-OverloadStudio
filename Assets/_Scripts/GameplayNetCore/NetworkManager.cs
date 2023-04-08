@@ -11,306 +11,348 @@ using System.Threading.Tasks;
 using Unity.VisualScripting;
 using System.Threading;
 
-using TMPro;
-
 public class NetworkManager : MonoBehaviour
 {
-    public static NetworkManager instance;
+    // Connect control
+    public static bool isOnNetwork = true;
 
-    // Networking
-    public static bool isOnNetwork = false;
-
-    private static IPEndPoint serverTCPEP;
-    public static IPEndPoint serverUDPEP;
-
-    public static Socket clientTCPSocket;
-    public static Socket clientUDPSocket;
-
-
-    // Player ID
-    public static NetPlayer localPlayer;
-
-    public static Dictionary<short, NetPlayer> playerDList = new Dictionary<short, NetPlayer>();
-
-    // Threads control
+    // Thread control
+    private static Mutex mutex = new Mutex();
     public static List<Thread> threads = new List<Thread>();
 
-    // Flags
-    static bool isTCPReceiving = false;
-    static bool isUDPReceiving = false;
-    static bool isFirstInitialized = false; // Player login player list initialize
+    // Sockets
+    private static IPEndPoint remoteEP;
+    private static Socket clientTCPSocket;
+    private static Socket clientUDPSocket;
+
+    // Memory
+    public static byte[] tcpReceiveBuffer = new byte[1024];
+    public static byte[] tcpSendBuffer = new byte[1024];
+
+    public static byte[] udpReceiveBuffer = new byte[1024];
+    public static byte[] udpSendBuffer = new byte[1024];
+
+    // Player ID
+    public short displayedPlayerID;
+    public static short localPlayerID;
+
+    // UDP Send
+    public float sendInterval = 0.3f;
+    float udpTimer = 0.0f;
+
+    // Latency
+    public float latencyDetectInterval = 1.0f;
+    float latencyCheckTimer = 0.0f;
+    public static float checkedLatency = 0.0f;
+    private static bool isStartedCalculateLatency = false;
+
+    // FLAGS
+    public static bool isLogin = false;
+    public static bool isUDPSetup = false;
+    public static bool isReceiveUDP = false;
+
+
+    private static bool isUDPReceiving = false;
+    private static bool isLocalPlayerSetup = false;
+
+    private static string localPlayerName = "DefualtName";
+    private static string localPlayerKartID = "008";
+
+    public static CancellationTokenSource cts = new CancellationTokenSource();
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
 
     private void Awake()
     {
-        
-        if (!instance) instance = this;
-    }
-
-    public void ConnectOnClick(string setName, string ipAdress)
-    {
-        isOnNetwork = true;
-        IPAddress ip = IPAddress.Parse(ipAdress);
-
-        serverTCPEP = new IPEndPoint(ip, 12581);
-        serverUDPEP = new IPEndPoint(ip, 12582);
-
-        clientTCPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        clientUDPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-
-        // => TCP Receive
-        Thread clientLogin = new Thread(() => ClientLogin(setName));
-        threads.Add(clientLogin);
-        threads[threads.Count - 1].Start();
-    }
-
-    static void ClientLogin(string setName)
-    {
-        try
+        if (SceneDataManager.instance)
         {
-            clientTCPSocket.Connect(serverTCPEP);
-            Debug.Log("TCP Connect");
-
-            clientUDPSocket.Bind(new IPEndPoint(IPAddress.Any, 0));
-            Debug.Log("UDP Bind");
-
-            byte[] loginMsg = AddHeader(Encoding.ASCII.GetBytes(setName), 0);
-            Debug.Log("Pname length: " + loginMsg.Length);
-
-            clientTCPSocket.Send(loginMsg);
-            Debug.Log("Login");
-            isTCPReceiving = true;
-
-            ClientTCPReceive();
-        }
-        catch (Exception ex)
-        {
-            Debug.LogException(ex);
-            throw;
-        }
-    }
-
-    static void ClientTCPReceive()
-    {
-        try
-        {
-            while (isTCPReceiving)
+            if (SceneDataManager.instance.getData(SceneData.SelectedMode) == "Online")
             {
-                byte[] recvBuffer = new byte[2048];
-                int recv = clientTCPSocket.Receive(recvBuffer);
+                IPAddress ip;
+                //ip = IPAddress.Parse("192.168.2.43");
+                ip = Dns.GetHostAddresses("jeffrey9911.ddns.net")[0];
+                
+                remoteEP = new IPEndPoint(ip, 12581);
 
-                switch (GetHeader(recvBuffer, 0))
-                {
-                    case 0:
-                        Debug.Log("TCP0");
-                        if (!isFirstInitialized)
-                        {
-                            string allPlayer = Encoding.ASCII.GetString(GetContent(recvBuffer, 2));
-                            UnityMainThreadDispatcher.Instance().Enqueue(() => InitialPlayerList(ref allPlayer));
-                        }
-                        else
-                        {
-                            Debug.Log("Initialize Ignored");
-                        }
+                clientTCPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                clientUDPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
+                localPlayerName = SceneDataManager.instance.getData(SceneData.SelectedName);
+                localPlayerKartID = SceneDataManager.instance.getData(SceneData.SelectedKart);
 
-                        break;
-
-                    case 1:
-                        Debug.Log("TCP1"); // new player
-                        short idToAdd = GetHeader(recvBuffer, 2);
-                        string nameToAdd = Encoding.ASCII.GetString(GetContent(recvBuffer, 4));
-                        UnityMainThreadDispatcher.Instance().Enqueue(() => AddPlayer(ref idToAdd, ref nameToAdd));
-                        break;
-
-                    case -1:
-                        Debug.Log("TCP-1"); // remove player
-                        short idToRemove = GetHeader(recvBuffer, 2);
-                        UnityMainThreadDispatcher.Instance().Enqueue(() => RemovePlayer(ref idToRemove));
-                        break;
-
-                    case 2:
-                        Debug.Log("TCP2"); // New message
-                        string msgReceived = Encoding.ASCII.GetString(GetContent(recvBuffer, 2));
-                        UnityMainThreadDispatcher.Instance().Enqueue(() => ReceivedMessage(ref msgReceived));
-
-                        break;
-                    case 9:
-                        Debug.Log("TCP9");
-                        short pid = GetHeader(recvBuffer, 2);
-                        Debug.Log("9: " + pid);
-
-                        string newPlayerName = Encoding.ASCII.GetString(GetContent(recvBuffer, 4));
-                        Debug.Log("9: " + newPlayerName);
-
-                        //UnityMainThreadDispatcher.Instance().Enqueue(() => NetPlayerManager.AddPlayer(ref pid, ref newPlayerName));
-
-                        break;
-
-                    case 999:
-                        Debug.Log("TCP 999");
-                        short quitID = GetHeader(recvBuffer, 2);
-
-                        //UnityMainThreadDispatcher.Instance().Enqueue(() => NetPlayerManager.DeletePlayer(ref quitID));
-
-                        break;
-                    default:
-                        break;
-                }
+                Thread thread = new Thread(() => clientTCPConnect(clientTCPSocket, remoteEP));
+                //Task.Run(() => { clientTCPConnect(clientTCPSocket, remoteEP); }, cts.Token);        // TCP Connect Thread
             }
         }
-        catch (Exception ex)
+        else
         {
+            if (isOnNetwork)
+            {
+                IPAddress ip;
+                //ip = IPAddress.Parse("192.168.2.43");
+                ip = Dns.GetHostAddresses("jeffrey9911.ddns.net")[0];
+                
+                remoteEP = new IPEndPoint(ip, 12581);
 
+                clientTCPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                clientUDPSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+                Thread thread = new Thread(() => clientTCPConnect(clientTCPSocket, remoteEP));
+                //Task.Run(() => { clientTCPConnect(clientTCPSocket, remoteEP); }, cts.Token);        // TCP Connect Thread
+            }
         }
-        finally
-        {
-            clientTCPSocket.Close();
-        }
-
-        
-
     }
 
-    public static void InitialPlayerList(ref string allPlayer)
+
+    // Update is called once per frame
+    void Update()
     {
-        if (allPlayer.Length > 4 && !isFirstInitialized)
+        if(isOnNetwork)
         {
-            string[] players = allPlayer.Split("#");
+            udpTimer += Time.deltaTime;
+            latencyCheckTimer += Time.deltaTime;
 
-            localPlayer = new NetPlayer(short.Parse(players[0].Substring(0, 4)), players[0].Substring(4, players[0].Length - 4));
-            localPlayer.playerLevelID = 0;
-            Debug.Log("Local ID :" + localPlayer.playerID + " Local Name: " + localPlayer.playerName);
-
-            for (int i = 1; i < players.Length; i++)
+            if (isLocalPlayerSetup && udpTimer >= sendInterval)
             {
-                short netPlayerID = short.Parse(players[i].Substring(0, 4));
-                string netPlayerName = players[i].Substring(4, players[i].Length - 4);
+                clientUDPSend("Transform");
 
-                playerDList.Add(netPlayerID, new NetPlayer(netPlayerID, netPlayerName));
-
-                Debug.Log("Net ID: " + netPlayerID + " Net Name: " + netPlayerName + " Created!");
+                udpTimer -= sendInterval;
             }
 
-            LobbyManager.RefreshPlayerList();
-
-            short[] shorts = { 0, localPlayer.playerID };
-            byte[] loginMsg = new byte[4];
-            Buffer.BlockCopy(shorts, 0, loginMsg, 0, 4);
-
-            clientUDPSocket.SendTo(loginMsg, serverUDPEP);
-            isFirstInitialized = true;
-            isUDPReceiving = true;
-
-            Thread udpReceive = new Thread(ClientUDPReceive);
-            threads.Add(udpReceive);
-            threads[threads.Count - 1].Start();
-        }
-    }
-
-    public static void AddPlayer(ref short pID, ref string pName)
-    {
-        playerDList.Add(pID, new NetPlayer(pID, pName));
-
-        LobbyManager.RefreshPlayerList();
-    }
-
-    public static void RemovePlayer(ref short pID)
-    {
-        if(playerDList.ContainsKey(pID))
-        {
-            switch (playerDList[pID].playerLevelID)
+            if (latencyCheckTimer >= latencyDetectInterval)
             {
-                case 0: // lobby
-                    playerDList.Remove(pID);
-                    LobbyManager.RefreshPlayerList();
+
+                clientTCPSend("Latency");
+                latencyCheckTimer -= latencyDetectInterval;
+            }
+
+            if (isStartedCalculateLatency)
+            {
+                checkedLatency += Time.deltaTime;
+            }
+            displayedPlayerID = localPlayerID;
+        }
+        
+    }
+
+    static void clientTCPConnect(Socket clientSocket, IPEndPoint serverEP)                  // TCP Connect
+    {
+        clientSocket.Connect(serverEP);
+
+        Debug.Log("Connected!");
+
+        short[] header = { 0 };
+
+        //string initString = GameplayManager.instance.playerManager.localPlayerName + "#" + GameplayManager.instance.playerManager.localPlayerKartID;
+        if(SceneDataManager.instance)
+        {
+
+        }
+        string initString = localPlayerName + "#" + localPlayerKartID;
+        Debug.Log("To Send: " + header[0].ToString() + initString);
+        byte[] initByte = Encoding.ASCII.GetBytes(initString);
+        byte[] initMsg = new byte[header.Length * 2 + initString.Length];
+
+        Buffer.BlockCopy(header, 0, initMsg, 0, header.Length * 2);
+
+        Buffer.BlockCopy(initByte, 0, initMsg, header.Length * 2, initByte.Length);
+
+        clientSocket.Send(initMsg);
+
+        Debug.Log("FIRST SEND");
+
+        Task.Run(() => { clientTCPReceive(); }, cts.Token);                     // TCP Receive Thread
+        Task.Run(() => { clientUDPReceive(); }, cts.Token);             // UDP Receive Thread
+
+    }
+
+    static void clientTCPReceive()                                              // TCP Receive
+    {
+        //Debug.Log("Start Receive");
+        try
+        {
+            byte[] buffer = new byte[1024];
+            int recv = clientTCPSocket.Receive(buffer);
+
+            short[] shortBuffer = new short[1];
+            Buffer.BlockCopy(buffer, 0, shortBuffer, 0, 2);
+            
+            //Debug.Log("Received!");
+
+            switch (shortBuffer[0])
+            {
+                // First Login
+                case 0:
+                    byte[] idInfo = new byte[recv - 2];
+                    Buffer.BlockCopy(buffer, 2, idInfo, 0, idInfo.Length);
+                    Buffer.BlockCopy(idInfo, 0, shortBuffer, 0, idInfo.Length);
+                    if (shortBuffer[0] >= 1000) localPlayerID = shortBuffer[0];
+                    Debug.Log("PlayerID Set TO:" + localPlayerID);
+                    isLocalPlayerSetup = true;
+                    
                     break;
 
                 case 1:
+                    byte[] newPlayerInfo = new byte[recv - 2];
+                    Buffer.BlockCopy(buffer, 2, newPlayerInfo, 0, recv - 2);
+                    UnityMainThreadDispatcher.Instance().Enqueue(() => PlayerManager.CheckPlayerDList(ref newPlayerInfo));
                     break;
 
-                case 2:
+                case 9:
+                    UnityMainThreadDispatcher.Instance().Enqueue(() => CalculateLatency(1));
                     break;
 
-                case 3:
-                    break;
                 default:
+                    Debug.Log("Default");
                     break;
-            }
-        }
-    }
-
-    static void ClientUDPReceive()
-    {
-        try
-        {
-            while(isUDPReceiving)
-            {
-                byte[] recvBuffer = new byte[1024];
-                int recv = clientUDPSocket.Receive(recvBuffer);
-
-                switch (GetHeader(recvBuffer, 0))
-                {
-                    case 0:
-                        break;
-
-                    case 1:
-                        break;
-
-                    default:
-                        break;
-                }
             }
         }
         catch (Exception ex)
         {
-            Debug.LogException(ex);
+            Debug.Log(ex.ToString());
             throw;
         }
-        finally
+
+        clientTCPReceive();
+    }
+
+    void clientTCPSend(string sendType)
+    {
+        switch (sendType)
         {
-            clientUDPSocket.Close();
+            case "Latency":
+                if(!isStartedCalculateLatency)
+                {
+                    byte[] buffer = new byte[2];
+                    short[] shortBuffer = { 9 };
+                    Buffer.BlockCopy(shortBuffer, 0, buffer, 0, buffer.Length);
+
+                    clientTCPSocket.Send(buffer);
+
+                    CalculateLatency(0);
+                }
+                
+                
+                break;
+
+
+            default:
+                break;
+        }
+
+        
+    }
+
+    void clientUDPSend(string sendType)
+    {
+        switch (sendType)
+        {
+            case "Transform":
+                if (isLocalPlayerSetup)
+                {
+                    byte[] buffer = new byte[36];
+                    short[] shortBuffer = { 0, localPlayerID };
+                    Buffer.BlockCopy(shortBuffer, 0, buffer, 0, 4);
+                    float[] playerTrans = { GameplayManager.instance.playerManager.localPlayer.transform.position.x,
+                                        GameplayManager.instance.playerManager.localPlayer.transform.position.y,
+                                        GameplayManager.instance.playerManager.localPlayer.transform.position.z,
+                                        GameplayManager.instance.playerManager.localPlayer.transform.rotation.eulerAngles.x,
+                                        GameplayManager.instance.playerManager.localPlayer.transform.rotation.eulerAngles.y,
+                                        GameplayManager.instance.playerManager.localPlayer.transform.rotation.eulerAngles.z,
+                                        GameplayManager.instance.playerManager.localPlayer.GetComponent<KartController>().GetMoveAction().x,
+                                        GameplayManager.instance.playerManager.localPlayer.GetComponent<KartController>().GetMoveAction().y};
+                    Buffer.BlockCopy(playerTrans, 0, buffer, 4, 32);
+                    clientUDPSocket.SendTo(buffer, remoteEP);
+
+                    // First UDP sent
+                    if (!isUDPReceiving) isUDPReceiving = true;
+                }
+                break;
+
+            default:
+                break;
         }
     }
 
-    public static void SendMessage(ref string msgToSend)
+    static void clientUDPReceive()                                      // UDP Receive
     {
-        clientTCPSocket.Send(AddHeader(AddHeader(Encoding.ASCII.GetBytes(msgToSend), localPlayer.playerID), 2));
-    }
-    public static void ReceivedMessage(ref string msgReceived)
-    {
-        LobbyManager.AddMessage(ref msgReceived);
+        while (!isUDPReceiving)
+        {
+            // Waiting for first UDP Sent
+        }
+
+        if (isUDPReceiving)
+        {
+            byte[] receiveBuffer = new byte[1024];
+            int recv = clientUDPSocket.Receive(receiveBuffer);
+            short[] receiveHeader = new short[1];
+            Buffer.BlockCopy(receiveBuffer, 0, receiveHeader, 0, 2);
+
+            switch (receiveHeader[0])
+            {
+                // Player Transform
+                case 0:
+                    byte[] buffer = new byte[recv - 2];
+                    Buffer.BlockCopy(receiveBuffer, 2, buffer, 0, buffer.Length);
+
+                    for (int i = 0; i < recv / 34; i++)
+                    {
+                        byte[] transBuffer = new byte[34];
+                        Buffer.BlockCopy(buffer, i * 34, transBuffer, 0, 34);
+
+                        try
+                        {
+                            UnityMainThreadDispatcher.Instance().Enqueue(() => PlayerManager.UpdateOnNetPlayer(ref transBuffer));
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.Log(ex.ToString());
+                            throw;
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+
+            
+
+        }
+
+
+        clientUDPReceive();
     }
 
-    static short GetHeader(byte[] bytes, int offset)
+    static void CalculateLatency(int operate)
     {
-        short[] sheader = new short[1];
-        Buffer.BlockCopy(bytes, offset, sheader, 0, 2);
-        return sheader[0];
+        switch (operate)
+        {
+            case 0:
+                checkedLatency = 0.0f;
+                isStartedCalculateLatency = true;
+                break;
+
+            case 1:
+                GameplayManager.instance.gameplayUIManager.UpdateLatency(checkedLatency);
+                isStartedCalculateLatency = false;
+                break;
+
+            default:
+                break;
+        }
     }
 
-    static byte[] AddHeader(byte[] bytes, short header)
-    {
-        byte[] buffer = new byte[bytes.Length + 2];
-        short[] sBuffer = { header };
-        Buffer.BlockCopy(sBuffer, 0, buffer, 0, 2);
-        Buffer.BlockCopy(bytes, 0, buffer, 2, bytes.Length);
-        return buffer;
-    }
-
-    static byte[] GetContent(byte[] buffer, int offset)
-    {
-        byte[] returnBy = new byte[buffer.Length - offset];
-        Buffer.BlockCopy(buffer, offset, returnBy, 0, returnBy.Length);
-        return returnBy;
-    }
 
     private void OnApplicationQuit()
     {
-        short[] quitShort = { -1 };
-        byte[] quitMsg = new byte[2];
-        Buffer.BlockCopy(quitShort, 0, quitMsg, 0, 2);
-        clientTCPSocket.Send(quitMsg);
-        isTCPReceiving = false;
-        isUDPReceiving = false;
+        cts.Cancel();
+        clientTCPSocket.Close();
+        clientUDPSocket.Close();
+        Destroy(UnityMainThreadDispatcher.Instance());
     }
 }

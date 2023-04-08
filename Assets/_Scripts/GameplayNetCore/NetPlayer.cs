@@ -4,55 +4,16 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-public struct TransformState
-{
-    public Vector3 position;
-    public Quaternion rotation;
-    public Vector2 input;
-
-    public TransformState(Vector3 consPos, Quaternion consRot, Vector2 consIn)
-    {
-        position = consPos;
-        rotation = consRot;
-        input = consIn;
-    }
-}
-
 public class NetPlayer : MonoBehaviour
 {
-    // Player Net ID
-    public short playerID;
+    public GameObject playerObj;
     public string playerName;
+    public short playerID;
+    public string playerKartID;
 
-    // Gameplay ID
-    public string playerKartID = "";
-    public short playerRoomID = -1;
-    public short playerLevelID = 0;
-
-    public Transform playerTransform;
-
-
-    // Constructor
-    public NetPlayer(short consID, string consName)
-    {
-        playerID = consID;
-        playerName = consName;
-    }
-
-    public NetPlayer(short consID, string consName, string consKartID, short consRoomID, short consLevelID)
-    {
-        playerID = consID;
-        playerName = consName;
-
-        playerKartID = consKartID;
-        playerRoomID = consRoomID;
-        playerLevelID = consLevelID;
-    }
-
-
-    // Motion prediction
     public TransformState serverState;
     public TransformState obsoleteState;
+
     public TransformState processedState;
 
     private float timeDifference;
@@ -60,7 +21,7 @@ public class NetPlayer : MonoBehaviour
     
     private void Awake()
     {
-        playerTransform = this.transform;
+        playerObj = this.gameObject;
     }
 
     private void Start()

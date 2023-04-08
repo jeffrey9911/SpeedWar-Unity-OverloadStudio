@@ -5,11 +5,22 @@ using System.Text;
 using Unity.VisualScripting;
 using UnityEngine;
 
+public struct TransformState
+{
+    public Vector3 position;
+    public Quaternion rotation;
+    public Vector2 input;
 
+    public TransformState(Vector3 consPos, Quaternion consRot, Vector2 consIn)
+    {
+        position = consPos;
+        rotation = consRot;
+        input = consIn;
+    }
+}
 
 public class PlayerManager : MonoBehaviour
 {
- /*   
     public static Transform _spawnPos;
     public static string _defaultKartID = "007";
 
@@ -51,6 +62,7 @@ public class PlayerManager : MonoBehaviour
             {
                 Debug.Log("Play Online Mode!");
                 NetworkManager networkManager = GameplayManager.instance.gameObject.AddComponent<NetworkManager>();
+                NetworkManager.isOnNetwork = true;
             }
 
             if (SceneDataManager.instance.getData(SceneData.SelectedMode) == "Offline")
@@ -146,10 +158,10 @@ public class PlayerManager : MonoBehaviour
         Buffer.BlockCopy(playerUpdateByte, 0, shortBuffer, 0, 2);
         short playerIDin = shortBuffer[0];
         */
-        
+
         //Debug.Log("LocalID: " + NetworkManager.localPlayerID + " IDin: " + shortBuffer[0] + " is in?: " + onNetPlayerDList.ContainsKey(playerIDin));
-        
-    /*
+
+
         if (playerIDin != NetworkManager.localPlayerID && onNetPlayerDList.ContainsKey(shortBuffer[0]))
         {
             float[] fPos = { 0, 0, 0 };
@@ -180,5 +192,5 @@ public class PlayerManager : MonoBehaviour
         //Array.Clear(shortBuffer, 0, shortBuffer.Length);
     }
 
-  */
+
 }

@@ -23,7 +23,7 @@ public class ItemSpawner : MonoBehaviour
     {
         if(Input.GetKeyUp(KeyCode.T))
         {
-            Vector3 spawnPos = NetworkManager.localPlayer.playerTransform.position;
+            Vector3 spawnPos = GameplayManager.instance.playerManager.localPlayer.transform.position;
             spawnPos.x += Random.Range(-5.0f, 5.0f);
             spawnPos.z += Random.Range(-5.0f, 5.0f);
             _itemFactory.GetItems("Booster").createItem(_itemFactory.booster, spawnPos, _itemFactory.booster.transform.rotation);

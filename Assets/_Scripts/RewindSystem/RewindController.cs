@@ -63,11 +63,11 @@ public class RewindController : MonoBehaviour
 
         if(isRewind)
         {
-            NetworkManager.localPlayer.playerTransform.GetComponent<Rigidbody>().velocity = Vector3.zero;
-            NetworkManager.localPlayer.playerTransform.transform.position = Vector3.Lerp(NetworkManager.localPlayer.playerTransform.position, loadedPos, Time.deltaTime * 3);
-            NetworkManager.localPlayer.playerTransform.transform.rotation = Quaternion.Lerp(NetworkManager.localPlayer.playerTransform.rotation, Quaternion.Euler(loadedRot), Time.deltaTime * 3);
+            GameplayManager.instance.playerManager.localPlayer.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            GameplayManager.instance.playerManager.localPlayer.transform.position = Vector3.Lerp(GameplayManager.instance.playerManager.localPlayer.transform.position, loadedPos, Time.deltaTime * 3);
+            GameplayManager.instance.playerManager.localPlayer.transform.rotation = Quaternion.Lerp(GameplayManager.instance.playerManager.localPlayer.transform.rotation, Quaternion.Euler(loadedRot), Time.deltaTime * 3);
 
-            Vector3 kartPos = NetworkManager.localPlayer.playerTransform.position;
+            Vector3 kartPos = GameplayManager.instance.playerManager.localPlayer.transform.position;
             if(Vector3.Distance(kartPos, loadedPos) <= minDist)
             {
                 Debug.Log("STOP REWIND");

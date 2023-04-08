@@ -50,7 +50,7 @@ public class CameraController : MonoBehaviour
 
     private void speedCam()
     {
-        float kartSpeedIndex = NetworkManager.localPlayer.playerTransform.GetComponent<KartController>().getSpeed / 230f;
+        float kartSpeedIndex = GameplayManager.instance.playerManager.localPlayer.GetComponent<KartController>().getSpeed / 230f;
 
         float targetView = 70.0f + (kartSpeedIndex * 30);
         if (isViewing) targetView = 70.0f + (kartSpeedIndex * 50);
