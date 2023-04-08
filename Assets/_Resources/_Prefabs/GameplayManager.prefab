@@ -4780,7 +4780,6 @@ GameObject:
   - component: {fileID: 8951244855320840178}
   - component: {fileID: 3392689885845632598}
   - component: {fileID: 8951244855320840173}
-  - component: {fileID: 8951244855320840179}
   - component: {fileID: 8951244855320840188}
   - component: {fileID: 8951244855320840189}
   - component: {fileID: 8951244855320840190}
@@ -4843,7 +4842,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gameManager: {fileID: 8951244855320840177}
   networkManager: {fileID: 0}
-  playerManager: {fileID: 8951244855320840179}
+  playerManager: {fileID: 0}
   itemsFactory: {fileID: 8951244855320840188}
   itemSpawner: {fileID: 8951244855320840189}
   itemEffectInvoker: {fileID: 8951244855320840190}
@@ -4851,19 +4850,6 @@ MonoBehaviour:
   kartAssetManager: {fileID: 0}
   objectPool: {fileID: 3392689885845632618}
   gameplayUIManager: {fileID: 3392689885845632613}
---- !u!114 &8951244855320840179
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8951244855320840177}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 105aff0938ca54463a489d36d31324bf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  localPlayer: {fileID: 0}
 --- !u!114 &8951244855320840188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4996,7 +4982,7 @@ GameObject:
   - component: {fileID: 8951244856490281460}
   m_Layer: 0
   m_Name: spawnPosition
-  m_TagString: Untagged
+  m_TagString: Respawn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

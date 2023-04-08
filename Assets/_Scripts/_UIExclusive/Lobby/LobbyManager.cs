@@ -4,6 +4,8 @@ using UnityEngine;
 
 using TMPro;
 
+using UnityEngine.SceneManagement;
+
 public class LobbyManager : MonoBehaviour
 {
     public TMP_InputField _messageInput;
@@ -40,7 +42,14 @@ public class LobbyManager : MonoBehaviour
         foreach(NetPlayer netPlayer in NetworkManager.playerDList.Values)
         {
             GameObject addedPlayer = Instantiate(Resources.Load<GameObject>("PNL_Player"), playerList);
-            OnNetPlayerDisplay.DisplayPlayer(addedPlayer.GetComponent<OnNetPlayerDisplay>(), ref netPlayer.playerID, ref netPlayer.playerName);
+            OnNetPlayerDisplay.DisplayPlayer(addedPlayer.GetComponent<OnNetPlayerDisplay>(), ref netPlayer.playerID, ref netPlayer.playerName, ref netPlayer.playerLevelID);
         }
+    }
+
+    public void NetStartOnClick()
+    {
+        short lvid = 1;
+        NetworkManager.UpdateLocalLevelID(ref lvid);
+        SceneManager.LoadScene("MainSelect");
     }
 }

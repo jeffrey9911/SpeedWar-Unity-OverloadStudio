@@ -104,7 +104,7 @@ public class NetworkManager : MonoBehaviour
                         Debug.Log("TCP0");
                         if (!isFirstInitialized)
                         {
-                            string allPlayer = Encoding.ASCII.GetString(GetContent(recvBuffer, 2));
+                            string allPlayer = Encoding.ASCII.GetString(GetContent(recvBuffer, 2, recv - 2));
                             UnityMainThreadDispatcher.Instance().Enqueue(() => InitialPlayerList(ref allPlayer));
                         }
                         else
@@ -118,7 +118,7 @@ public class NetworkManager : MonoBehaviour
                     case 1:
                         Debug.Log("TCP1"); // new player
                         short idToAdd = GetHeader(recvBuffer, 2);
-                        string nameToAdd = Encoding.ASCII.GetString(GetContent(recvBuffer, 4));
+                        string nameToAdd = Encoding.ASCII.GetString(GetContent(recvBuffer, 4, recv - 4));
                         UnityMainThreadDispatcher.Instance().Enqueue(() => AddPlayer(ref idToAdd, ref nameToAdd));
                         break;
 
@@ -130,16 +130,30 @@ public class NetworkManager : MonoBehaviour
 
                     case 2:
                         Debug.Log("TCP2"); // New message
-                        string msgReceived = Encoding.ASCII.GetString(GetContent(recvBuffer, 2));
+                        string msgReceived = Encoding.ASCII.GetString(GetContent(recvBuffer, 2, recv - 2));
                         UnityMainThreadDispatcher.Instance().Enqueue(() => ReceivedMessage(ref msgReceived));
-
                         break;
+
+                    case 3:
+                        Debug.Log("TCP3"); // Update status
+                        short[] shorts = new short[4];
+                        Buffer.BlockCopy(recvBuffer, 2, shorts, 0, 4);
+                        UnityMainThreadDispatcher.Instance().Enqueue(() => UpdateNetPlayerLevelID(ref shorts));
+                        break;
+
+                    case 4:
+                        Debug.Log("TCP4"); // Room creation request accepted
+                        localPlayer.playerRoomID = GetHeader(recvBuffer, 2);
+                        Debug.Log("Creating room with id: " + localPlayer.playerRoomID);
+                        break;
+
+
                     case 9:
                         Debug.Log("TCP9");
                         short pid = GetHeader(recvBuffer, 2);
                         Debug.Log("9: " + pid);
 
-                        string newPlayerName = Encoding.ASCII.GetString(GetContent(recvBuffer, 4));
+                        string newPlayerName = Encoding.ASCII.GetString(GetContent(recvBuffer, 4, recv - 4));
                         Debug.Log("9: " + newPlayerName);
 
                         //UnityMainThreadDispatcher.Instance().Enqueue(() => NetPlayerManager.AddPlayer(ref pid, ref newPlayerName));
@@ -169,6 +183,39 @@ public class NetworkManager : MonoBehaviour
 
         
 
+    }
+
+    static void ClientUDPReceive()
+    {
+        try
+        {
+            while (isUDPReceiving)
+            {
+                byte[] recvBuffer = new byte[1024];
+                int recv = clientUDPSocket.Receive(recvBuffer);
+
+                switch (GetHeader(recvBuffer, 0))
+                {
+                    case 0:
+                        break;
+
+                    case 1:
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            throw;
+        }
+        finally
+        {
+            clientUDPSocket.Close();
+        }
     }
 
     public static void InitialPlayerList(ref string allPlayer)
@@ -239,38 +286,7 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
-    static void ClientUDPReceive()
-    {
-        try
-        {
-            while(isUDPReceiving)
-            {
-                byte[] recvBuffer = new byte[1024];
-                int recv = clientUDPSocket.Receive(recvBuffer);
-
-                switch (GetHeader(recvBuffer, 0))
-                {
-                    case 0:
-                        break;
-
-                    case 1:
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.LogException(ex);
-            throw;
-        }
-        finally
-        {
-            clientUDPSocket.Close();
-        }
-    }
+    
 
     public static void SendMessage(ref string msgToSend)
     {
@@ -279,6 +295,45 @@ public class NetworkManager : MonoBehaviour
     public static void ReceivedMessage(ref string msgReceived)
     {
         LobbyManager.AddMessage(ref msgReceived);
+    }
+
+    public static void UpdateLocalLevelID(ref short id)
+    {
+        localPlayer.playerLevelID = id;
+
+        short[] updateHeaders = { 3, localPlayer.playerID, localPlayer.playerLevelID };
+        byte[] updateMsg = new byte[6];
+        Buffer.BlockCopy(updateHeaders, 0, updateMsg, 0, 6);
+
+        clientTCPSocket.Send(updateMsg); // 3: to server update level id
+    }
+
+    public static void UpdateNetPlayerLevelID(ref short[] shorts)
+    {
+        if (playerDList.ContainsKey(shorts[0]))
+        {
+            playerDList[shorts[0]] = playerDList[shorts[0]].SetPlayerLevelID(shorts[1]);
+        }
+        switch (localPlayer.playerLevelID)
+        {
+            case 0:
+                LobbyManager.RefreshPlayerList();
+                break;
+
+
+            default:
+                break;
+        }
+    }
+
+    public static void CreateNewGame(ref short levelID)
+    {
+        localPlayer.playerKartID = SceneDataManager.instance.getData(SceneData.SelectedKart);
+        Debug.Log("Local Kart Selected: " + localPlayer.playerKartID);
+
+        localPlayer.playerLevelID = levelID;
+
+        clientTCPSocket.Send(AddHeader(AddHeader(AddHeader(Encoding.ASCII.GetBytes(localPlayer.playerKartID), localPlayer.playerLevelID), localPlayer.playerID), 4)); // 4: to server set kart id
     }
 
     static short GetHeader(byte[] bytes, int offset)
@@ -297,9 +352,9 @@ public class NetworkManager : MonoBehaviour
         return buffer;
     }
 
-    static byte[] GetContent(byte[] buffer, int offset)
+    static byte[] GetContent(byte[] buffer, int offset, int count)
     {
-        byte[] returnBy = new byte[buffer.Length - offset];
+        byte[] returnBy = new byte[count];
         Buffer.BlockCopy(buffer, offset, returnBy, 0, returnBy.Length);
         return returnBy;
     }

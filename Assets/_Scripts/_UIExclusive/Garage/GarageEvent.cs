@@ -25,12 +25,29 @@ public class GarageEvent : MonoBehaviour
 
     public void startOnClickLV2()
     {
-        SceneManager.LoadScene(2);
+        if(NetworkManager.isOnNetwork)
+        {
+            short lvid = 2;
+            NetworkManager.CreateNewGame(ref lvid);
+        }
+        else
+        {
+            SceneManager.LoadScene(2);
+        }
+        
     }
 
     public void startOnClick()
     {
-        SceneManager.LoadScene(3);
+        if (NetworkManager.isOnNetwork)
+        {
+            short lvid = 3;
+            NetworkManager.CreateNewGame(ref lvid);
+        }
+        else
+        {
+            SceneManager.LoadScene(3);
+        }
     }
 
 

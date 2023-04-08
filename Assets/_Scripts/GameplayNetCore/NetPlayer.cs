@@ -39,6 +39,20 @@ public class NetPlayer : MonoBehaviour
         playerName = consName;
     }
 
+    // Update levelid
+    public NetPlayer(short consID, string consName, short consLevelID)
+    {
+        playerID = consID;
+        playerName = consName;
+
+        playerLevelID = consLevelID;
+    }
+    public NetPlayer SetPlayerLevelID(short levelIDtoSet)
+    {
+        return new NetPlayer(playerID, playerName, levelIDtoSet);
+    }
+
+    // Creating game
     public NetPlayer(short consID, string consName, string consKartID, short consRoomID, short consLevelID)
     {
         playerID = consID;
