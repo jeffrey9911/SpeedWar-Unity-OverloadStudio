@@ -4789,6 +4789,7 @@ GameObject:
   - component: {fileID: 3392689885845632619}
   - component: {fileID: 3392689885845632612}
   - component: {fileID: 3392689885845632613}
+  - component: {fileID: 6570619143287356271}
   m_Layer: 0
   m_Name: GameplayManager
   m_TagString: Untagged
@@ -4971,6 +4972,18 @@ MonoBehaviour:
   _gTimer: {fileID: 3392689884540556946}
   _gScore: {fileID: 3392689885655879311}
   _netLatency: {fileID: 5472249857125757354}
+--- !u!114 &6570619143287356271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8951244855320840177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 105aff0938ca54463a489d36d31324bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8951244856490281451
 GameObject:
   m_ObjectHideFlags: 0

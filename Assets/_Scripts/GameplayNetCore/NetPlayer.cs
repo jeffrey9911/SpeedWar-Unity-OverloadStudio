@@ -4,20 +4,6 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-public struct TransformState
-{
-    public Vector3 position;
-    public Quaternion rotation;
-    public Vector2 input;
-
-    public TransformState(Vector3 consPos, Quaternion consRot, Vector2 consIn)
-    {
-        position = consPos;
-        rotation = consRot;
-        input = consIn;
-    }
-}
-
 public class NetPlayer : MonoBehaviour
 {
     // Player Net ID
@@ -31,6 +17,7 @@ public class NetPlayer : MonoBehaviour
 
     public Transform playerTransform;
 
+    public short score = -1;
 
     // Constructor
     public NetPlayer(short consID, string consName)
@@ -53,7 +40,52 @@ public class NetPlayer : MonoBehaviour
     }
 
     // Creating game
-    public NetPlayer(short consID, string consName, string consKartID, short consRoomID, short consLevelID)
+    private NetPlayer(short consID, string consName, string consKartID, short consLevelID)
+    {
+        playerID = consID;
+        playerName = consName;
+
+        playerKartID = consKartID;
+        playerLevelID = consLevelID;
+    }
+    public NetPlayer SetPlayerOnRoomCreated(string consKartID, short consLevelID)
+    {
+        return new NetPlayer(playerID, playerName, consKartID, consLevelID);
+    }
+
+    // Set Room id
+    private NetPlayer(short consID, string consName, string consKartID, short consLevelID, short consRoomID)
+    {
+        playerID = consID;
+        playerName = consName;
+
+        playerKartID = consKartID;
+        playerLevelID = consLevelID;
+        playerRoomID = consRoomID;
+    }
+    public NetPlayer SetPlayerRoomID(short consRoomID)
+    {
+        return new NetPlayer(playerID, playerName, playerKartID, playerLevelID, consRoomID);
+    }
+
+    // Set Score
+    private NetPlayer(short consID, string consName, string consKartID, short consLevelID, short consRoomID, short consScore)
+    {
+        playerID = consID;
+        playerName = consName;
+
+        playerKartID = consKartID;
+        playerLevelID = consLevelID;
+        playerRoomID = consRoomID;
+        score = consScore;
+    }
+    public NetPlayer SetPlayerScore(short consScore)
+    {
+        return new NetPlayer(playerID, playerName, playerKartID, playerLevelID, playerRoomID, consScore);
+    }
+
+    // Creating object
+    private NetPlayer(short consID, string consName, string consKartID, short consRoomID, short consLevelID, Transform consTransform)
     {
         playerID = consID;
         playerName = consName;
@@ -61,59 +93,11 @@ public class NetPlayer : MonoBehaviour
         playerKartID = consKartID;
         playerRoomID = consRoomID;
         playerLevelID = consLevelID;
+
+        playerTransform = consTransform;
     }
-
-
-    // Motion prediction
-    public TransformState serverState;
-    public TransformState obsoleteState;
-    public TransformState processedState;
-
-    private float timeDifference;
-    private float timer;
-    
-    private void Awake()
+    public NetPlayer UpdatePlayerKartObject(Transform consTransform)
     {
-        playerTransform = this.transform;
+        return new NetPlayer(playerID, playerName, playerKartID, playerRoomID, playerLevelID, consTransform);
     }
-
-    private void Start()
-    {
-        serverState = new TransformState();
-        obsoleteState = new TransformState();
-        processedState = new TransformState();
-    }
-
-    private void Update()
-    {
-        timer += Time.deltaTime;
-        HandleUpdate();
-    }
-
-
-    void HandleUpdate()
-    {
-        if (!obsoleteState.Equals(default(TransformState))  && !serverState.Equals(default(TransformState)))
-        {
-            timeDifference = 0.3f;//GameplayManager.instance.networkManager.sendInterval;// + NetworkManager.checkedLatency;
-            this.transform.position = Vector3.Lerp(serverState.position, processedState.position, timer / timeDifference);
-            this.transform.rotation = Quaternion.Lerp(serverState.rotation, processedState.rotation, timer / timeDifference);
-            this.transform.GetComponent<KartController>().UpdateMoveAction(Vector2.Lerp(serverState.input, processedState.input, timer / timeDifference));
-        }
-    }
-
-    public void ServerStateUpdate(Vector3 pos, Quaternion rot, Vector2 input)
-    {
-        obsoleteState = serverState;
-        serverState = new TransformState(pos, rot, input);
-        processedState.position = serverState.position + (serverState.position - obsoleteState.position);
-        processedState.rotation = serverState.rotation * (serverState.rotation * Quaternion.Inverse(obsoleteState.rotation));
-        processedState.input = serverState.input + (serverState.input - obsoleteState.input);
-        this.transform.position = pos;
-        this.transform.rotation = rot;
-        timer = 0;
-    }
-
-
-
 }

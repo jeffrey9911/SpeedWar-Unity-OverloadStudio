@@ -4,6 +4,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+using UnityEngine.UI;
+
 public class GarageEvent : MonoBehaviour
 {
     private int index = 0;
@@ -11,16 +13,32 @@ public class GarageEvent : MonoBehaviour
     private KartAsset _kart;
     private KartAssetManager KAM;
 
+    public Button _lv2Btn;
+    public Button _lv3Btn;
+    public Button _joinBtn;
+
     private void Start()
     {
         KAM = SceneDataManager.instance.kartAssetManager;
         _kart = KAM.getKartList[index];
         SwitchKart();
+
+        if(NetworkManager.isJoiningRoom)
+        {
+            _joinBtn.gameObject.SetActive(true);
+            _lv2Btn.gameObject.SetActive(false);
+            _lv3Btn.gameObject.SetActive(false);
+        }
     }
 
     public void reloadScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void joinRoomOnClick()
+    {
+        NetworkManager.JoinOnRequest();
     }
 
     public void startOnClickLV2()

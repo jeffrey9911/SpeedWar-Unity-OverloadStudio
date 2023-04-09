@@ -1,4 +1,4 @@
-using System;
+//using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -6,149 +6,156 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 
-
 public class PlayerManager : MonoBehaviour
 {
- /*   
-    public static Transform _spawnPos;
-    public static string _defaultKartID = "007";
+    public static Transform spawnPoint;
 
-    public struct InputState
+    private void Awake()
     {
-        public int tick;
-        public Vector2 input;
+        spawnPoint = GameObject.Find("spawnPosition").GetComponent<Transform>();
 
+        if (SceneDataManager.instance)
+        {
+            KartAsset kartKAM = SceneDataManager.instance.kartAssetManager.getKart(NetworkManager.localPlayer.playerKartID);
+            Vector3 spawnPos = new Vector3(spawnPoint.position.x + Random.Range(-3, 3), spawnPoint.position.y + Random.Range(-3, 3), spawnPoint.position.z + Random.Range(-3, 3));
+
+            NetworkManager.localPlayer.playerTransform = Instantiate(kartKAM.AssetPrefab, spawnPos, spawnPoint.rotation).transform;
+            NetworkManager.localPlayer.playerTransform.GetComponent<KartController>().KartSetup(kartKAM._acceleration, kartKAM._maxSpeed, kartKAM._drift, kartKAM._control, kartKAM._weight);
+            NetworkManager.localPlayer.playerTransform.GetComponent<KartController>().spawnMode = 0;
+        }
     }
-
-    public struct TransformState
-    {
-        public int tick;
-        public Vector3 position;
-        public Vector3 rotation;
-    }
-    
-
-    public GameObject localPlayer;
-    
-
-
-
-    public static Dictionary<short, NetPlayer> onNetPlayerDList = new Dictionary<short, NetPlayer>();
-
-    private GameObject _spawnPrefab;
-
-
-    //public static byte[] playerUpdateByte = new byte[26];
 
     private void Start()
     {
-        _spawnPos = GameObject.Find("spawnPosition").GetComponent<Transform>();
-        if (SceneDataManager.instance)
-        {
-            //isOnNetWork = GameplayManager.instance.getData(GameplayManager.instance.selectedMode) == 2f;
-
-            if (SceneDataManager.instance.getData(SceneData.SelectedMode) == "Online")
-            {
-                Debug.Log("Play Online Mode!");
-                NetworkManager networkManager = GameplayManager.instance.gameObject.AddComponent<NetworkManager>();
-            }
-
-            if (SceneDataManager.instance.getData(SceneData.SelectedMode) == "Offline")
-            {
-                //NetworkManager.isOnNetwork = false;
-            }
-
-
-            _spawnPrefab = SceneDataManager.instance.kartAssetManager.getKart(SceneDataManager.instance.getData(SceneData.SelectedKart)).AssetPrefab;
-            
-
-            if (_spawnPrefab == null)
-                _spawnPrefab = SceneDataManager.instance.kartAssetManager.getKart(_defaultKartID).AssetPrefab;
-
-
-        }
-        else
-        {
-            _spawnPrefab = GameplayManager.instance.kartAssetManager.getKart(_defaultKartID).AssetPrefab;
-        }
-
-
-
-
-        PlayerSpawn();
+        NetworkManager.isUpdatingLocalTransform = true;
     }
 
-    private void PlayerSpawn()
-    {
-        
-        
-        KartAsset _kartKAM;
-        if(SceneDataManager.instance)
-        {
-            _kartKAM = SceneDataManager.instance.kartAssetManager.getKart(SceneDataManager.instance.getData(SceneData.SelectedKart));
-        }
-        else
-        {
-            _kartKAM = GameplayManager.instance.kartAssetManager.getKart(_defaultKartID);
-        }
-        localPlayer = Instantiate(_spawnPrefab, _spawnPos.position, _spawnPos.rotation);
+    /*   
+       public static Transform _spawnPos;
+       public static string _defaultKartID = "007";
 
-        localPlayer.gameObject.GetComponent<KartController>().KartSetup(_kartKAM._acceleration, _kartKAM._maxSpeed, _kartKAM._drift, _kartKAM._control, _kartKAM._weight);
 
-        localPlayer.GetComponent<KartController>()._gameManager = GameplayManager.instance._gameManager;
-    }
+       public GameObject localPlayer;
 
-    public static void CheckPlayerDList(ref byte[] spawnInfo)
-    {
-        string dlist = Encoding.ASCII.GetString(spawnInfo);
-        string[] players = dlist.Split('#');
 
-        foreach (string player in players)
-        {
-            //Debug.Log(player);
-            string[] pInfo = player.Split(",");
-            short id = short.Parse(pInfo[0]);
-            if(id != NetworkManager.localPlayerID)
-            {
-                if(onNetPlayerDList.ContainsKey(id))
-                {
-                    if (onNetPlayerDList[id].playerID != id) onNetPlayerDList[id].playerID = id;
-                    if (onNetPlayerDList[id].playerName != pInfo[1]) onNetPlayerDList[id].playerName = pInfo[1];
-                    if (onNetPlayerDList[id].playerKartID != pInfo[2]) onNetPlayerDList[id].playerKartID = pInfo[2];
-                }
-                else
-                {
-                    var _kartKAM = SceneDataManager.instance.kartAssetManager.getKart(pInfo[2]);
-                    NetPlayer newPlayer = Instantiate(_kartKAM.AssetPrefab, _spawnPos.position, _spawnPos.rotation).AddComponent<NetPlayer>();
-                    newPlayer.playerObj.GetComponent<KartController>().spawnMode = 2;
-                    newPlayer.playerID = id;
-                    newPlayer.playerName = pInfo[1];
-                    newPlayer.playerKartID = pInfo[2];
-                    onNetPlayerDList.Add(id, newPlayer);
-                }
-            }
-        }
 
-        spawnInfo = null;
-    }
 
-    public static void UpdateOnNetPlayer(ref byte[] buffer)
-    {
-        
-        short[] shortBuffer = new short[1];
-        Buffer.BlockCopy(buffer, 0, shortBuffer, 0, 2);
-        //Debug.Log(buffer.Length);
-        short playerIDin = shortBuffer[0];
-        
+       public static Dictionary<short, NetPlayer> onNetPlayerDList = new Dictionary<short, NetPlayer>();
 
-        /*
-        short[] shortBuffer = new short[1];
-        Buffer.BlockCopy(playerUpdateByte, 0, shortBuffer, 0, 2);
-        short playerIDin = shortBuffer[0];
-        */
-        
-        //Debug.Log("LocalID: " + NetworkManager.localPlayerID + " IDin: " + shortBuffer[0] + " is in?: " + onNetPlayerDList.ContainsKey(playerIDin));
-        
+       private GameObject _spawnPrefab;
+
+
+       //public static byte[] playerUpdateByte = new byte[26];
+
+       private void Start()
+       {
+           _spawnPos = GameObject.Find("spawnPosition").GetComponent<Transform>();
+           if (SceneDataManager.instance)
+           {
+               //isOnNetWork = GameplayManager.instance.getData(GameplayManager.instance.selectedMode) == 2f;
+
+               if (SceneDataManager.instance.getData(SceneData.SelectedMode) == "Online")
+               {
+                   Debug.Log("Play Online Mode!");
+                   NetworkManager networkManager = GameplayManager.instance.gameObject.AddComponent<NetworkManager>();
+               }
+
+               if (SceneDataManager.instance.getData(SceneData.SelectedMode) == "Offline")
+               {
+                   //NetworkManager.isOnNetwork = false;
+               }
+
+
+               _spawnPrefab = SceneDataManager.instance.kartAssetManager.getKart(SceneDataManager.instance.getData(SceneData.SelectedKart)).AssetPrefab;
+
+
+               if (_spawnPrefab == null)
+                   _spawnPrefab = SceneDataManager.instance.kartAssetManager.getKart(_defaultKartID).AssetPrefab;
+
+
+           }
+           else
+           {
+               _spawnPrefab = GameplayManager.instance.kartAssetManager.getKart(_defaultKartID).AssetPrefab;
+           }
+
+
+
+
+           PlayerSpawn();
+       }
+
+       private void PlayerSpawn()
+       {
+
+
+           KartAsset _kartKAM;
+           if(SceneDataManager.instance)
+           {
+               _kartKAM = SceneDataManager.instance.kartAssetManager.getKart(SceneDataManager.instance.getData(SceneData.SelectedKart));
+           }
+           else
+           {
+               _kartKAM = GameplayManager.instance.kartAssetManager.getKart(_defaultKartID);
+           }
+           localPlayer = Instantiate(_spawnPrefab, _spawnPos.position, _spawnPos.rotation);
+
+           localPlayer.gameObject.GetComponent<KartController>().KartSetup(_kartKAM._acceleration, _kartKAM._maxSpeed, _kartKAM._drift, _kartKAM._control, _kartKAM._weight);
+
+           localPlayer.GetComponent<KartController>()._gameManager = GameplayManager.instance._gameManager;
+       }
+
+       public static void CheckPlayerDList(ref byte[] spawnInfo)
+       {
+           string dlist = Encoding.ASCII.GetString(spawnInfo);
+           string[] players = dlist.Split('#');
+
+           foreach (string player in players)
+           {
+               //Debug.Log(player);
+               string[] pInfo = player.Split(",");
+               short id = short.Parse(pInfo[0]);
+               if(id != NetworkManager.localPlayerID)
+               {
+                   if(onNetPlayerDList.ContainsKey(id))
+                   {
+                       if (onNetPlayerDList[id].playerID != id) onNetPlayerDList[id].playerID = id;
+                       if (onNetPlayerDList[id].playerName != pInfo[1]) onNetPlayerDList[id].playerName = pInfo[1];
+                       if (onNetPlayerDList[id].playerKartID != pInfo[2]) onNetPlayerDList[id].playerKartID = pInfo[2];
+                   }
+                   else
+                   {
+                       var _kartKAM = SceneDataManager.instance.kartAssetManager.getKart(pInfo[2]);
+                       NetPlayer newPlayer = Instantiate(_kartKAM.AssetPrefab, _spawnPos.position, _spawnPos.rotation).AddComponent<NetPlayer>();
+                       newPlayer.playerObj.GetComponent<KartController>().spawnMode = 2;
+                       newPlayer.playerID = id;
+                       newPlayer.playerName = pInfo[1];
+                       newPlayer.playerKartID = pInfo[2];
+                       onNetPlayerDList.Add(id, newPlayer);
+                   }
+               }
+           }
+
+           spawnInfo = null;
+       }
+
+       public static void UpdateOnNetPlayer(ref byte[] buffer)
+       {
+
+           short[] shortBuffer = new short[1];
+           Buffer.BlockCopy(buffer, 0, shortBuffer, 0, 2);
+           //Debug.Log(buffer.Length);
+           short playerIDin = shortBuffer[0];
+
+
+           /*
+           short[] shortBuffer = new short[1];
+           Buffer.BlockCopy(playerUpdateByte, 0, shortBuffer, 0, 2);
+           short playerIDin = shortBuffer[0];
+           */
+
+    //Debug.Log("LocalID: " + NetworkManager.localPlayerID + " IDin: " + shortBuffer[0] + " is in?: " + onNetPlayerDList.ContainsKey(playerIDin));
+
     /*
         if (playerIDin != NetworkManager.localPlayerID && onNetPlayerDList.ContainsKey(shortBuffer[0]))
         {

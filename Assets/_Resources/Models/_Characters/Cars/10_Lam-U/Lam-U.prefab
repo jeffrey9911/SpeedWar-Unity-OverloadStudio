@@ -706,6 +706,7 @@ GameObject:
   - component: {fileID: 6348103536497810933}
   - component: {fileID: 8555477690613744329}
   - component: {fileID: 4898014050571290464}
+  - component: {fileID: -6925041064269982496}
   m_Layer: 0
   m_Name: Lam-U
   m_TagString: Untagged
@@ -763,10 +764,10 @@ MonoBehaviour:
   displayPlayerID: 0
   spawnMode: 0
   onDisplayScale: 1
-  _gameManager: {fileID: 0}
   isOnNetwork: 0
   vehicle_centre: {fileID: 5808408928464908903}
   exhaustTransList: []
+  _kartCollider: {fileID: 2134224724257138626}
   wheels:
   - _wCollider: {fileID: 6329924826879525197}
     _wObject: {fileID: 6582133924107989691}
@@ -907,6 +908,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 98db0ab2fa426f241b3ba61d5118cb70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-6925041064269982496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7911312396160623222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dace0bcee38a43aab157ea46f3fff38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &8006697103806987624

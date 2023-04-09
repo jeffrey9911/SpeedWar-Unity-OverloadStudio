@@ -473,6 +473,7 @@ GameObject:
   - component: {fileID: 5753119294361321583}
   - component: {fileID: 438106492330172022}
   - component: {fileID: 116298465778685149}
+  - component: {fileID: -1102186917118460104}
   m_Layer: 0
   m_Name: Alpha
   m_TagString: Player
@@ -530,10 +531,10 @@ MonoBehaviour:
   displayPlayerID: 0
   spawnMode: 0
   onDisplayScale: 1
-  _gameManager: {fileID: 0}
   isOnNetwork: 0
   vehicle_centre: {fileID: 2133964237467870967}
   exhaustTransList: []
+  _kartCollider: {fileID: 5391208543261259646}
   wheels:
   - _wCollider: {fileID: 2133964236490133513}
     _wObject: {fileID: 6365273816088147026}
@@ -674,6 +675,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 98db0ab2fa426f241b3ba61d5118cb70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-1102186917118460104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133964237668934765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dace0bcee38a43aab157ea46f3fff38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &3298594839418195655

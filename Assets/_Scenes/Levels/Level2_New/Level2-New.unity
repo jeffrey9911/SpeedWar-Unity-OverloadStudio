@@ -66235,6 +66235,10 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3392689885585260703, guid: 43c2c43cf171c364da00d0871b3ab489, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8951244855320840177, guid: 43c2c43cf171c364da00d0871b3ab489, type: 3}
       propertyPath: m_Name
       value: GameplayManager
@@ -66286,6 +66290,10 @@ PrefabInstance:
     - target: {fileID: 8951244856490281451, guid: 43c2c43cf171c364da00d0871b3ab489, type: 3}
       propertyPath: m_TagString
       value: Respawn
+      objectReference: {fileID: 0}
+    - target: {fileID: 8951244856490281460, guid: 43c2c43cf171c364da00d0871b3ab489, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.31
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []

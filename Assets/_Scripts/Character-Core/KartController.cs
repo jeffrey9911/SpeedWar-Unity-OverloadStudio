@@ -16,7 +16,6 @@ public class KartController : MonoBehaviour
     [Header("Manager Systems")]
     [SerializeField] public int spawnMode = 0;
     [SerializeField] public float onDisplayScale = 1.0f;
-    public GameObject _gameManager;
     [SerializeField] private bool isOnNetwork = false;
     Publisher _publisher = new Publisher();
 
@@ -30,6 +29,7 @@ public class KartController : MonoBehaviour
     private Rigidbody _rigidbody;
     [SerializeField] private List<Transform> exhaustTransList = new List<Transform>();
 
+    [SerializeField] Transform _kartCollider;
     public enum Wheel_Location
     {
         Front_Left,
@@ -161,6 +161,7 @@ public class KartController : MonoBehaviour
                     //_rigidbody.centerOfMass = vehicle_centre.localPosition;
                     _rigidbody.mass = kartWeight;
                 }
+                _kartCollider.gameObject.tag = "netPlayer";
                 break;
 
             default:
@@ -407,63 +408,66 @@ public class KartController : MonoBehaviour
                 wheels[i]._wCollider.steerAngle = steerAng;
             }
 
-            /// Not Handbraking
-            if (!isHandbrake)
+            if(spawnMode == 0)
             {
-                SetSideFriction(wheels[i], nmWheelSideFric);
-                /// Speeding Up by W
-                if (moveVec.y > 0)
+                /// Not Handbraking
+                if (!isHandbrake)
                 {
-                    //Debug.Log("SPEEDING!!!" + torqueForce);
-                    wheels[i]._wCollider.motorTorque = torqueForce;
-                    wheels[i]._wCollider.brakeTorque = 0.0f;
-                }
-                /// Slowing Down by S
-                else if (moveVec.y < 0)
-                {
-                    
-                    if (kartSpeed > 0)
+                    SetSideFriction(wheels[i], nmWheelSideFric);
+                    /// Speeding Up by W
+                    if (moveVec.y > 0)
                     {
-                        //Debug.Log("BRAKING!!!" + torqueForce);
-                        if (wheels[i]._wLocation == Wheel_Location.Front_Left || wheels[i]._wLocation == Wheel_Location.Front_Right)
-                            wheels[i]._wCollider.brakeTorque = -moveVec.y * brakeTorque_max;
-                        else
-                            wheels[i]._wCollider.brakeTorque = -moveVec.y * brakeTorque_max / 2;
-
-                        wheels[i]._wCollider.motorTorque = 0.0f;
-                    }
-                    else if(kartSpeed < 0 || Mathf.Approximately(kartSpeed, 0.0f))
-                    {
-                        //Debug.Log("BACKING!!!" + torqueForce);
+                        //Debug.Log("SPEEDING!!!" + torqueForce);
                         wheels[i]._wCollider.motorTorque = torqueForce;
                         wheels[i]._wCollider.brakeTorque = 0.0f;
                     }
-                }
-                else if(moveVec.y == 0)
-                {
-                    //Debug.Log("STILL!!!" + torqueForce);
-                    wheels[i]._wCollider.motorTorque = 0.0f;
-                    wheels[i]._wCollider.brakeTorque = kineticRecycleForce;
+                    /// Slowing Down by S
+                    else if (moveVec.y < 0)
+                    {
 
+                        if (kartSpeed > 0)
+                        {
+                            //Debug.Log("BRAKING!!!" + torqueForce);
+                            if (wheels[i]._wLocation == Wheel_Location.Front_Left || wheels[i]._wLocation == Wheel_Location.Front_Right)
+                                wheels[i]._wCollider.brakeTorque = -moveVec.y * brakeTorque_max;
+                            else
+                                wheels[i]._wCollider.brakeTorque = -moveVec.y * brakeTorque_max / 2;
+
+                            wheels[i]._wCollider.motorTorque = 0.0f;
+                        }
+                        else if (kartSpeed < 0 || Mathf.Approximately(kartSpeed, 0.0f))
+                        {
+                            //Debug.Log("BACKING!!!" + torqueForce);
+                            wheels[i]._wCollider.motorTorque = torqueForce;
+                            wheels[i]._wCollider.brakeTorque = 0.0f;
+                        }
+                    }
+                    else if (moveVec.y == 0)
+                    {
+                        //Debug.Log("STILL!!!" + torqueForce);
+                        wheels[i]._wCollider.motorTorque = 0.0f;
+                        wheels[i]._wCollider.brakeTorque = kineticRecycleForce;
+
+                    }
                 }
-            }
-            /// IS Handbraking
-            else
-            {
-                if (wheels[i]._wLocation == Wheel_Location.Rear_Left || wheels[i]._wLocation == Wheel_Location.Rear_Right 
-                    || wheels[i]._wLocation == Wheel_Location.Middle_Left || wheels[i]._wLocation == Wheel_Location.Middle_Right)
-                {
-                    wheels[i]._wCollider.brakeTorque = brakeTorque_max;
-                    SetSideFriction(wheels[i], hbWheelSideFric);
-                }
+                /// IS Handbraking
                 else
-                    wheels[i]._wCollider.brakeTorque = kineticRecycleForce;
+                {
+                    if (wheels[i]._wLocation == Wheel_Location.Rear_Left || wheels[i]._wLocation == Wheel_Location.Rear_Right
+                        || wheels[i]._wLocation == Wheel_Location.Middle_Left || wheels[i]._wLocation == Wheel_Location.Middle_Right)
+                    {
+                        wheels[i]._wCollider.brakeTorque = brakeTorque_max;
+                        SetSideFriction(wheels[i], hbWheelSideFric);
+                    }
+                    else
+                        wheels[i]._wCollider.brakeTorque = kineticRecycleForce;
 
-                wheels[i]._wCollider.motorTorque = 0.0f;
+                    wheels[i]._wCollider.motorTorque = 0.0f;
+                }
+
+                
             }
-
             syncWheel(wheels[i]);
-
             if (isDebugging)
             {
                 debugKart(wheels[i]);

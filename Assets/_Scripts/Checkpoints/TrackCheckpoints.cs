@@ -26,6 +26,10 @@ public class TrackCheckpoints : MonoBehaviour
     [SerializeField] private Canvas _Winlose;
     [SerializeField] private TMP_Text _winloseText;
 
+    short finalP;
+
+    bool isWaitingForScore = true;
+
     private void Awake()
     {
         if(!instance)
@@ -64,6 +68,56 @@ public class TrackCheckpoints : MonoBehaviour
         UpdateCompletion();
         UpdateLaps();
         UpdateGTimer();
+
+        if(NetworkManager.isLocalGameFinished && isWaitingForScore)
+        {
+            string wlText = "Your score: [" + finalP + "]";
+
+            bool isRanking = true;
+            foreach(NetPlayer netPlayer in NetworkManager.playerDList.Values)
+            {
+                if(netPlayer.playerRoomID == NetworkManager.localPlayer.playerRoomID)
+                {
+                    Debug.Log("SCORE: " + netPlayer.score);
+                    wlText += "\n" + netPlayer.playerName + "[";
+                    if(netPlayer.score <= 0)
+                    {
+                        wlText += "Please wait...]";
+                        isRanking = false;
+                    }
+                    else
+                    {
+                        wlText += netPlayer.score + "]";
+                    }
+                }
+            }
+
+            if(isRanking)
+            {
+                short firstPlayerID = 0;
+                short firstPlayerScore = 0;
+                foreach(NetPlayer netPlayer in NetworkManager.playerDList.Values)
+                {
+                    if(netPlayer.score > firstPlayerScore)
+                    {
+                        firstPlayerID = netPlayer.playerID;
+                        firstPlayerScore = netPlayer.score;
+                    }
+                }
+
+                if(finalP > firstPlayerScore)
+                {
+                    wlText += "\n You got the most points. You Win!";
+                }
+                else
+                {
+                    wlText += "\n " + NetworkManager.playerDList[firstPlayerID].playerName + " Wins!";
+                }
+                isWaitingForScore = false;
+            }
+
+            _winloseText.text = wlText;
+        }
     }
 
     public void PlayerThroughCheckpoint(CheckpointSingle checkpointSingle)
@@ -72,7 +126,9 @@ public class TrackCheckpoints : MonoBehaviour
         if(checkpointSingle == cpQueue.Peek())
         {
             Debug.Log("Correct");
-            cpQueue.Dequeue().GetComponent<MeshRenderer>().enabled = false;
+            CheckpointSingle cps = cpQueue.Dequeue();
+            cps.GetComponent<MeshRenderer>().enabled = false;
+            Destroy(cps.gameObject);
             cpPosList.RemoveAt(0);
             if(cpQueue.Count == 0)
             {
@@ -136,20 +192,29 @@ public class TrackCheckpoints : MonoBehaviour
 
     private void GameOver()
     {
-        
         _GUI.gameObject.SetActive(false);
         _Winlose.gameObject.SetActive(true);
         int finalScore = scoreManager.instance.getScore() * 10 / (int)_gTimer;
-        if(finalScore >= 400)
+        if (!NetworkManager.isOnNetwork)
         {
-            _winloseText.text = "Your points is \n Score * 10 / Timer = " + finalScore + " POINTS!\n" + finalScore + " >= 400! You Win!";
+            if (finalScore >= 400)
+            {
+                _winloseText.text = "Your points is \n Score * 10 / Timer = " + finalScore + " POINTS!\n" + finalScore + " >= 400! You Win!";
+            }
+            else
+            {
+                _winloseText.text = "Your points is \n Score * 10 / Timer = " + finalScore + " POINTS!\n" + finalScore + " < 400! You Lose!";
+            }
+
+            Time.timeScale = 0.0f;
         }
         else
         {
-            _winloseText.text = "Your points is \n Score * 10 / Timer = " + finalScore + " POINTS!\n" + finalScore + " < 400! You Lose!";
+            
+            finalP = (short)finalScore;
+            NetworkManager.FinishScore(ref finalP);
         }
         
-        Time.timeScale = 0.0f;
     }
     
 }

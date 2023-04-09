@@ -444,6 +444,7 @@ GameObject:
   - component: {fileID: 2264713164017375684}
   - component: {fileID: 8532221659466254830}
   - component: {fileID: 5880961684022099435}
+  - component: {fileID: 1322494730915603662}
   m_Layer: 0
   m_Name: RRLuxury
   m_TagString: Untagged
@@ -501,12 +502,12 @@ MonoBehaviour:
   displayPlayerID: 0
   spawnMode: 0
   onDisplayScale: 1
-  _gameManager: {fileID: 0}
   isOnNetwork: 0
   vehicle_centre: {fileID: 6885274723163505766}
   exhaustTransList:
   - {fileID: 1490801250645391798}
   - {fileID: 4420690818954128450}
+  _kartCollider: {fileID: 4311765795148117718}
   wheels:
   - _wCollider: {fileID: 1358682974513688243}
     _wObject: {fileID: 6383345090368142068}
@@ -647,6 +648,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 98db0ab2fa426f241b3ba61d5118cb70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1322494730915603662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2279894067461655158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dace0bcee38a43aab157ea46f3fff38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &2279894067971827480

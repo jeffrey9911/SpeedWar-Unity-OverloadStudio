@@ -887,6 +887,7 @@ GameObject:
   - component: {fileID: 7107370674672592235}
   - component: {fileID: 8831439374489132063}
   - component: {fileID: 5907233311102592622}
+  - component: {fileID: -5282650610126610188}
   m_Layer: 0
   m_Name: SkyHorizon
   m_TagString: Player
@@ -944,12 +945,12 @@ MonoBehaviour:
   displayPlayerID: 0
   spawnMode: 0
   onDisplayScale: 1
-  _gameManager: {fileID: 0}
   isOnNetwork: 0
   vehicle_centre: {fileID: 3455415325505076993}
   exhaustTransList:
   - {fileID: 7107370673691164567}
   - {fileID: 7107370673441935507}
+  _kartCollider: {fileID: 4306015968824078888}
   wheels:
   - _wCollider: {fileID: 7107370673773401556}
     _wObject: {fileID: 2949650523171111315}
@@ -1090,6 +1091,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 98db0ab2fa426f241b3ba61d5118cb70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-5282650610126610188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7107370674672592234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dace0bcee38a43aab157ea46f3fff38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &7107370675113716477

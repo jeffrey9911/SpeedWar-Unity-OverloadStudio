@@ -707,6 +707,7 @@ GameObject:
   - component: {fileID: 545878057101203212}
   - component: {fileID: 7465984937786209138}
   - component: {fileID: 5906102441019125218}
+  - component: {fileID: 7033698018138568575}
   m_Layer: 0
   m_Name: FGT
   m_TagString: Player
@@ -764,10 +765,10 @@ MonoBehaviour:
   displayPlayerID: 0
   spawnMode: 0
   onDisplayScale: 1
-  _gameManager: {fileID: 0}
   isOnNetwork: 0
   vehicle_centre: {fileID: 7165461107258192726}
   exhaustTransList: []
+  _kartCollider: {fileID: 8787197587011896644}
   wheels:
   - _wCollider: {fileID: 1299082753403342743}
     _wObject: {fileID: 2923818180888888759}
@@ -908,6 +909,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 98db0ab2fa426f241b3ba61d5118cb70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7033698018138568575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8921499540823837477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dace0bcee38a43aab157ea46f3fff38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &8933115375755653730

@@ -50,6 +50,7 @@ public class LobbyManager : MonoBehaviour
     {
         short lvid = 1;
         NetworkManager.UpdateLocalLevelID(ref lvid);
+        NetworkManager.isJoiningRoom = false;
         SceneManager.LoadScene("MainSelect");
     }
 }

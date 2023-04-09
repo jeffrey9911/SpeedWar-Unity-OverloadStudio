@@ -94,8 +94,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   idText: {fileID: 8377369403699893710}
   statusText: {fileID: 8377369403384007247}
+  joinButton: {fileID: 8377369403983389108}
   displayedPlayerID: 0
-  dispalyedName: 
+  displayedName: 
 --- !u!1 &8377369403384007245
 GameObject:
   m_ObjectHideFlags: 0
@@ -487,7 +488,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8377369403983389111}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8377369402931306489}
+        m_TargetAssemblyTypeName: OnNetPlayerDisplay, Assembly-CSharp
+        m_MethodName: JoinOnClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8377369404097912827
 GameObject:
   m_ObjectHideFlags: 0

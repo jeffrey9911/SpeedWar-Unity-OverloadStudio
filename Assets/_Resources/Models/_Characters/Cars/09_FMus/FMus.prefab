@@ -803,6 +803,7 @@ GameObject:
   - component: {fileID: 3573437805366150445}
   - component: {fileID: 5934231060769815199}
   - component: {fileID: 7088845756895206164}
+  - component: {fileID: -5237555017232097282}
   m_Layer: 0
   m_Name: FMus
   m_TagString: Untagged
@@ -860,10 +861,10 @@ MonoBehaviour:
   displayPlayerID: 0
   spawnMode: 0
   onDisplayScale: 1
-  _gameManager: {fileID: 0}
   isOnNetwork: 0
   vehicle_centre: {fileID: 1081941704933783829}
   exhaustTransList: []
+  _kartCollider: {fileID: 3924011088179121398}
   wheels:
   - _wCollider: {fileID: 2914816932550541588}
     _wObject: {fileID: 7238386673740591668}
@@ -1004,6 +1005,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 98db0ab2fa426f241b3ba61d5118cb70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-5237555017232097282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7680529341542515507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dace0bcee38a43aab157ea46f3fff38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &8637125969721889487

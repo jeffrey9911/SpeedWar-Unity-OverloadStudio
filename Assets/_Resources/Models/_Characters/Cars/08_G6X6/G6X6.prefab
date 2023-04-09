@@ -334,6 +334,7 @@ GameObject:
   - component: {fileID: 2816141175957717099}
   - component: {fileID: 9203664742468812327}
   - component: {fileID: 7944700062000130641}
+  - component: {fileID: -1090592904297251415}
   m_Layer: 0
   m_Name: G6X6
   m_TagString: Untagged
@@ -391,10 +392,10 @@ MonoBehaviour:
   displayPlayerID: 0
   spawnMode: 0
   onDisplayScale: 1
-  _gameManager: {fileID: 0}
   isOnNetwork: 0
   vehicle_centre: {fileID: 0}
   exhaustTransList: []
+  _kartCollider: {fileID: 5477785663131598192}
   wheels:
   - _wCollider: {fileID: 1183653067541294917}
     _wObject: {fileID: 775504190492207113}
@@ -541,6 +542,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 98db0ab2fa426f241b3ba61d5118cb70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-1090592904297251415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3167419093621641001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dace0bcee38a43aab157ea46f3fff38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &3629882181228907833

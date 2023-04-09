@@ -8,7 +8,6 @@ public class CheckpointSingle : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.transform.tag);
         if (other.transform.tag == "KartCollider")
         {
             TrackCheckpoints.instance.PlayerThroughCheckpoint(this);

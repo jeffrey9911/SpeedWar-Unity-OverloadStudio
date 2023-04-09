@@ -413,6 +413,7 @@ GameObject:
   - component: {fileID: 1797814507197140499}
   - component: {fileID: 9012021027672339214}
   - component: {fileID: 1829048665708194293}
+  - component: {fileID: 3613465556934903932}
   m_Layer: 0
   m_Name: FerraPort
   m_TagString: Player
@@ -470,7 +471,6 @@ MonoBehaviour:
   displayPlayerID: 0
   spawnMode: 0
   onDisplayScale: 1
-  _gameManager: {fileID: 0}
   isOnNetwork: 0
   vehicle_centre: {fileID: 6171467311473448057}
   exhaustTransList:
@@ -478,6 +478,7 @@ MonoBehaviour:
   - {fileID: 1797814506281106411}
   - {fileID: 1797814506607324500}
   - {fileID: 1797814507667108156}
+  _kartCollider: {fileID: 4666613724495434907}
   wheels:
   - _wCollider: {fileID: 1797814505932996268}
     _wObject: {fileID: 5962254332585585387}
@@ -618,6 +619,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 98db0ab2fa426f241b3ba61d5118cb70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3613465556934903932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1797814507197140498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dace0bcee38a43aab157ea46f3fff38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1797814507454232151

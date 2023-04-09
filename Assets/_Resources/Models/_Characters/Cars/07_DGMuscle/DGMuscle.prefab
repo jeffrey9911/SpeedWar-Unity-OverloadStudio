@@ -587,6 +587,7 @@ GameObject:
   - component: {fileID: 8949170248338016773}
   - component: {fileID: 8842686233538727485}
   - component: {fileID: 8973252625153024307}
+  - component: {fileID: -1209558187658593178}
   m_Layer: 0
   m_Name: DGMuscle
   m_TagString: Untagged
@@ -644,10 +645,10 @@ MonoBehaviour:
   displayPlayerID: 0
   spawnMode: 0
   onDisplayScale: 1
-  _gameManager: {fileID: 0}
   isOnNetwork: 0
   vehicle_centre: {fileID: 1360186525128665}
   exhaustTransList: []
+  _kartCollider: {fileID: 4397190622726820455}
   wheels:
   - _wCollider: {fileID: 929785036457882426}
     _wObject: {fileID: 7999233574641953957}
@@ -788,6 +789,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 98db0ab2fa426f241b3ba61d5118cb70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-1209558187658593178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5610585659096420452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dace0bcee38a43aab157ea46f3fff38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &5984118586139548920
