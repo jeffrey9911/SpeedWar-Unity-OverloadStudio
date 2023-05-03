@@ -1,19 +1,23 @@
-# **Ontario Tech University Game Dev GDW 2022-23 Group Project**
+# **Ontario Tech University Game Development Workshop Project**
 
 ## ***Group Information***
 ### **Group Name**
 - Overload Studio
 ### **Group Member Information**
 - **Jeffrey Li** - Programmer <sub>/ Game Designer / UI Designer</sub> - yaojie.li@ontariotechu.net
-- **Kevin Huang** - Project Manager <sub>/ Level Designer / Sound Designer</sub> - kevin.huang@ontariotechu.net
-- **Ewan Chang** - Programmer <sub>/ Level Designer</sub> - ewan.chang@ontariotechu.net
+- **Kevin Huang** - Sound Designer <sub>/ Level Designer </sub> - kevin.huang@ontariotechu.net
+- **Ewan Chang** - Level Designer <sub>/ Programmer</sub> - ewan.chang@ontariotechu.net
 - **Joshua Yap** - 2D/3D Artist - joshua.yap@ontariotechu.net
 - **Tiantian Fan** - 2D Artist <sub>/ Sound Designer</sub> - tiantian.fan@ontariotechu.net
 - **Ikponmwosa Odiase** - 2D/3D Artist - ikponmwosa.odiase@ontariotechu.net
-- **Patrick Thompson** - Programmer <sub>/ 2D Artist</sub> - patrick.thompson8@ontariotechu.net
+- **Patrick Thompson** - Game Designer <sub>/ 2D Artist</sub> - patrick.thompson8@ontariotechu.net
 
 ## ***Project Information***
 ### **Project Name**
 - SpeedWars
 ### **Project Overview**
-- Multiplayer 3D racing party game
+- Speed War is a physics based 3D racing game. Choose from a variety of vehicles and race tracks to experience a unique, colourful, and fun racing game with friends. Play solo or in co-op multiplayer as you race towards the finish line at top speeds!
+### **itch.io page**
+- [itch page](https://patar63.itch.io/speed-war)
+### **Trailer video**
+[![SC2 Video]()](https://youtu.be/03UpC_VMMqM)
