@@ -19,4 +19,4 @@
 ### **itch.io page**
 - [itch page](https://patar63.itch.io/speed-war)
 ### **Trailer video**
-[![SpeedWar Promo Trailer Video](https://github.com/jeffrey9911/GDW22_23-Project-Overload-Studio/blob/main/Assets/_Resources/UI/Screenshot%202023-05-02%20211426.png?raw=true)](https://youtu.be/03UpC_VMMqM)
+[![SpeedWar Promo Trailer Video](https://raw.githubusercontent.com/jeffrey9911/SpeedWar-Unity-OverloadStudio/refs/heads/main/_Externals/video_pic.png)](https://youtu.be/03UpC_VMMqM)
