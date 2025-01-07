@@ -1,9 +1,6 @@
 # **Ontario Tech University Game Development Workshop Project**
 
-## ***Group Information***
-### **Group Name**
-- Overload Studio
-### **Group Member Information**
+## **Member Information**
 - **Jeffrey Li** - Programmer <sub>/ Game Designer / UI Designer</sub> - yaojie.li@ontariotechu.net
 - **Kevin Huang** - Sound Designer <sub>/ Level Designer </sub> - kevin.huang@ontariotechu.net
 - **Ewan Chang** - Level Designer <sub>/ Programmer</sub> - ewan.chang@ontariotechu.net
@@ -12,9 +9,11 @@
 - **Ikponmwosa Odiase** - 2D/3D Artist - ikponmwosa.odiase@ontariotechu.net
 - **Patrick Thompson** - Game Designer <sub>/ 2D Artist</sub> - patrick.thompson8@ontariotechu.net
 
+- **Florence Lam** - Freelance 2D Designer - florencelam9916@gmail.com
+
 ## ***Project Information***
 ### **Project Name**
-- SpeedWars
+- Speed War
 ### **Project Overview**
 - Speed War is a physics based 3D racing game. Choose from a variety of vehicles and race tracks to experience a unique, colourful, and fun racing game with friends. Play solo or in co-op multiplayer as you race towards the finish line at top speeds!
 ### **itch.io page**
